@@ -47,23 +47,60 @@ const AdvancedGlobeMap = () => {
         []
     );
 
-    // Memoizar estilo de mapa para evitar re-renderizados
+    // Estilo híbrido: Satélite + Límites + Nombres de países
     const mapStyle = useMemo(
         () => ({
             version: 8,
+            glyphs: "https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf",
             sources: {
-                "natural-earth": {
+                // Fuente de imágenes satelitales
+                satellite: {
                     type: "raster",
-                    tiles: ["https://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}"],
+                    tiles: ["https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"],
+                    tileSize: 256,
+                    attribution: "© Esri, DigitalGlobe, GeoEye, Earthstar Geographics",
+                },
+                // Fuente para límites y etiquetas (transparente)
+                boundaries: {
+                    type: "raster",
+                    tiles: ["https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}"],
                     tileSize: 256,
                     attribution: "© Esri",
+                },
+                // Fuente vectorial para países (mejor control)
+                countries: {
+                    type: "vector",
+                    tiles: ["https://demotiles.maplibre.org/tiles/{z}/{x}/{y}.pbf"],
+                    attribution: "© MapLibre",
                 },
             },
             layers: [
                 {
-                    id: "natural-earth-layer",
+                    id: "background",
+                    type: "background",
+                    paint: {
+                        "background-color": "#000000", // Negro para mejor contraste con satélite
+                    },
+                },
+                // Capa base: Imágenes satelitales
+                {
+                    id: "satellite-layer",
                     type: "raster",
-                    source: "natural-earth",
+                    source: "satellite",
+                    paint: {
+                        "raster-opacity": 1.0,
+                        "raster-brightness-max": 1.0,
+                        "raster-contrast": 0.1, // Ligero aumento de contraste
+                    },
+                },
+                // Capa de límites y nombres (superpuesta)
+                {
+                    id: "boundaries-layer",
+                    type: "raster",
+                    source: "boundaries",
+                    paint: {
+                        "raster-opacity": 0.7, // Semi-transparente para no ocultar satélite
+                    },
                 },
             ],
         }),
@@ -177,7 +214,7 @@ const AdvancedGlobeMap = () => {
                 ref={mapRef}
                 {...viewState}
                 onMove={handleMove}
-                mapStyle={mapStyleComplete}
+                mapStyle={mapStyle}
                 projection={projection}
                 style={{ width: "100%", height: "100%" }}
                 maxZoom={18}
@@ -258,7 +295,7 @@ const AdvancedGlobeMap = () => {
                                 <button
                                     key={`${city.properties.name}-${index}`}
                                     onClick={() => navigateToCity(city)}
-                                    className="px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded transition-colors duration-150"
+                                    className="px-2 py-1 text-xs bg-gray-700 hover:bg-gray-500 rounded transition-colors duration-150"
                                 >
                                     {city.properties.name}
                                 </button>
