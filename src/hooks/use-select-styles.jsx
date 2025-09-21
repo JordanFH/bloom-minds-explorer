@@ -35,7 +35,7 @@ const useBloomWatchMapStyles = () => {
                             source: "esri-world",
                             paint: {
                                 "raster-opacity": 0.8,
-                                "raster-saturation": 1.2, // Aumenta saturación para vegetación
+                                "raster-saturation": 1, // Aumenta saturación para vegetación
                             },
                         },
                     ],
