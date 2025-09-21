@@ -15,7 +15,6 @@ const AdvancedGlobeMap = () => {
         bearing: 0,
     });
     const [projection, setProjection] = useState("globe");
-    const [isRotating, setIsRotating] = useState(false);
 
     // Memoizar datos de ciudades para evitar re-creaciones
     const citiesData = useMemo(
@@ -151,51 +150,12 @@ const AdvancedGlobeMap = () => {
     }, []);
 
     // Optimizar cambio de proyección
-    const handleProjectionChange = useCallback(
-        (newProjection) => {
-            if (isRotating && newProjection !== "globe") {
-                setIsRotating(false);
-                if (rotationRef.current) {
-                    cancelAnimationFrame(rotationRef.current);
-                    rotationRef.current = null;
-                }
-            }
-            setProjection(newProjection);
-        },
-        [isRotating]
-    );
-
-    // Función optimizada para rotar el globo
-    const startGlobeRotation = useCallback(() => {
-        if (projection !== "globe") return;
-
-        setIsRotating(true);
-        const map = mapRef.current?.getMap();
-        if (!map) return;
-
-        let bearing = viewState.bearing;
-
-        const rotate = () => {
-            bearing += 0.2;
-            if (bearing >= 360) bearing = 0;
-
-            if (map.getProjection().name === "globe" && isRotating) {
-                map.setBearing(bearing);
-                setViewState((prev) => ({ ...prev, bearing }));
-                rotationRef.current = requestAnimationFrame(rotate);
-            }
-        };
-
-        rotationRef.current = requestAnimationFrame(rotate);
-    }, [projection, viewState.bearing, isRotating]);
-
-    // Función para detener rotación
-    const stopGlobeRotation = useCallback(() => {
-        setIsRotating(false);
+    const handleProjectionChange = useCallback((newProjection) => {
         if (rotationRef.current) {
             cancelAnimationFrame(rotationRef.current);
             rotationRef.current = null;
         }
+        setProjection(newProjection);
     }, []);
 
     // Optimizar navegación a ciudades
@@ -269,24 +229,6 @@ const AdvancedGlobeMap = () => {
                         </button>
                     </div>
 
-                    {/* Controles de rotación */}
-                    <div className="flex space-x-2">
-                        <button
-                            onClick={startGlobeRotation}
-                            disabled={projection !== "globe" || isRotating}
-                            className={`px-3 py-1 text-xs rounded transition-colors duration-200 ${
-                                projection === "globe" && !isRotating ? "bg-green-500 text-white hover:bg-green-600" : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                            }`}
-                        >
-                            {isRotating ? "🔄 Rotando..." : "🔄 Rotar"}
-                        </button>
-                        {isRotating && (
-                            <button onClick={stopGlobeRotation} className="px-3 py-1 text-xs rounded bg-red-500 text-white hover:bg-red-600 transition-colors duration-200">
-                                ⏹️ Parar
-                            </button>
-                        )}
-                    </div>
-
                     {/* Botones de navegación rápida */}
                     <div className="space-y-1">
                         <p className="text-xs font-medium">Ir a:</p>
@@ -295,7 +237,7 @@ const AdvancedGlobeMap = () => {
                                 <button
                                     key={`${city.properties.name}-${index}`}
                                     onClick={() => navigateToCity(city)}
-                                    className="px-2 py-1 text-xs bg-gray-700 hover:bg-gray-500 rounded transition-colors duration-150"
+                                    className="px-2 py-1 text-xs bg-gray-700 text-white hover:bg-gray-500 rounded transition-colors duration-150"
                                 >
                                     {city.properties.name}
                                 </button>
@@ -310,7 +252,6 @@ const AdvancedGlobeMap = () => {
                         <span>Zoom: {viewState.zoom.toFixed(1)}</span>
                         <span>|</span>
                         <span>{projection === "globe" ? "🌍 Globo" : "🗺️ Plano"}</span>
-                        {isRotating && <span className="text-green-400">🔄 Rotando</span>}
                     </div>
                 </div>
             </Map>
