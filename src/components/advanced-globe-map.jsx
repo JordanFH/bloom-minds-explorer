@@ -15,6 +15,7 @@ const AdvancedGlobeMap = () => {
         bearing: 0,
     });
     const [projection, setProjection] = useState("globe");
+    const [currentMapStyle, setCurrentMapStyle] = useState("satellite");
 
     // Memoizar datos de ciudades para evitar re-creaciones
     const citiesData = useMemo(
@@ -46,8 +47,8 @@ const AdvancedGlobeMap = () => {
         []
     );
 
-    // Estilo híbrido: Satélite + Límites + Nombres de países
-    const mapStyle = useMemo(
+    // Estilo híbrido original: Satélite + Límites + Nombres de países
+    const satelliteStyle = useMemo(
         () => ({
             version: 8,
             glyphs: "https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf",
@@ -106,7 +107,106 @@ const AdvancedGlobeMap = () => {
         []
     );
 
-    const mapStyleComplete = "https://demotiles.maplibre.org/style.json";
+    // Estilo terreno/topográfico
+    const terrainStyle = useMemo(
+        () => ({
+            version: 8,
+            glyphs: "https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf",
+            sources: {
+                terrain: {
+                    type: "raster",
+                    tiles: ["https://server.arcgisonline.com/ArcGIS/rest/services/World_Terrain_Base/MapServer/tile/{z}/{y}/{x}"],
+                    tileSize: 256,
+                    attribution: "© Esri, USGS, NOAA",
+                },
+                labels: {
+                    type: "raster",
+                    tiles: ["https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Reference_Overlay/MapServer/tile/{z}/{y}/{x}"],
+                    tileSize: 256,
+                    attribution: "© Esri",
+                },
+            },
+            layers: [
+                {
+                    id: "background",
+                    type: "background",
+                    paint: {
+                        "background-color": "#f0f8ff",
+                    },
+                },
+                {
+                    id: "terrain-layer",
+                    type: "raster",
+                    source: "terrain",
+                    paint: {
+                        "raster-opacity": 1.0,
+                    },
+                },
+                {
+                    id: "labels-layer",
+                    type: "raster",
+                    source: "labels",
+                    paint: {
+                        "raster-opacity": 0.8,
+                    },
+                },
+            ],
+        }),
+        []
+    );
+
+    // Estilo callejero/carreteras
+    const streetStyle = useMemo(
+        () => ({
+            version: 8,
+            glyphs: "https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf",
+            sources: {
+                streets: {
+                    type: "raster",
+                    tiles: ["https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}"],
+                    tileSize: 256,
+                    attribution: "© Esri, HERE, Garmin, USGS, Intermap, INCREMENT P",
+                },
+            },
+            layers: [
+                {
+                    id: "background",
+                    type: "background",
+                    paint: {
+                        "background-color": "#f5f5f5",
+                    },
+                },
+                {
+                    id: "streets-layer",
+                    type: "raster",
+                    source: "streets",
+                    paint: {
+                        "raster-opacity": 1.0,
+                    },
+                },
+            ],
+        }),
+        []
+    );
+
+    // Estilo vectorial limpio
+    const vectorStyle = "https://demotiles.maplibre.org/style.json";
+
+    // Función para obtener el estilo actual
+    const getCurrentMapStyle = () => {
+        switch (currentMapStyle) {
+            case "satellite":
+                return satelliteStyle;
+            case "terrain":
+                return terrainStyle;
+            case "street":
+                return streetStyle;
+            case "vector":
+                return vectorStyle;
+            default:
+                return satelliteStyle;
+        }
+    };
 
     // Memoizar capas para evitar re-renderizados
     const citiesLayerCircle = useMemo(
@@ -174,7 +274,7 @@ const AdvancedGlobeMap = () => {
                 ref={mapRef}
                 {...viewState}
                 onMove={handleMove}
-                mapStyle={mapStyle}
+                mapStyle={getCurrentMapStyle()}
                 projection={projection}
                 style={{ width: "100%", height: "100%" }}
                 maxZoom={18}
@@ -229,8 +329,47 @@ const AdvancedGlobeMap = () => {
                         </button>
                     </div>
 
+                    {/* Control de estilo de mapa */}
+                    <div className="border-t pt-2">
+                        <p className="text-xs font-medium mb-1">Estilo del Mapa:</p>
+                        <div className="grid grid-cols-2 gap-1">
+                            <button
+                                onClick={() => setCurrentMapStyle("satellite")}
+                                className={`px-2 py-1 text-xs rounded transition-colors duration-150 ${
+                                    currentMapStyle === "satellite" ? "bg-green-600 text-white" : "bg-green-500 text-white hover:bg-green-600"
+                                }`}
+                            >
+                                🛰️ Satélite
+                            </button>
+                            <button
+                                onClick={() => setCurrentMapStyle("terrain")}
+                                className={`px-2 py-1 text-xs rounded transition-colors duration-150 ${
+                                    currentMapStyle === "terrain" ? "bg-amber-600 text-white" : "bg-amber-500 text-white hover:bg-amber-600"
+                                }`}
+                            >
+                                🏔️ Terreno
+                            </button>
+                            <button
+                                onClick={() => setCurrentMapStyle("street")}
+                                className={`px-2 py-1 text-xs rounded transition-colors duration-150 ${
+                                    currentMapStyle === "street" ? "bg-blue-600 text-white" : "bg-blue-500 text-white hover:bg-blue-600"
+                                }`}
+                            >
+                                🛣️ Calles
+                            </button>
+                            <button
+                                onClick={() => setCurrentMapStyle("vector")}
+                                className={`px-2 py-1 text-xs rounded transition-colors duration-150 ${
+                                    currentMapStyle === "vector" ? "bg-purple-600 text-white" : "bg-purple-500 text-white hover:bg-purple-600"
+                                }`}
+                            >
+                                🗺️ Vector
+                            </button>
+                        </div>
+                    </div>
+
                     {/* Botones de navegación rápida */}
-                    <div className="space-y-1">
+                    <div className="space-y-1 border-t pt-2">
                         <p className="text-xs font-medium">Ir a:</p>
                         <div className="grid grid-cols-2 gap-1">
                             {citiesData.features.map((city, index) => (
@@ -252,6 +391,13 @@ const AdvancedGlobeMap = () => {
                         <span>Zoom: {viewState.zoom.toFixed(1)}</span>
                         <span>|</span>
                         <span>{projection === "globe" ? "🌍 Globo" : "🗺️ Plano"}</span>
+                        <span>|</span>
+                        <span>
+                            {currentMapStyle === "satellite" && "🛰️ Satélite"}
+                            {currentMapStyle === "terrain" && "🏔️ Terreno"}
+                            {currentMapStyle === "street" && "🛣️ Calles"}
+                            {currentMapStyle === "vector" && "🗺️ Vector"}
+                        </span>
                     </div>
                 </div>
             </Map>
