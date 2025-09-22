@@ -209,13 +209,9 @@ export function useBloomRegions() {
           ndvi: Math.random() * 0.4 + 0.4, // 0.4-0.8 range
           evi: Math.random() * 0.3 + 0.3, // 0.3-0.6 range
         },
-        bloomProbability: region.isInBloomSeason
-          ? Math.random() * 0.4 + 0.6
-          : Math.random() * 0.3,
+        bloomProbability: region.isInBloomSeason ? Math.random() * 0.4 + 0.6 : Math.random() * 0.3,
         temperatureC: Math.random() * 10 + 15, // 15-25°C
-        trend: ["increasing", "stable", "decreasing"][
-          Math.floor(Math.random() * 3)
-        ],
+        trend: ["increasing", "stable", "decreasing"][Math.floor(Math.random() * 3)],
       };
 
       setAnalysisData((prev) => ({
@@ -268,9 +264,7 @@ export function useVegetationMonitoring(coordinates) {
         ndvi: Math.random() * 0.6 + 0.2,
         evi: Math.random() * 0.4 + 0.2,
         landSurfaceTemp: Math.random() * 15 + 10,
-        vegetationHealth: ["poor", "fair", "good", "excellent"][
-          Math.floor(Math.random() * 4)
-        ],
+        vegetationHealth: ["poor", "fair", "good", "excellent"][Math.floor(Math.random() * 4)],
         bloomLikelihood: Math.random(),
       };
 
@@ -332,8 +326,7 @@ export function useVegetationTimeSeries(region, dateRange) {
           date: date.toISOString().split("T")[0],
           ndvi: Math.random() * 0.4 + 0.3 + Math.sin(i / 30) * 0.1,
           evi: Math.random() * 0.3 + 0.2 + Math.sin(i / 30) * 0.05,
-          temperature:
-            Math.random() * 10 + 15 + Math.sin((i / 365) * 2 * Math.PI) * 5,
+          temperature: Math.random() * 10 + 15 + Math.sin((i / 365) * 2 * Math.PI) * 5,
         };
       });
 

@@ -16,15 +16,13 @@ const nasaAuth = new NasaAuth();
 export async function POST(request) {
   try {
     const body = await request.json();
-    const { taskName, coordinates, startDate, endDate, layers, credentials } =
-      body;
+    const { taskName, coordinates, startDate, endDate, layers, credentials } = body;
 
     // Validate required fields
     if (!taskName || !coordinates || !startDate || !endDate) {
       return NextResponse.json(
         {
-          error:
-            "Missing required fields: taskName, coordinates, startDate, endDate",
+          error: "Missing required fields: taskName, coordinates, startDate, endDate",
         },
         { status: 400 },
       );
@@ -37,9 +35,7 @@ export async function POST(request) {
         task_name: taskName,
         status: "queued",
         message: "Mock task created for demo purposes",
-        estimated_completion: new Date(
-          Date.now() + 5 * 60 * 1000,
-        ).toISOString(),
+        estimated_completion: new Date(Date.now() + 5 * 60 * 1000).toISOString(),
         coordinates: coordinates,
         date_range: { startDate, endDate },
         layers: layers || ["NDVI", "EVI"],
@@ -90,10 +86,7 @@ export async function GET(request) {
     const taskId = searchParams.get("taskId");
 
     if (!taskId) {
-      return NextResponse.json(
-        { error: "Missing taskId parameter" },
-        { status: 400 },
-      );
+      return NextResponse.json({ error: "Missing taskId parameter" }, { status: 400 });
     }
 
     // Handle mock task IDs
@@ -126,10 +119,7 @@ export async function GET(request) {
 
     // Real AppEEARS integration
     if (!nasaAuth.isTokenValid()) {
-      return NextResponse.json(
-        { error: "Authentication required" },
-        { status: 401 },
-      );
+      return NextResponse.json({ error: "Authentication required" }, { status: 401 });
     }
 
     const client = new AppEEARSClient(nasaAuth);

@@ -1,12 +1,7 @@
 "use client";
 
 import { useCallback, useMemo, useRef, useState } from "react";
-import Map, {
-  GeolocateControl,
-  Layer,
-  NavigationControl,
-  Source,
-} from "react-map-gl/maplibre";
+import Map, { GeolocateControl, Layer, NavigationControl, Source } from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
 
 const AdvancedGlobeMap = () => {
@@ -335,6 +330,7 @@ const AdvancedGlobeMap = () => {
           {/* Botones de proyección */}
           <div className="flex space-x-2">
             <button
+              type="button"
               onClick={() => handleProjectionChange("globe")}
               className={`px-3 py-1 text-xs rounded transition-colors duration-200 ${projection === "globe" ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300"}`}
               disabled={projection === "globe"}

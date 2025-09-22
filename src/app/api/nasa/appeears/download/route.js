@@ -16,10 +16,7 @@ export async function GET(request) {
     const format = searchParams.get("format") || "json";
 
     if (!taskId) {
-      return NextResponse.json(
-        { error: "Missing taskId parameter" },
-        { status: 400 },
-      );
+      return NextResponse.json({ error: "Missing taskId parameter" }, { status: 400 });
     }
 
     // Handle mock data for demo
@@ -76,32 +73,20 @@ function generateMockTimeSeriesData() {
   const endDate = new Date("2024-12-31");
 
   for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 16)) {
-    const dayOfYear = Math.floor(
-      (d - new Date(d.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24),
-    );
+    const dayOfYear = Math.floor((d - new Date(d.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
 
     // Simulate seasonal vegetation patterns
-    const seasonalFactor = Math.sin(
-      (dayOfYear / 365) * 2 * Math.PI - Math.PI / 2,
-    );
+    const seasonalFactor = Math.sin((dayOfYear / 365) * 2 * Math.PI - Math.PI / 2);
 
     data.push({
       date: d.toISOString().split("T")[0],
-      ndvi: Math.max(
-        0.1,
-        0.5 + seasonalFactor * 0.3 + (Math.random() - 0.5) * 0.1,
-      ),
-      evi: Math.max(
-        0.05,
-        0.3 + seasonalFactor * 0.2 + (Math.random() - 0.5) * 0.05,
-      ),
+      ndvi: Math.max(0.1, 0.5 + seasonalFactor * 0.3 + (Math.random() - 0.5) * 0.1),
+      evi: Math.max(0.05, 0.3 + seasonalFactor * 0.2 + (Math.random() - 0.5) * 0.05),
       lst_day: 20 + seasonalFactor * 10 + (Math.random() - 0.5) * 5,
       quality_flag: Math.random() > 0.9 ? "cloudy" : "good",
       bloom_probability: Math.max(
         0,
-        seasonalFactor > 0.5
-          ? seasonalFactor + (Math.random() - 0.5) * 0.2
-          : 0.1,
+        seasonalFactor > 0.5 ? seasonalFactor + (Math.random() - 0.5) * 0.2 : 0.1,
       ),
     });
   }

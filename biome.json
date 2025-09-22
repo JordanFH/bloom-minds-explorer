@@ -24,13 +24,14 @@
       },
       "suspicious": {
         "noUnknownAtRules": "off",
-        "noShadowRestrictedNames": "warn"
+        "noShadowRestrictedNames": "off"
       },
       "a11y": {
-        "useButtonType": "warn"
+        "useButtonType": "off"
       },
       "correctness": {
-        "useExhaustiveDependencies": "warn"
+        "useExhaustiveDependencies": "warn",
+        "useUniqueElementIds": "off"
       }
     }
   },

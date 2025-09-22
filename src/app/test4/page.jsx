@@ -20,9 +20,7 @@ function NasaMapLoading() {
           </div>
         </div>
         <h2 className="text-xl font-bold mb-2">NASA BloomWatch</h2>
-        <p className="text-blue-200 mb-4">
-          Loading satellite vegetation data...
-        </p>
+        <p className="text-blue-200 mb-4">Loading satellite vegetation data...</p>
         <div className="flex justify-center space-x-1">
           <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce"></div>
           <div

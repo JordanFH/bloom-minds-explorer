@@ -1,10 +1,7 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
-import Map, {
-  GeolocateControl,
-  NavigationControl,
-} from "react-map-gl/maplibre";
+import Map, { GeolocateControl, NavigationControl } from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
 
 const GlobeMap = () => {
@@ -74,11 +71,7 @@ const GlobeMap = () => {
         <NavigationControl position="top-right" visualizePitch={true} />
 
         {/* Control de geolocalización */}
-        <GeolocateControl
-          position="top-left"
-          trackUserLocation
-          showUserHeading
-        />
+        <GeolocateControl position="top-left" trackUserLocation showUserHeading />
       </Map>
     </div>
   );

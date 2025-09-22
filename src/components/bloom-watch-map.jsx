@@ -1,28 +1,15 @@
 "use client";
 
 import { useCallback, useMemo, useRef, useState } from "react";
-import Map, {
-  GeolocateControl,
-  Layer,
-  NavigationControl,
-  Source,
-} from "react-map-gl/maplibre";
+import Map, { GeolocateControl, Layer, NavigationControl, Source } from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
-import {
-  useBloomRegions,
-  useVegetationLayers,
-} from "@/hooks/use-nasa-vegetation";
+import { useBloomRegions, useVegetationLayers } from "@/hooks/use-nasa-vegetation";
 import useBloomWatchMapStyles from "@/hooks/use-select-styles";
 
 const BloomWatchMap = () => {
   const mapRef = useRef();
-  const {
-    mapStyles,
-    currentStyle,
-    currentMapStyle,
-    changeStyle,
-    availableStyles,
-  } = useBloomWatchMapStyles();
+  const { mapStyles, currentStyle, currentMapStyle, changeStyle, availableStyles } =
+    useBloomWatchMapStyles();
 
   // NASA vegetation data integration
   const {
@@ -241,9 +228,7 @@ const BloomWatchMap = () => {
                     }`}
                   >
                     <div className="font-medium">{layer.name}</div>
-                    <div className="text-xs opacity-75 mt-1">
-                      {layer.description}
-                    </div>
+                    <div className="text-xs opacity-75 mt-1">{layer.description}</div>
                   </button>
                 ))}
               </div>
@@ -267,9 +252,7 @@ const BloomWatchMap = () => {
                     }`}
                   >
                     <div className="font-medium">{style.name}</div>
-                    <div className="text-xs opacity-75 mt-1">
-                      {style.description}
-                    </div>
+                    <div className="text-xs opacity-75 mt-1">{style.description}</div>
                   </button>
                 );
               })}
@@ -300,9 +283,7 @@ const BloomWatchMap = () => {
                       }`}
                     ></span>
                   </div>
-                  <div className="text-xs opacity-75 mt-1">
-                    {region.species}
-                  </div>
+                  <div className="text-xs opacity-75 mt-1">{region.species}</div>
                 </button>
               ))}
             </div>
@@ -322,9 +303,7 @@ const BloomWatchMap = () => {
               </div>
               {activeLayer && (
                 <div className="flex items-center space-x-2 mt-2 p-2 bg-blue-50 rounded">
-                  <span className="text-blue-800 font-medium">
-                    NASA: {activeLayer.name}
-                  </span>
+                  <span className="text-blue-800 font-medium">NASA: {activeLayer.name}</span>
                 </div>
               )}
             </div>
@@ -384,14 +363,11 @@ const BloomWatchMap = () => {
               </div>
               <div>
                 <strong>Peak Month:</strong>{" "}
-                {new Date(
-                  0,
-                  selectedBloomPoint.peakBloomMonth - 1,
-                ).toLocaleString("default", { month: "long" })}
+                {new Date(0, selectedBloomPoint.peakBloomMonth - 1).toLocaleString("default", {
+                  month: "long",
+                })}
               </div>
-              <div className="mt-2 text-xs text-gray-600">
-                {selectedBloomPoint.description}
-              </div>
+              <div className="mt-2 text-xs text-gray-600">{selectedBloomPoint.description}</div>
               {selectedRegion && (
                 <button
                   onClick={() => analyzeRegion(selectedRegion)}
@@ -412,8 +388,8 @@ const BloomWatchMap = () => {
             <span className="font-bold">NASA Space Apps 2025</span>
           </div>
           <p>
-            Usa datos satelitales para monitorear patrones de floración global y
-            predecir cambios fenológicos.
+            Usa datos satelitales para monitorear patrones de floración global y predecir cambios
+            fenológicos.
           </p>
         </div>
       </Map>

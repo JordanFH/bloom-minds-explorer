@@ -113,9 +113,7 @@ const useBloomWatchMapStyles = () => {
           sources: {
             "carto-light": {
               type: "raster",
-              tiles: [
-                "https://cartodb-basemaps-a.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png",
-              ],
+              tiles: ["https://cartodb-basemaps-a.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png"],
               tileSize: 256,
               attribution: "© CartoDB",
             },
@@ -148,9 +146,7 @@ const useBloomWatchMapStyles = () => {
           sources: {
             "carto-dark": {
               type: "raster",
-              tiles: [
-                "https://cartodb-basemaps-a.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png",
-              ],
+              tiles: ["https://cartodb-basemaps-a.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png"],
               tileSize: 256,
               attribution: "© CartoDB",
             },

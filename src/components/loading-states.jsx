@@ -2,7 +2,6 @@
  * Loading states and error components for BloomWatch
  */
 
-
 /**
  * NASA data loading spinner
  */
@@ -31,10 +30,7 @@ export function NasaDataLoader({ isLoading, error, children }) {
 /**
  * Map loading overlay
  */
-export function MapLoadingOverlay({
-  isVisible,
-  message = "Loading map data...",
-}) {
+export function MapLoadingOverlay({ isVisible, message = "Loading map data..." }) {
   if (!isVisible) return null;
 
   return (
@@ -97,9 +93,7 @@ export function BloomAnalysisLoader({ isAnalyzing, region }) {
               <span className="text-2xl">🌸</span>
             </div>
           </div>
-          <h3 className="font-medium text-gray-800 mb-2">
-            Analyzing Bloom Data
-          </h3>
+          <h3 className="font-medium text-gray-800 mb-2">Analyzing Bloom Data</h3>
           <p className="text-gray-600 text-sm mb-4">
             Processing NASA vegetation indices for {region?.name}...
           </p>
@@ -162,9 +156,7 @@ export function DataStatusIndicator({ status, lastUpdate }) {
       ></div>
       <span className="text-gray-600">{getStatusText(status)}</span>
       {lastUpdate && (
-        <span className="text-gray-400">
-          {new Date(lastUpdate).toLocaleTimeString()}
-        </span>
+        <span className="text-gray-400">{new Date(lastUpdate).toLocaleTimeString()}</span>
       )}
     </div>
   );
@@ -203,10 +195,7 @@ export function ConnectionStatus({ apis = {} }) {
         {apiList.map((api) => {
           const status = apis[api.key] || "unknown";
           return (
-            <div
-              key={api.key}
-              className="flex items-center justify-between text-xs"
-            >
+            <div key={api.key} className="flex items-center justify-between text-xs">
               <div className="flex items-center space-x-2">
                 <DataStatusIndicator status={status} />
                 <span>{api.name}</span>
