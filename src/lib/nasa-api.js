@@ -5,26 +5,26 @@
 
 // NASA GIBS Configuration
 export const GIBS_CONFIG = {
-  baseUrl: 'https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/wmts.cgi',
+  baseUrl: "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/wmts.cgi",
   layers: {
-    MODIS_NDVI_8Day: 'MODIS_Terra_NDVI_8Day',
-    MODIS_EVI_8Day: 'MODIS_Terra_EVI_8Day',
-    VIIRS_NDVI: 'VIIRS_SNPP_DayNightBand_ENCC',
-    MODIS_LST_Day: 'MODIS_Terra_Land_Surface_Temp_Day',
-    MODIS_VCF: 'MODIS_Terra_Vegetation_Continuous_Fields'
+    MODIS_NDVI_8Day: "MODIS_Terra_NDVI_8Day",
+    MODIS_EVI_8Day: "MODIS_Terra_EVI_8Day",
+    VIIRS_NDVI: "VIIRS_SNPP_DayNightBand_ENCC",
+    MODIS_LST_Day: "MODIS_Terra_Land_Surface_Temp_Day",
+    MODIS_VCF: "MODIS_Terra_Vegetation_Continuous_Fields",
   },
-  tileMatrixSet: 'GoogleMapsCompatible_Level9',
-  format: 'image/png'
+  tileMatrixSet: "GoogleMapsCompatible_Level9",
+  format: "image/png",
 };
 
 // AppEEARS Configuration
 export const APPEEARS_CONFIG = {
-  baseUrl: 'https://appeears.earthdatacloud.nasa.gov/api',
+  baseUrl: "https://appeears.earthdatacloud.nasa.gov/api",
   products: {
-    MOD13Q1: 'MOD13Q1.061', // MODIS Terra Vegetation Indices 16-Day 250m
-    VNP13A1: 'VNP13A1.001', // VIIRS Vegetation Indices 16-Day 500m
-    MOD11A2: 'MOD11A2.061'  // MODIS Terra Land Surface Temperature
-  }
+    MOD13Q1: "MOD13Q1.061", // MODIS Terra Vegetation Indices 16-Day 250m
+    VNP13A1: "VNP13A1.001", // VIIRS Vegetation Indices 16-Day 500m
+    MOD11A2: "MOD11A2.061", // MODIS Terra Land Surface Temperature
+  },
 };
 
 /**
@@ -38,7 +38,7 @@ export function createGibsTileUrl(layer, date, options = {}) {
   const {
     tileMatrixSet = GIBS_CONFIG.tileMatrixSet,
     format = GIBS_CONFIG.format,
-    style = 'default'
+    style = "default",
   } = options;
 
   // Build URL manually to avoid encoding the placeholders
@@ -61,7 +61,7 @@ export function getGibsDate(daysOffset = 0) {
   const dataDate = new Date();
   dataDate.setDate(dataDate.getDate() - 7); // 7 days back to ensure data availability
 
-  return dataDate.toISOString().split('T')[0];
+  return dataDate.toISOString().split("T")[0];
 }
 
 /**
@@ -77,12 +77,12 @@ export class NasaAuth {
   async authenticate(username, password) {
     try {
       const response = await fetch(`${APPEEARS_CONFIG.baseUrl}/login`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Authorization': `Basic ${btoa(`${username}:${password}`)}`,
-          'Content-Type': 'application/x-www-form-urlencoded'
+          Authorization: `Basic ${btoa(`${username}:${password}`)}`,
+          "Content-Type": "application/x-www-form-urlencoded",
         },
-        body: 'grant_type=client_credentials'
+        body: "grant_type=client_credentials",
       });
 
       if (!response.ok) {
@@ -91,11 +91,11 @@ export class NasaAuth {
 
       const data = await response.json();
       this.token = data.token;
-      this.tokenExpiry = Date.now() + (data.expires_in * 1000);
+      this.tokenExpiry = Date.now() + data.expires_in * 1000;
 
       return this.token;
     } catch (error) {
-      console.error('NASA authentication error:', error);
+      console.error("NASA authentication error:", error);
       throw error;
     }
   }
@@ -106,10 +106,10 @@ export class NasaAuth {
 
   getAuthHeaders() {
     if (!this.isTokenValid()) {
-      throw new Error('No valid token available');
+      throw new Error("No valid token available");
     }
     return {
-      'Authorization': `Bearer ${this.token}`
+      Authorization: `Bearer ${this.token}`,
     };
   }
 }
@@ -134,33 +134,35 @@ export class AppEEARSClient {
       coordinates, // GeoJSON polygon or point
       startDate,
       endDate,
-      layers = ['NDVI', 'EVI']
+      layers = ["NDVI", "EVI"],
     } = params;
 
     const taskData = {
       task_name: taskName,
-      task_type: coordinates.type === 'Point' ? 'point' : 'area',
+      task_type: coordinates.type === "Point" ? "point" : "area",
       params: {
-        dates: [{
-          startDate: startDate,
-          endDate: endDate
-        }],
-        layers: layers.map(layer => ({
+        dates: [
+          {
+            startDate: startDate,
+            endDate: endDate,
+          },
+        ],
+        layers: layers.map((layer) => ({
           product: APPEEARS_CONFIG.products.MOD13Q1,
-          layer: layer
+          layer: layer,
         })),
-        coordinates: coordinates
-      }
+        coordinates: coordinates,
+      },
     };
 
     try {
       const response = await fetch(`${this.baseUrl}/task`, {
-        method: 'POST',
+        method: "POST",
         headers: {
           ...this.auth.getAuthHeaders(),
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(taskData)
+        body: JSON.stringify(taskData),
       });
 
       if (!response.ok) {
@@ -169,7 +171,7 @@ export class AppEEARSClient {
 
       return await response.json();
     } catch (error) {
-      console.error('AppEEARS task submission error:', error);
+      console.error("AppEEARS task submission error:", error);
       throw error;
     }
   }
@@ -182,7 +184,7 @@ export class AppEEARSClient {
   async getTaskStatus(taskId) {
     try {
       const response = await fetch(`${this.baseUrl}/task/${taskId}`, {
-        headers: this.auth.getAuthHeaders()
+        headers: this.auth.getAuthHeaders(),
       });
 
       if (!response.ok) {
@@ -191,7 +193,7 @@ export class AppEEARSClient {
 
       return await response.json();
     } catch (error) {
-      console.error('AppEEARS task status error:', error);
+      console.error("AppEEARS task status error:", error);
       throw error;
     }
   }
@@ -204,7 +206,7 @@ export class AppEEARSClient {
   async downloadResults(taskId) {
     try {
       const response = await fetch(`${this.baseUrl}/bundle/${taskId}`, {
-        headers: this.auth.getAuthHeaders()
+        headers: this.auth.getAuthHeaders(),
       });
 
       if (!response.ok) {
@@ -213,7 +215,7 @@ export class AppEEARSClient {
 
       return await response.json();
     } catch (error) {
-      console.error('AppEEARS results download error:', error);
+      console.error("AppEEARS results download error:", error);
       throw error;
     }
   }
@@ -226,33 +228,33 @@ export class AppEEARSClient {
 export function getVegetationLayers() {
   return [
     {
-      id: 'truecolor',
-      name: 'True Color Satellite',
-      layer: 'MODIS_Aqua_CorrectedReflectance_TrueColor',
-      description: 'Natural color satellite imagery',
-      requiresDate: true
+      id: "truecolor",
+      name: "True Color Satellite",
+      layer: "MODIS_Aqua_CorrectedReflectance_TrueColor",
+      description: "Natural color satellite imagery",
+      requiresDate: true,
     },
     {
-      id: 'falsecolor',
-      name: 'False Color (Vegetation)',
-      layer: 'MODIS_Aqua_CorrectedReflectance_Bands721',
-      description: 'False color highlighting vegetation in red',
-      requiresDate: true
+      id: "falsecolor",
+      name: "False Color (Vegetation)",
+      layer: "MODIS_Aqua_CorrectedReflectance_Bands721",
+      description: "False color highlighting vegetation in red",
+      requiresDate: true,
     },
     {
-      id: 'terra_truecolor',
-      name: 'Terra True Color',
-      layer: 'MODIS_Terra_CorrectedReflectance_TrueColor',
-      description: 'Terra satellite true color imagery',
-      requiresDate: true
+      id: "terra_truecolor",
+      name: "Terra True Color",
+      layer: "MODIS_Terra_CorrectedReflectance_TrueColor",
+      description: "Terra satellite true color imagery",
+      requiresDate: true,
     },
     {
-      id: 'terra_falsecolor',
-      name: 'Terra False Color',
-      layer: 'MODIS_Terra_CorrectedReflectance_Bands721',
-      description: 'Terra false color for vegetation analysis',
-      requiresDate: true
-    }
+      id: "terra_falsecolor",
+      name: "Terra False Color",
+      layer: "MODIS_Terra_CorrectedReflectance_Bands721",
+      description: "Terra false color for vegetation analysis",
+      requiresDate: true,
+    },
   ];
 }
 
@@ -263,51 +265,53 @@ export function getVegetationLayers() {
 export function getBloomAnalysisRegions() {
   return [
     {
-      name: 'Cherry Blossoms - Washington DC',
+      name: "Cherry Blossoms - Washington DC",
       coordinates: {
-        type: 'Point',
-        coordinates: [-77.0365, 38.8977]
+        type: "Point",
+        coordinates: [-77.0365, 38.8977],
       },
-      species: 'Prunus serrulata',
+      species: "Prunus serrulata",
       peakBloomMonth: 4,
-      description: 'Famous cherry blossoms around the Tidal Basin'
+      description: "Famous cherry blossoms around the Tidal Basin",
     },
     {
-      name: 'Jacaranda Trees - Los Angeles',
+      name: "Jacaranda Trees - Los Angeles",
       coordinates: {
-        type: 'Point',
-        coordinates: [-118.2437, 34.0522]
+        type: "Point",
+        coordinates: [-118.2437, 34.0522],
       },
-      species: 'Jacaranda mimosifolia',
+      species: "Jacaranda mimosifolia",
       peakBloomMonth: 5,
-      description: 'Purple flowering trees throughout the city'
+      description: "Purple flowering trees throughout the city",
     },
     {
-      name: 'Sakura - Tokyo',
+      name: "Sakura - Tokyo",
       coordinates: {
-        type: 'Point',
-        coordinates: [139.6503, 35.6762]
+        type: "Point",
+        coordinates: [139.6503, 35.6762],
       },
-      species: 'Prunus speciosa',
+      species: "Prunus speciosa",
       peakBloomMonth: 4,
-      description: 'Traditional Japanese cherry blossoms'
+      description: "Traditional Japanese cherry blossoms",
     },
     {
-      name: 'Wildflower Superbloom - California',
+      name: "Wildflower Superbloom - California",
       coordinates: {
-        type: 'Polygon',
-        coordinates: [[
-          [-116.8, 33.9],
-          [-116.5, 33.9],
-          [-116.5, 34.2],
-          [-116.8, 34.2],
-          [-116.8, 33.9]
-        ]]
+        type: "Polygon",
+        coordinates: [
+          [
+            [-116.8, 33.9],
+            [-116.5, 33.9],
+            [-116.5, 34.2],
+            [-116.8, 34.2],
+            [-116.8, 33.9],
+          ],
+        ],
       },
-      species: 'Mixed wildflowers',
+      species: "Mixed wildflowers",
       peakBloomMonth: 3,
-      description: 'Desert wildflower blooms in Antelope Valley'
-    }
+      description: "Desert wildflower blooms in Antelope Valley",
+    },
   ];
 }
 

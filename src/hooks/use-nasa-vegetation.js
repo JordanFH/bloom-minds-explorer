@@ -3,15 +3,15 @@
  * Provides real-time vegetation indices and bloom analysis
  */
 
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   createGibsTileUrl,
+  GIBS_CONFIG,
+  getBloomAnalysisRegions,
   getGibsDate,
   getVegetationLayers,
-  getBloomAnalysisRegions,
   isBloomSeason,
-  GIBS_CONFIG
-} from '@/lib/nasa-api';
+} from "@/lib/nasa-api";
 
 /**
  * Hook for managing GIBS vegetation layers
@@ -20,10 +20,10 @@ import {
  */
 export function useVegetationLayers(options = {}) {
   const {
-    defaultLayer = 'truecolor',
+    defaultLayer = "truecolor",
     daysOffset = 0,
     autoUpdate = false,
-    updateInterval = 3600000 // 1 hour
+    updateInterval = 3600000, // 1 hour
   } = options;
 
   const [currentLayer, setCurrentLayer] = useState(defaultLayer);
@@ -36,7 +36,7 @@ export function useVegetationLayers(options = {}) {
 
   // Current layer configuration
   const activeLayer = useMemo(() => {
-    return availableLayers.find(layer => layer.id === currentLayer);
+    return availableLayers.find((layer) => layer.id === currentLayer);
   }, [availableLayers, currentLayer]);
 
   // Generate tile URL for current configuration
@@ -65,35 +65,41 @@ export function useVegetationLayers(options = {}) {
     if (!tileUrl) return null;
 
     return {
-      type: 'raster',
+      type: "raster",
       tiles: [tileUrl],
       tileSize: 256,
-      attribution: '© NASA GIBS'
+      attribution: "© NASA GIBS",
     };
   }, [tileUrl]);
 
   // Layer style configuration
-  const layerStyle = useMemo(() => ({
-    id: `nasa-${currentLayer}`,
-    type: 'raster',
-    paint: {
-      'raster-opacity': 0.7,
-      'raster-fade-duration': 300
-    }
-  }), [currentLayer]);
+  const layerStyle = useMemo(
+    () => ({
+      id: `nasa-${currentLayer}`,
+      type: "raster",
+      paint: {
+        "raster-opacity": 0.7,
+        "raster-fade-duration": 300,
+      },
+    }),
+    [currentLayer],
+  );
 
   // Change active layer
-  const changeLayer = useCallback((layerId) => {
-    const layer = availableLayers.find(l => l.id === layerId);
-    if (layer) {
-      setIsLoading(true);
-      setError(null);
-      setCurrentLayer(layerId);
+  const changeLayer = useCallback(
+    (layerId) => {
+      const layer = availableLayers.find((l) => l.id === layerId);
+      if (layer) {
+        setIsLoading(true);
+        setError(null);
+        setCurrentLayer(layerId);
 
-      // Simulate loading delay for UX
-      setTimeout(() => setIsLoading(false), 500);
-    }
-  }, [availableLayers]);
+        // Simulate loading delay for UX
+        setTimeout(() => setIsLoading(false), 500);
+      }
+    },
+    [availableLayers],
+  );
 
   // Change date
   const changeDate = useCallback((date) => {
@@ -104,10 +110,13 @@ export function useVegetationLayers(options = {}) {
   }, []);
 
   // Navigate to relative date
-  const navigateDate = useCallback((daysOffset) => {
-    const newDate = getGibsDate(daysOffset);
-    changeDate(newDate);
-  }, [changeDate]);
+  const navigateDate = useCallback(
+    (daysOffset) => {
+      const newDate = getGibsDate(daysOffset);
+      changeDate(newDate);
+    },
+    [changeDate],
+  );
 
   // Auto-update functionality
   useEffect(() => {
@@ -145,7 +154,7 @@ export function useVegetationLayers(options = {}) {
     // Utilities
     getLatestDate: () => getGibsDate(0),
     getPreviousWeek: () => getGibsDate(-7),
-    getPreviousMonth: () => getGibsDate(-30)
+    getPreviousMonth: () => getGibsDate(-30),
   };
 }
 
@@ -163,23 +172,26 @@ export function useBloomRegions() {
 
   // Add bloom season status to regions
   const regionsWithStatus = useMemo(() => {
-    return regions.map(region => ({
+    return regions.map((region) => ({
       ...region,
       isInBloomSeason: isBloomSeason(region.peakBloomMonth),
-      bloomStatus: isBloomSeason(region.peakBloomMonth) ? 'active' : 'dormant'
+      bloomStatus: isBloomSeason(region.peakBloomMonth) ? "active" : "dormant",
     }));
   }, [regions]);
 
   // Currently blooming regions
   const bloomingRegions = useMemo(() => {
-    return regionsWithStatus.filter(region => region.isInBloomSeason);
+    return regionsWithStatus.filter((region) => region.isInBloomSeason);
   }, [regionsWithStatus]);
 
   // Select region for analysis
-  const selectRegion = useCallback((regionName) => {
-    const region = regionsWithStatus.find(r => r.name === regionName);
-    setSelectedRegion(region);
-  }, [regionsWithStatus]);
+  const selectRegion = useCallback(
+    (regionName) => {
+      const region = regionsWithStatus.find((r) => r.name === regionName);
+      setSelectedRegion(region);
+    },
+    [regionsWithStatus],
+  );
 
   // Simulate vegetation analysis for a region
   const analyzeRegion = useCallback(async (region) => {
@@ -187,7 +199,7 @@ export function useBloomRegions() {
 
     try {
       // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      await new Promise((resolve) => setTimeout(resolve, 1500));
 
       // Generate mock analysis data
       const mockData = {
@@ -195,20 +207,23 @@ export function useBloomRegions() {
         analysisDate: new Date().toISOString(),
         vegetationIndex: {
           ndvi: Math.random() * 0.4 + 0.4, // 0.4-0.8 range
-          evi: Math.random() * 0.3 + 0.3,   // 0.3-0.6 range
+          evi: Math.random() * 0.3 + 0.3, // 0.3-0.6 range
         },
-        bloomProbability: region.isInBloomSeason ? Math.random() * 0.4 + 0.6 : Math.random() * 0.3,
+        bloomProbability: region.isInBloomSeason
+          ? Math.random() * 0.4 + 0.6
+          : Math.random() * 0.3,
         temperatureC: Math.random() * 10 + 15, // 15-25°C
-        trend: ['increasing', 'stable', 'decreasing'][Math.floor(Math.random() * 3)]
+        trend: ["increasing", "stable", "decreasing"][
+          Math.floor(Math.random() * 3)
+        ],
       };
 
-      setAnalysisData(prev => ({
+      setAnalysisData((prev) => ({
         ...prev,
-        [region.name]: mockData
+        [region.name]: mockData,
       }));
-
     } catch (error) {
-      console.error('Region analysis failed:', error);
+      console.error("Region analysis failed:", error);
     } finally {
       setIsAnalyzing(false);
     }
@@ -221,7 +236,7 @@ export function useBloomRegions() {
     analysisData,
     isAnalyzing,
     selectRegion,
-    analyzeRegion
+    analyzeRegion,
   };
 }
 
@@ -245,7 +260,7 @@ export function useVegetationMonitoring(coordinates) {
 
     try {
       // Simulate NASA API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       const mockData = {
         coordinates,
@@ -253,13 +268,14 @@ export function useVegetationMonitoring(coordinates) {
         ndvi: Math.random() * 0.6 + 0.2,
         evi: Math.random() * 0.4 + 0.2,
         landSurfaceTemp: Math.random() * 15 + 10,
-        vegetationHealth: ['poor', 'fair', 'good', 'excellent'][Math.floor(Math.random() * 4)],
-        bloomLikelihood: Math.random()
+        vegetationHealth: ["poor", "fair", "good", "excellent"][
+          Math.floor(Math.random() * 4)
+        ],
+        bloomLikelihood: Math.random(),
       };
 
       setData(mockData);
       setLastUpdate(new Date());
-
     } catch (err) {
       setError(err.message);
     } finally {
@@ -279,7 +295,7 @@ export function useVegetationMonitoring(coordinates) {
     isLoading,
     error,
     lastUpdate,
-    refresh: fetchVegetationData
+    refresh: fetchVegetationData,
   };
 }
 
@@ -302,7 +318,7 @@ export function useVegetationTimeSeries(region, dateRange) {
 
     try {
       // Simulate time series data generation
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      await new Promise((resolve) => setTimeout(resolve, 1500));
 
       const startDate = new Date(dateRange.start);
       const endDate = new Date(dateRange.end);
@@ -313,15 +329,15 @@ export function useVegetationTimeSeries(region, dateRange) {
         date.setDate(date.getDate() + i);
 
         return {
-          date: date.toISOString().split('T')[0],
+          date: date.toISOString().split("T")[0],
           ndvi: Math.random() * 0.4 + 0.3 + Math.sin(i / 30) * 0.1,
           evi: Math.random() * 0.3 + 0.2 + Math.sin(i / 30) * 0.05,
-          temperature: Math.random() * 10 + 15 + Math.sin(i / 365 * 2 * Math.PI) * 5
+          temperature:
+            Math.random() * 10 + 15 + Math.sin((i / 365) * 2 * Math.PI) * 5,
         };
       });
 
       setTimeSeries(mockTimeSeries);
-
     } catch (err) {
       setError(err.message);
     } finally {
@@ -337,6 +353,6 @@ export function useVegetationTimeSeries(region, dateRange) {
     timeSeries,
     isLoading,
     error,
-    refresh: fetchTimeSeries
+    refresh: fetchTimeSeries,
   };
 }

@@ -2,7 +2,6 @@
  * Loading states and error components for BloomWatch
  */
 
-import React from 'react';
 
 /**
  * NASA data loading spinner
@@ -32,7 +31,10 @@ export function NasaDataLoader({ isLoading, error, children }) {
 /**
  * Map loading overlay
  */
-export function MapLoadingOverlay({ isVisible, message = "Loading map data..." }) {
+export function MapLoadingOverlay({
+  isVisible,
+  message = "Loading map data...",
+}) {
   if (!isVisible) return null;
 
   return (
@@ -95,13 +97,18 @@ export function BloomAnalysisLoader({ isAnalyzing, region }) {
               <span className="text-2xl">🌸</span>
             </div>
           </div>
-          <h3 className="font-medium text-gray-800 mb-2">Analyzing Bloom Data</h3>
+          <h3 className="font-medium text-gray-800 mb-2">
+            Analyzing Bloom Data
+          </h3>
           <p className="text-gray-600 text-sm mb-4">
             Processing NASA vegetation indices for {region?.name}...
           </p>
           <div className="space-y-2">
             <div className="w-full bg-gray-200 rounded-full h-2">
-              <div className="bg-green-500 h-2 rounded-full animate-pulse" style={{ width: '60%' }}></div>
+              <div
+                className="bg-green-500 h-2 rounded-full animate-pulse"
+                style={{ width: "60%" }}
+              ></div>
             </div>
             <div className="flex justify-between text-xs text-gray-500">
               <span>Downloading MODIS data</span>
@@ -120,27 +127,39 @@ export function BloomAnalysisLoader({ isAnalyzing, region }) {
 export function DataStatusIndicator({ status, lastUpdate }) {
   const getStatusColor = (status) => {
     switch (status) {
-      case 'connected': return 'bg-green-500';
-      case 'loading': return 'bg-yellow-500';
-      case 'error': return 'bg-red-500';
-      case 'offline': return 'bg-gray-500';
-      default: return 'bg-gray-300';
+      case "connected":
+        return "bg-green-500";
+      case "loading":
+        return "bg-yellow-500";
+      case "error":
+        return "bg-red-500";
+      case "offline":
+        return "bg-gray-500";
+      default:
+        return "bg-gray-300";
     }
   };
 
   const getStatusText = (status) => {
     switch (status) {
-      case 'connected': return 'Live Data';
-      case 'loading': return 'Updating';
-      case 'error': return 'Error';
-      case 'offline': return 'Offline';
-      default: return 'Unknown';
+      case "connected":
+        return "Live Data";
+      case "loading":
+        return "Updating";
+      case "error":
+        return "Error";
+      case "offline":
+        return "Offline";
+      default:
+        return "Unknown";
     }
   };
 
   return (
     <div className="flex items-center space-x-2 text-xs">
-      <div className={`w-2 h-2 rounded-full ${getStatusColor(status)} ${status === 'loading' ? 'animate-pulse' : ''}`}></div>
+      <div
+        className={`w-2 h-2 rounded-full ${getStatusColor(status)} ${status === "loading" ? "animate-pulse" : ""}`}
+      ></div>
       <span className="text-gray-600">{getStatusText(status)}</span>
       {lastUpdate && (
         <span className="text-gray-400">
@@ -169,9 +188,9 @@ export function SkeletonLoader({ className = "" }) {
  */
 export function ConnectionStatus({ apis = {} }) {
   const apiList = [
-    { name: 'GIBS', key: 'gibs', description: 'Satellite imagery' },
-    { name: 'AppEEARS', key: 'appeears', description: 'Time series data' },
-    { name: 'CMR', key: 'cmr', description: 'Data catalog' }
+    { name: "GIBS", key: "gibs", description: "Satellite imagery" },
+    { name: "AppEEARS", key: "appeears", description: "Time series data" },
+    { name: "CMR", key: "cmr", description: "Data catalog" },
   ];
 
   return (
@@ -181,10 +200,13 @@ export function ConnectionStatus({ apis = {} }) {
         NASA API Status
       </h4>
       <div className="space-y-1">
-        {apiList.map(api => {
-          const status = apis[api.key] || 'unknown';
+        {apiList.map((api) => {
+          const status = apis[api.key] || "unknown";
           return (
-            <div key={api.key} className="flex items-center justify-between text-xs">
+            <div
+              key={api.key}
+              className="flex items-center justify-between text-xs"
+            >
               <div className="flex items-center space-x-2">
                 <DataStatusIndicator status={status} />
                 <span>{api.name}</span>

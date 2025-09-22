@@ -3,8 +3,8 @@
  * Handles NASA authentication and data requests
  */
 
-import { NextResponse } from 'next/server';
-import { AppEEARSClient, NasaAuth } from '@/lib/nasa-api';
+import { NextResponse } from "next/server";
+import { AppEEARSClient, NasaAuth } from "@/lib/nasa-api";
 
 // Initialize NASA authentication
 const nasaAuth = new NasaAuth();
@@ -16,20 +16,17 @@ const nasaAuth = new NasaAuth();
 export async function POST(request) {
   try {
     const body = await request.json();
-    const {
-      taskName,
-      coordinates,
-      startDate,
-      endDate,
-      layers,
-      credentials
-    } = body;
+    const { taskName, coordinates, startDate, endDate, layers, credentials } =
+      body;
 
     // Validate required fields
     if (!taskName || !coordinates || !startDate || !endDate) {
       return NextResponse.json(
-        { error: 'Missing required fields: taskName, coordinates, startDate, endDate' },
-        { status: 400 }
+        {
+          error:
+            "Missing required fields: taskName, coordinates, startDate, endDate",
+        },
+        { status: 400 },
       );
     }
 
@@ -38,12 +35,14 @@ export async function POST(request) {
       const mockResponse = {
         task_id: `mock_${Date.now()}`,
         task_name: taskName,
-        status: 'queued',
-        message: 'Mock task created for demo purposes',
-        estimated_completion: new Date(Date.now() + 5 * 60 * 1000).toISOString(),
+        status: "queued",
+        message: "Mock task created for demo purposes",
+        estimated_completion: new Date(
+          Date.now() + 5 * 60 * 1000,
+        ).toISOString(),
         coordinates: coordinates,
         date_range: { startDate, endDate },
-        layers: layers || ['NDVI', 'EVI']
+        layers: layers || ["NDVI", "EVI"],
       };
 
       return NextResponse.json(mockResponse);
@@ -63,21 +62,20 @@ export async function POST(request) {
       coordinates,
       startDate,
       endDate,
-      layers
+      layers,
     });
 
     return NextResponse.json(taskResponse);
-
   } catch (error) {
-    console.error('AppEEARS API error:', error);
+    console.error("AppEEARS API error:", error);
 
     return NextResponse.json(
       {
-        error: 'Failed to submit AppEEARS task',
+        error: "Failed to submit AppEEARS task",
         details: error.message,
-        type: 'APPEEARS_ERROR'
+        type: "APPEEARS_ERROR",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -89,38 +87,38 @@ export async function POST(request) {
 export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url);
-    const taskId = searchParams.get('taskId');
+    const taskId = searchParams.get("taskId");
 
     if (!taskId) {
       return NextResponse.json(
-        { error: 'Missing taskId parameter' },
-        { status: 400 }
+        { error: "Missing taskId parameter" },
+        { status: 400 },
       );
     }
 
     // Handle mock task IDs
-    if (taskId.startsWith('mock_')) {
+    if (taskId.startsWith("mock_")) {
       const mockStatus = {
         task_id: taskId,
-        status: 'completed',
+        status: "completed",
         progress: 100,
         created: new Date(Date.now() - 10 * 60 * 1000).toISOString(),
         updated: new Date().toISOString(),
         results: {
           summary: {
             total_points: 1,
-            date_range: '2024-01-01 to 2024-12-31',
-            products: ['MOD13Q1.061'],
-            layers: ['NDVI', 'EVI']
+            date_range: "2024-01-01 to 2024-12-31",
+            products: ["MOD13Q1.061"],
+            layers: ["NDVI", "EVI"],
           },
-          data_url: '/api/nasa/appeears/download?taskId=' + taskId,
+          data_url: `/api/nasa/appeears/download?taskId=${taskId}`,
           preview: {
             ndvi_mean: 0.65,
             evi_mean: 0.42,
-            vegetation_health: 'good',
-            bloom_probability: 0.75
-          }
-        }
+            vegetation_health: "good",
+            bloom_probability: 0.75,
+          },
+        },
       };
 
       return NextResponse.json(mockStatus);
@@ -129,8 +127,8 @@ export async function GET(request) {
     // Real AppEEARS integration
     if (!nasaAuth.isTokenValid()) {
       return NextResponse.json(
-        { error: 'Authentication required' },
-        { status: 401 }
+        { error: "Authentication required" },
+        { status: 401 },
       );
     }
 
@@ -138,16 +136,15 @@ export async function GET(request) {
     const status = await client.getTaskStatus(taskId);
 
     return NextResponse.json(status);
-
   } catch (error) {
-    console.error('AppEEARS status check error:', error);
+    console.error("AppEEARS status check error:", error);
 
     return NextResponse.json(
       {
-        error: 'Failed to check task status',
-        details: error.message
+        error: "Failed to check task status",
+        details: error.message,
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
