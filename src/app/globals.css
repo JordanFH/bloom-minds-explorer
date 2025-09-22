@@ -29,7 +29,7 @@ body {
 /* Optimizaciones para MapLibre GL */
 .maplibregl-map {
   /* Suavizar transiciones */
-  transition: none !important;
+  transition: none;
 
   /* Mejorar renderizado */
   transform: translateZ(0);
@@ -56,7 +56,6 @@ body {
 @media (max-width: 768px) {
   .maplibregl-map {
     /* Reducir calidad en móviles si es necesario */
-    image-rendering: -webkit-optimize-contrast;
     image-rendering: crisp-edges;
   }
 }

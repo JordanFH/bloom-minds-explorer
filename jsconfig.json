@@ -1,62 +1,69 @@
 {
-    "compilerOptions": {
-        // Configuración base estricta
-        "strict": true,
-        "noImplicitAny": true,
-        "strictNullChecks": true,
-        "strictFunctionTypes": true,
-        "noImplicitReturns": true,
-        "noImplicitThis": true,
-        "noUnusedLocals": true,
-        "noUnusedParameters": true,
+  "compilerOptions": {
+    // Configuración base estricta
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
 
-        // Target y módulos
-        "target": "ES2022",
-        "lib": ["DOM", "DOM.Iterable", "ES2022"],
-        "module": "ESNext",
-        "moduleResolution": "bundler",
-        "allowJs": true,
-        "checkJs": false, // Cambia a true si quieres verificar archivos JS también
+    // Target y módulos
+    "target": "ES2022",
+    "lib": ["DOM", "DOM.Iterable", "ES2022"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowJs": true,
+    "checkJs": false, // Cambia a true si quieres verificar archivos JS también
 
-        // Configuraciones de importación
-        "allowSyntheticDefaultImports": true,
-        "esModuleInterop": true,
-        "resolveJsonModule": true,
-        "isolatedModules": true,
-        "verbatimModuleSyntax": false,
+    // Configuraciones de importación
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "verbatimModuleSyntax": false,
 
-        // JSX
-        "jsx": "preserve",
-        "jsxImportSource": "react",
+    // JSX
+    "jsx": "preserve",
+    "jsxImportSource": "react",
 
-        // Paths y resolución
-        "baseUrl": ".",
-        "paths": {
-            "@/*": ["./src/*"],
-            "@/components/*": ["./src/components/*"],
-            "@/lib/*": ["./src/lib/*"],
-            "@/utils/*": ["./src/utils/*"],
-            "@/hooks/*": ["./src/hooks/*"],
-            "@/types/*": ["./src/types/*"],
-            "@/styles/*": ["./src/styles/*"],
-            "@/app/*": ["./src/app/*"]
-        },
-
-        // Verificaciones adicionales
-        "noFallthroughCasesInSwitch": true,
-        "noUncheckedIndexedAccess": true,
-        "exactOptionalPropertyTypes": true,
-        "forceConsistentCasingInFileNames": true,
-        "skipLibCheck": true,
-        "incremental": true,
-
-        // Plugins para Next.js
-        "plugins": [
-            {
-                "name": "next"
-            }
-        ]
+    // Paths y resolución
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@/components/*": ["./src/components/*"],
+      "@/lib/*": ["./src/lib/*"],
+      "@/utils/*": ["./src/utils/*"],
+      "@/hooks/*": ["./src/hooks/*"],
+      "@/types/*": ["./src/types/*"],
+      "@/styles/*": ["./src/styles/*"],
+      "@/app/*": ["./src/app/*"]
     },
-    "include": ["next-env.d.ts", "**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-    "exclude": ["node_modules", ".next", "out", "build", "dist"]
+
+    // Verificaciones adicionales
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "incremental": true,
+
+    // Plugins para Next.js
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.js",
+    "**/*.jsx",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": ["node_modules", ".next", "out", "build", "dist"]
 }
