@@ -7,7 +7,8 @@
     "build": "next build --turbopack",
     "start": "next start",
     "lint": "biome check",
-    "format": "biome format --write"
+    "format": "biome format --write",
+    "prepare": "husky"
   },
   "dependencies": {
     "maplibre-gl": "^5.7.2",
@@ -18,7 +19,20 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.0",
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1",
     "@tailwindcss/postcss": "^4",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.0",
     "tailwindcss": "^4"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "biome format --write",
+      "biome check --write"
+    ],
+    "*.{json,css,md}": [
+      "biome format --write"
+    ]
   }
 }
