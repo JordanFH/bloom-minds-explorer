@@ -27,11 +27,20 @@
         "noShadowRestrictedNames": "off"
       },
       "a11y": {
-        "useButtonType": "off"
+        "useButtonType": "off",
+        "noSvgWithoutTitle": "warn"
       },
       "correctness": {
         "useExhaustiveDependencies": "warn",
-        "useUniqueElementIds": "off"
+        "useUniqueElementIds": "off",
+        "noUnusedImports": "warn"
+      },
+      "style": {
+        "noUnusedTemplateLiteral": "warn",
+        "useImportType": "warn"
+      },
+      "nursery": {
+        "useSortedClasses": "off"
       }
     }
   },
