@@ -3,6 +3,7 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 import Map, { GeolocateControl, Layer, NavigationControl, Source } from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
+import StarryBackground from "./starry-background";
 
 const AdvancedGlobeMap = () => {
   const mapRef = useRef();
@@ -287,7 +288,8 @@ const AdvancedGlobeMap = () => {
   }, []);
 
   return (
-    <div className="w-full h-screen relative">
+    <div className="map-with-stars">
+      <StarryBackground />
       <Map
         ref={mapRef}
         {...viewState}

@@ -5,6 +5,7 @@ import Map, { GeolocateControl, Layer, NavigationControl, Source } from "react-m
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useBloomRegions, useVegetationLayers } from "@/hooks/use-nasa-vegetation";
 import useBloomWatchMapStyles from "@/hooks/use-select-styles";
+import StarryBackground from "./starry-background";
 
 const BloomWatchMap = () => {
   const mapRef = useRef();
@@ -152,7 +153,8 @@ const BloomWatchMap = () => {
   );
 
   return (
-    <div className="w-full h-screen relative">
+    <div className="map-with-stars">
+      <StarryBackground />
       <Map
         ref={mapRef}
         {...viewState}

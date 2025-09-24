@@ -3,6 +3,7 @@
 import { useCallback, useMemo, useState } from "react";
 import Map, { GeolocateControl, NavigationControl } from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
+import StarryBackground from "./starry-background";
 
 const GlobeMap = () => {
   const [viewState, setViewState] = useState({
@@ -42,7 +43,8 @@ const GlobeMap = () => {
   }, []);
 
   return (
-    <div className="w-full h-screen">
+    <div className="map-with-stars">
+      <StarryBackground />
       <Map
         {...viewState}
         onMove={handleMove}
