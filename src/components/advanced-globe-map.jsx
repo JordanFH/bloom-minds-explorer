@@ -287,7 +287,7 @@ const AdvancedGlobeMap = () => {
   }, []);
 
   return (
-    <div className="w-full h-screen relative">
+    <div className="w-full h-screen relative map-with-starry-bg">
       <Map
         ref={mapRef}
         {...viewState}
