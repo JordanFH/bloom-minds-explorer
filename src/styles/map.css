@@ -1,3 +1,61 @@
+/* Fondo estrellado estático para el mapa */
+.map-with-starry-bg {
+  background:
+    radial-gradient(2px 2px at 73px 147px, white, transparent), radial-gradient(
+      1px 1px at 234px 67px,
+      white,
+      transparent
+    ),
+    radial-gradient(3px 3px at 456px 189px, white, transparent), radial-gradient(
+      1px 1px at 127px 234px,
+      white,
+      transparent
+    ),
+    radial-gradient(2px 2px at 389px 43px, white, transparent), radial-gradient(
+      1px 1px at 512px 156px,
+      white,
+      transparent
+    ),
+    radial-gradient(2px 2px at 89px 78px, white, transparent), radial-gradient(
+      1px 1px at 345px 267px,
+      white,
+      transparent
+    ),
+    radial-gradient(1px 1px at 167px 12px, white, transparent), radial-gradient(
+      3px 3px at 423px 98px,
+      white,
+      transparent
+    ),
+    radial-gradient(1px 1px at 278px 189px, white, transparent), radial-gradient(
+      2px 2px at 34px 145px,
+      white,
+      transparent
+    ),
+    radial-gradient(1px 1px at 498px 234px, white, transparent), radial-gradient(
+      1px 1px at 156px 56px,
+      white,
+      transparent
+    ),
+    radial-gradient(2px 2px at 312px 123px, white, transparent), radial-gradient(
+      1px 1px at 67px 198px,
+      white,
+      transparent
+    ),
+    radial-gradient(1px 1px at 445px 167px, white, transparent), radial-gradient(
+      2px 2px at 189px 289px,
+      white,
+      transparent
+    ),
+    radial-gradient(1px 1px at 367px 34px, white, transparent), radial-gradient(
+      3px 3px at 523px 78px,
+      white,
+      transparent
+    );
+  background-color: #0a0a0a;
+  background-repeat: repeat;
+  background-size: 600px 300px;
+}
+
 /* Optimizaciones para MapLibre GL */
 .maplibregl-map {
   /* Suavizar transiciones */
