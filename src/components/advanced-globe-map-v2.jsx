@@ -4,20 +4,11 @@ import { useCallback, useMemo, useRef, useState } from "react";
 import Map, { GeolocateControl, Layer, NavigationControl, Source } from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
 
-const AdvancedGlobeMapV2 = () => {
-  const mapRef = useRef();
-  const [viewState, setViewState] = useState({
-    longitude: -74.5,
-    latitude: 40,
-    zoom: 2,
-    pitch: 0,
-    bearing: 0,
-  });
-  const [projection, setProjection] = useState("globe");
-  const [currentMapStyle, setCurrentMapStyle] = useState("satellite");
+// ==================== HOOKS PERSONALIZADOS ====================
 
-  // Datos de ciudades optimizados
-  const citiesData = useMemo(
+// Hook para manejar los datos de las ciudades
+const useCitiesData = () => {
+  return useMemo(
     () => ({
       type: "FeatureCollection",
       features: [
@@ -45,8 +36,10 @@ const AdvancedGlobeMapV2 = () => {
     }),
     [],
   );
+};
 
-  // Estilos de mapa optimizados
+// Hook para manejar los estilos de mapa
+const useMapStyles = () => {
   const satelliteStyle = useMemo(
     () => ({
       version: 8,
@@ -166,7 +159,7 @@ const AdvancedGlobeMapV2 = () => {
     [],
   );
 
-  const mapStyles = useMemo(
+  return useMemo(
     () => ({
       satellite: satelliteStyle,
       terrain: terrainStyle,
@@ -196,8 +189,11 @@ const AdvancedGlobeMapV2 = () => {
     }),
     [satelliteStyle, terrainStyle, streetStyle],
   );
+};
 
-  const styleGroups = useMemo(
+// Hook para grupos de estilos
+const useStyleGroups = () => {
+  return useMemo(
     () => [
       {
         name: "Básicos",
@@ -242,12 +238,11 @@ const AdvancedGlobeMapV2 = () => {
     ],
     [],
   );
+};
 
-  const getCurrentMapStyle = useCallback(() => {
-    return mapStyles[currentMapStyle] || mapStyles.satellite;
-  }, [currentMapStyle, mapStyles]);
-
-  const citiesLayerCircle = useMemo(
+// Hook para capas de ciudades
+const useCityLayers = () => {
+  const circleLayer = useMemo(
     () => ({
       id: "cities-circle",
       type: "circle",
@@ -270,7 +265,7 @@ const AdvancedGlobeMapV2 = () => {
     [],
   );
 
-  const citiesLayerLabel = useMemo(
+  const labelLayer = useMemo(
     () => ({
       id: "cities-label",
       type: "symbol",
@@ -290,12 +285,186 @@ const AdvancedGlobeMapV2 = () => {
     [],
   );
 
+  return { circleLayer, labelLayer };
+};
+
+// ==================== COMPONENTES ====================
+
+// Componente de botones de proyección
+const ProjectionControls = ({ projection, onProjectionChange }) => {
+  return (
+    <div className="mb-3">
+      <p className="text-xs font-semibold mb-2 text-gray-700">Proyección:</p>
+      <div className="flex gap-2">
+        <button
+          onClick={() => onProjectionChange("globe")}
+          className={`flex-1 px-3 py-2 text-xs rounded font-medium transition-all ${
+            projection === "globe"
+              ? "bg-blue-500 text-white shadow-md"
+              : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+          }`}
+        >
+          🌍 Globo
+        </button>
+        <button
+          onClick={() => onProjectionChange("mercator")}
+          className={`flex-1 px-3 py-2 text-xs rounded font-medium transition-all ${
+            projection === "mercator"
+              ? "bg-blue-500 text-white shadow-md"
+              : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+          }`}
+        >
+          🗺️ Plano
+        </button>
+      </div>
+    </div>
+  );
+};
+
+// Componente de grupo de estilos
+const StyleGroup = ({ group, currentMapStyle, onStyleChange }) => {
+  return (
+    <div className="mb-3 pb-3 border-b border-gray-200 last:border-b-0">
+      <p className="text-xs font-semibold mb-2 text-gray-700">{group.name}:</p>
+      <div className="grid grid-cols-2 gap-1">
+        {group.styles.map((style) => (
+          <button
+            key={style.key}
+            onClick={() => onStyleChange(style.key)}
+            className={`px-2 py-1.5 text-xs rounded font-medium transition-all ${
+              currentMapStyle === style.key
+                ? "bg-blue-500 text-white shadow-md"
+                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+            }`}
+          >
+            {style.label}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// Componente de navegación a ciudades
+const CityNavigation = ({ cities, onCityClick }) => {
+  return (
+    <div className="pt-3 border-t border-gray-200">
+      <p className="text-xs font-semibold mb-2 text-gray-700">Ir a ciudad:</p>
+      <div className="grid grid-cols-2 gap-1">
+        {cities.map((city) => (
+          <button
+            key={city.properties.name}
+            onClick={() => onCityClick(city)}
+            className="px-2 py-1.5 text-xs bg-gray-800 text-white hover:bg-gray-700 rounded font-medium transition-all"
+          >
+            {city.properties.name}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// Componente de panel de controles
+const ControlPanel = ({
+  projection,
+  onProjectionChange,
+  styleGroups,
+  currentMapStyle,
+  onStyleChange,
+  cities,
+  onCityClick,
+}) => {
+  return (
+    <div className="absolute top-4 left-4 bg-white rounded-lg shadow-xl p-4 max-h-[90vh] overflow-y-auto w-64 z-10">
+      <h3 className="font-bold text-base mb-3 sticky top-0 bg-white pb-2">Controles del Globo</h3>
+
+      <ProjectionControls projection={projection} onProjectionChange={onProjectionChange} />
+
+      {styleGroups.map((group) => (
+        <StyleGroup
+          key={group.name}
+          group={group}
+          currentMapStyle={currentMapStyle}
+          onStyleChange={onStyleChange}
+        />
+      ))}
+
+      <CityNavigation cities={cities} onCityClick={onCityClick} />
+    </div>
+  );
+};
+
+// Componente de información de estado
+const MapStatusInfo = ({ viewState, projection, currentMapStyle }) => {
+  const getStyleLabel = (styleKey) => {
+    const labels = {
+      satellite: "🛰️ Satélite",
+      terrain: "🏔️ Terreno",
+      street: "🛣️ Calles",
+      vector: "🗺️ Vector",
+    };
+    return labels[styleKey] || styleKey;
+  };
+
+  return (
+    <div className="absolute bottom-4 left-4 bg-black bg-opacity-80 text-white px-4 py-2 rounded-lg text-xs backdrop-blur-sm z-10">
+      <div className="flex items-center gap-3">
+        <span className="font-mono">Zoom: {viewState.zoom.toFixed(1)}</span>
+        <span>•</span>
+        <span>{projection === "globe" ? "🌍 Globo" : "🗺️ Plano"}</span>
+        <span>•</span>
+        <span>{getStyleLabel(currentMapStyle)}</span>
+      </div>
+    </div>
+  );
+};
+
+// Componente de capas de ciudades
+const CitiesLayer = ({ citiesData, circleLayer, labelLayer }) => {
+  return (
+    <Source id="cities" type="geojson" data={citiesData}>
+      <Layer {...circleLayer} />
+      <Layer {...labelLayer} />
+    </Source>
+  );
+};
+
+// ==================== COMPONENTE PRINCIPAL ====================
+
+const AdvancedGlobeMapV2 = () => {
+  const mapRef = useRef();
+  const [viewState, setViewState] = useState({
+    longitude: -74.5,
+    latitude: 40,
+    zoom: 2,
+    pitch: 0,
+    bearing: 0,
+  });
+  const [projection, setProjection] = useState("globe");
+  const [currentMapStyle, setCurrentMapStyle] = useState("satellite");
+
+  // Usar hooks personalizados
+  const citiesData = useCitiesData();
+  const mapStyles = useMapStyles();
+  const styleGroups = useStyleGroups();
+  const { circleLayer, labelLayer } = useCityLayers();
+
+  // Callbacks optimizados
+  const getCurrentMapStyle = useCallback(() => {
+    return mapStyles[currentMapStyle] || mapStyles.satellite;
+  }, [currentMapStyle, mapStyles]);
+
   const handleMove = useCallback((evt) => {
     setViewState(evt.viewState);
   }, []);
 
   const handleProjectionChange = useCallback((newProjection) => {
     setProjection(newProjection);
+  }, []);
+
+  const handleStyleChange = useCallback((styleKey) => {
+    setCurrentMapStyle(styleKey);
   }, []);
 
   const navigateToCity = useCallback((city) => {
@@ -308,18 +477,8 @@ const AdvancedGlobeMapV2 = () => {
     }));
   }, []);
 
-  const getStyleLabel = (styleKey) => {
-    const labels = {
-      satellite: "🛰️ Satélite",
-      terrain: "🏔️ Terreno",
-      street: "🛣️ Calles",
-      vector: "🗺️ Vector",
-    };
-    return labels[styleKey] || styleKey;
-  };
-
   return (
-    <div className="w-full h-screen relative">
+    <div className="w-full h-screen relative map-with-starry-bg">
       <Map
         ref={mapRef}
         {...viewState}
@@ -334,96 +493,26 @@ const AdvancedGlobeMapV2 = () => {
         renderWorldCopies={false}
         reuseMaps={true}
       >
-        <Source id="cities" type="geojson" data={citiesData}>
-          <Layer {...citiesLayerCircle} />
-          <Layer {...citiesLayerLabel} />
-        </Source>
+        <CitiesLayer citiesData={citiesData} circleLayer={circleLayer} labelLayer={labelLayer} />
 
         <NavigationControl position="top-right" visualizePitch={true} />
         <GeolocateControl position="top-left" />
 
-        {/* Panel de controles optimizado con scroll */}
-        <div className="absolute top-4 left-4 bg-white rounded-lg shadow-xl p-4 max-h-[90vh] overflow-y-auto w-64">
-          <h3 className="font-bold text-base mb-3 sticky top-0 bg-white pb-2">
-            Controles del Globo
-          </h3>
+        <ControlPanel
+          projection={projection}
+          onProjectionChange={handleProjectionChange}
+          styleGroups={styleGroups}
+          currentMapStyle={currentMapStyle}
+          onStyleChange={handleStyleChange}
+          cities={citiesData.features}
+          onCityClick={navigateToCity}
+        />
 
-          {/* Proyección */}
-          <div className="mb-3">
-            <p className="text-xs font-semibold mb-2 text-gray-700">Proyección:</p>
-            <div className="flex gap-2">
-              <button
-                onClick={() => handleProjectionChange("globe")}
-                className={`flex-1 px-3 py-2 text-xs rounded font-medium transition-all ${
-                  projection === "globe"
-                    ? "bg-blue-500 text-white shadow-md"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                }`}
-              >
-                🌍 Globo
-              </button>
-              <button
-                onClick={() => handleProjectionChange("mercator")}
-                className={`flex-1 px-3 py-2 text-xs rounded font-medium transition-all ${
-                  projection === "mercator"
-                    ? "bg-blue-500 text-white shadow-md"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                }`}
-              >
-                🗺️ Plano
-              </button>
-            </div>
-          </div>
-
-          {/* Estilos agrupados */}
-          {styleGroups.map((group) => (
-            <div key={group.name} className="mb-3 pb-3 border-b border-gray-200 last:border-b-0">
-              <p className="text-xs font-semibold mb-2 text-gray-700">{group.name}:</p>
-              <div className="grid grid-cols-2 gap-1">
-                {group.styles.map((style) => (
-                  <button
-                    key={style.key}
-                    onClick={() => setCurrentMapStyle(style.key)}
-                    className={`px-2 py-1.5 text-xs rounded font-medium transition-all ${
-                      currentMapStyle === style.key
-                        ? "bg-blue-500 text-white shadow-md"
-                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                    }`}
-                  >
-                    {style.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-          ))}
-
-          {/* Navegación rápida */}
-          <div className="pt-3 border-t border-gray-200">
-            <p className="text-xs font-semibold mb-2 text-gray-700">Ir a ciudad:</p>
-            <div className="grid grid-cols-2 gap-1">
-              {citiesData.features.map((city) => (
-                <button
-                  key={city.properties.name}
-                  onClick={() => navigateToCity(city)}
-                  className="px-2 py-1.5 text-xs bg-gray-800 text-white hover:bg-gray-700 rounded font-medium transition-all"
-                >
-                  {city.properties.name}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Información de estado */}
-        <div className="absolute bottom-4 left-4 bg-black bg-opacity-80 text-white px-4 py-2 rounded-lg text-xs backdrop-blur-sm">
-          <div className="flex items-center gap-3">
-            <span className="font-mono">Zoom: {viewState.zoom.toFixed(1)}</span>
-            <span>•</span>
-            <span>{projection === "globe" ? "🌍 Globo" : "🗺️ Plano"}</span>
-            <span>•</span>
-            <span>{getStyleLabel(currentMapStyle)}</span>
-          </div>
-        </div>
+        <MapStatusInfo
+          viewState={viewState}
+          projection={projection}
+          currentMapStyle={currentMapStyle}
+        />
       </Map>
     </div>
   );
