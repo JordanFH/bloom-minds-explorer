@@ -204,13 +204,13 @@ const useStyleGroups = () => {
           { key: "vector", label: "🗺️ Vector" },
         ],
       },
-      {
-        name: "OpenStreetMap",
-        styles: [
-          { key: "openStreetMap", label: "🌍 OSM" },
-          { key: "arcgis_hybrid", label: "🗺️ ArcGIS Hybrid" },
-        ],
-      },
+      //   {
+      //     name: "OpenStreetMap",
+      //     styles: [
+      //       { key: "openStreetMap", label: "🌍 OSM" },
+      //       { key: "arcgis_hybrid", label: "🗺️ ArcGIS Hybrid" },
+      //     ],
+      //   },
       {
         name: "CartoCDN",
         styles: [
@@ -227,12 +227,12 @@ const useStyleGroups = () => {
         styles: [
           { key: "icgc", label: "📍 ICGC" },
           { key: "icgc_mapa_base_fosc", label: "🌑 Base Fosca" },
-          { key: "icgc_ombra_hipsometria_corbes", label: "⛰️ Hipsometría" },
-          { key: "icgc_ombra_fosca", label: "🏔️ Ombra Fosca" },
-          { key: "icgc_orto_estandard", label: "🛰️ Orto Estándar" },
+          //   { key: "icgc_ombra_hipsometria_corbes", label: "⛰️ Hipsometría" },
+          //   { key: "icgc_ombra_fosca", label: "🏔️ Ombra Fosca" },
+          //   { key: "icgc_orto_estandard", label: "🛰️ Orto Estándar" },
           { key: "icgc_orto_estandard_gris", label: "⚫ Orto Gris" },
           { key: "icgc_orto_hibrida", label: "🗺️ Orto Híbrida" },
-          { key: "icgc_geologic_riscos", label: "🪨 Geológico" },
+          //   { key: "icgc_geologic_riscos", label: "🪨 Geológico" },
         ],
       },
     ],
