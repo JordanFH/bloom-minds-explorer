@@ -215,11 +215,11 @@ const useStyleGroups = () => {
         name: "CartoCDN",
         styles: [
           { key: "positron", label: "☀️ Positron" },
-          { key: "positronNoLabels", label: "☀️ Sin Etiquetas" },
+          { key: "positronNoLabels", label: "☀️ Positron Sin Etiquetas" },
           { key: "darkMatter", label: "🌙 Dark Matter" },
-          { key: "darkMatterNoLabels", label: "🌙 Sin Etiquetas" },
+          { key: "darkMatterNoLabels", label: "🌙 Dark Matter Sin Etiquetas" },
           { key: "voyager", label: "⛵ Voyager" },
-          { key: "voyagerNoLabels", label: "⛵ Sin Etiquetas" },
+          { key: "voyagerNoLabels", label: "⛵ Voyager Sin Etiquetas" },
         ],
       },
       {
