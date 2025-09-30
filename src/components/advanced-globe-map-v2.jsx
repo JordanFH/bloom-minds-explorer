@@ -396,16 +396,10 @@ const ControlPanel = ({
 };
 
 // Componente de información de estado
-const MapStatusInfo = ({ viewState, projection, currentMapStyle }) => {
-  const getStyleLabel = (styleKey) => {
-    const labels = {
-      satellite: "🛰️ Satélite",
-      terrain: "🏔️ Terreno",
-      street: "🛣️ Calles",
-      vector: "🗺️ Vector",
-    };
-    return labels[styleKey] || styleKey;
-  };
+const MapStatusInfo = ({ viewState, projection, currentMapStyle, styleGroups }) => {
+  const currentStyleLabel =
+    styleGroups.flatMap((g) => g.styles).find((s) => s.key === currentMapStyle)?.label ||
+    currentMapStyle;
 
   return (
     <div className="absolute bottom-4 left-4 bg-black bg-opacity-80 text-white px-4 py-2 rounded-lg text-xs backdrop-blur-sm z-10">
@@ -414,7 +408,7 @@ const MapStatusInfo = ({ viewState, projection, currentMapStyle }) => {
         <span>•</span>
         <span>{projection === "globe" ? "🌍 Globo" : "🗺️ Plano"}</span>
         <span>•</span>
-        <span>{getStyleLabel(currentMapStyle)}</span>
+        <span>{currentStyleLabel}</span>
       </div>
     </div>
   );
@@ -509,6 +503,7 @@ const AdvancedGlobeMapV2 = () => {
         />
 
         <MapStatusInfo
+          styleGroups={styleGroups}
           viewState={viewState}
           projection={projection}
           currentMapStyle={currentMapStyle}
