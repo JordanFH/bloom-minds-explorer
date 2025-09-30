@@ -6,7 +6,6 @@ import "maplibre-gl/dist/maplibre-gl.css";
 
 const AdvancedGlobeMapV2 = () => {
   const mapRef = useRef();
-  const rotationRef = useRef();
   const [viewState, setViewState] = useState({
     longitude: -74.5,
     latitude: 40,
@@ -17,7 +16,7 @@ const AdvancedGlobeMapV2 = () => {
   const [projection, setProjection] = useState("globe");
   const [currentMapStyle, setCurrentMapStyle] = useState("satellite");
 
-  // Memoizar datos de ciudades para evitar re-creaciones
+  // Datos de ciudades optimizados
   const citiesData = useMemo(
     () => ({
       type: "FeatureCollection",
@@ -47,22 +46,20 @@ const AdvancedGlobeMapV2 = () => {
     [],
   );
 
-  // Estilo híbrido original: Satélite + Límites + Nombres de países
+  // Estilos de mapa optimizados
   const satelliteStyle = useMemo(
     () => ({
       version: 8,
       glyphs: "https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf",
       sources: {
-        // Fuente de imágenes satelitales
         satellite: {
           type: "raster",
           tiles: [
             "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
           ],
           tileSize: 256,
-          attribution: "© Esri, DigitalGlobe, GeoEye, Earthstar Geographics",
+          attribution: "© Esri, DigitalGlobe, GeoEye",
         },
-        // Fuente para límites y etiquetas (transparente)
         boundaries: {
           type: "raster",
           tiles: [
@@ -71,47 +68,33 @@ const AdvancedGlobeMapV2 = () => {
           tileSize: 256,
           attribution: "© Esri",
         },
-        // Fuente vectorial para países (mejor control)
-        countries: {
-          type: "vector",
-          tiles: ["https://demotiles.maplibre.org/tiles/{z}/{x}/{y}.pbf"],
-          attribution: "© MapLibre",
-        },
       },
       layers: [
         {
           id: "background",
           type: "background",
-          paint: {
-            "background-color": "#000000", // Negro para mejor contraste con satélite
-          },
+          paint: { "background-color": "#000000" },
         },
-        // Capa base: Imágenes satelitales
         {
           id: "satellite-layer",
           type: "raster",
           source: "satellite",
           paint: {
             "raster-opacity": 1.0,
-            "raster-brightness-max": 1.0,
-            "raster-contrast": 0.1, // Ligero aumento de contraste
+            "raster-contrast": 0.1,
           },
         },
-        // Capa de límites y nombres (superpuesta)
         {
           id: "boundaries-layer",
           type: "raster",
           source: "boundaries",
-          paint: {
-            "raster-opacity": 0.7, // Semi-transparente para no ocultar satélite
-          },
+          paint: { "raster-opacity": 0.7 },
         },
       ],
     }),
     [],
   );
 
-  // Estilo terreno/topográfico
   const terrainStyle = useMemo(
     () => ({
       version: 8,
@@ -123,7 +106,6 @@ const AdvancedGlobeMapV2 = () => {
             "https://server.arcgisonline.com/ArcGIS/rest/services/World_Terrain_Base/MapServer/tile/{z}/{y}/{x}",
           ],
           tileSize: 256,
-          attribution: "© Esri, USGS, NOAA",
         },
         labels: {
           type: "raster",
@@ -131,39 +113,30 @@ const AdvancedGlobeMapV2 = () => {
             "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Reference_Overlay/MapServer/tile/{z}/{y}/{x}",
           ],
           tileSize: 256,
-          attribution: "© Esri",
         },
       },
       layers: [
         {
           id: "background",
           type: "background",
-          paint: {
-            "background-color": "#f0f8ff",
-          },
+          paint: { "background-color": "#f0f8ff" },
         },
         {
           id: "terrain-layer",
           type: "raster",
           source: "terrain",
-          paint: {
-            "raster-opacity": 1.0,
-          },
         },
         {
           id: "labels-layer",
           type: "raster",
           source: "labels",
-          paint: {
-            "raster-opacity": 0.8,
-          },
+          paint: { "raster-opacity": 0.8 },
         },
       ],
     }),
     [],
   );
 
-  // Estilo callejero/carreteras
   const streetStyle = useMemo(
     () => ({
       version: 8,
@@ -175,48 +148,34 @@ const AdvancedGlobeMapV2 = () => {
             "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
           ],
           tileSize: 256,
-          attribution: "© Esri, HERE, Garmin, USGS, Intermap, INCREMENT P",
         },
       },
       layers: [
         {
           id: "background",
           type: "background",
-          paint: {
-            "background-color": "#f5f5f5",
-          },
+          paint: { "background-color": "#f5f5f5" },
         },
         {
           id: "streets-layer",
           type: "raster",
           source: "streets",
-          paint: {
-            "raster-opacity": 1.0,
-          },
         },
       ],
     }),
     [],
   );
 
-  // Estilo vectorial limpio
-  const vectorStyle = "https://demotiles.maplibre.org/style.json";
-
   const mapStyles = useMemo(
     () => ({
-      // Estilos personalizados (raster)
       satellite: satelliteStyle,
       terrain: terrainStyle,
       street: streetStyle,
-
-      // Estilos vectoriales externos
       vector: "https://demotiles.maplibre.org/style.json",
       openStreetMap:
         "https://raw.githubusercontent.com/go2garret/maps/main/src/assets/json/openStreetMap.json",
       arcgis_hybrid:
         "https://raw.githubusercontent.com/go2garret/maps/main/src/assets/json/arcgis_hybrid.json",
-
-      // CartoCDN styles
       darkMatter: "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json",
       darkMatterNoLabels:
         "https://basemaps.cartocdn.com/gl/dark-matter-nolabels-gl-style/style.json",
@@ -224,8 +183,6 @@ const AdvancedGlobeMapV2 = () => {
       positronNoLabels: "https://basemaps.cartocdn.com/gl/positron-nolabels-gl-style/style.json",
       voyager: "https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json",
       voyagerNoLabels: "https://basemaps.cartocdn.com/gl/voyager-nolabels-gl-style/style.json",
-
-      // ICGC styles
       icgc: "https://geoserveis.icgc.cat/contextmaps/icgc.json",
       icgc_mapa_base_fosc: "https://geoserveis.icgc.cat/contextmaps/icgc_mapa_base_fosc.json",
       icgc_ombra_hipsometria_corbes:
@@ -240,59 +197,56 @@ const AdvancedGlobeMapV2 = () => {
     [satelliteStyle, terrainStyle, streetStyle],
   );
 
-  // Grupos de estilos para organizar la UI
   const styleGroups = useMemo(
     () => [
       {
         name: "Básicos",
         styles: [
-          { key: "satellite", label: "🛰️ Satélite", color: "green" },
-          { key: "terrain", label: "🏔️ Terreno", color: "amber" },
-          { key: "street", label: "🛣️ Calles", color: "blue" },
-          { key: "vector", label: "🗺️ Vector", color: "purple" },
+          { key: "satellite", label: "🛰️ Satélite" },
+          { key: "terrain", label: "🏔️ Terreno" },
+          { key: "street", label: "🛣️ Calles" },
+          { key: "vector", label: "🗺️ Vector" },
         ],
       },
       {
         name: "OpenStreetMap",
         styles: [
-          { key: "openStreetMap", label: "🌍 OSM", color: "emerald" },
-          { key: "arcgis_hybrid", label: "🗺️ ArcGIS Hybrid", color: "teal" },
+          { key: "openStreetMap", label: "🌍 OSM" },
+          { key: "arcgis_hybrid", label: "🗺️ ArcGIS Hybrid" },
         ],
       },
       {
         name: "CartoCDN",
         styles: [
-          { key: "positron", label: "☀️ Positron", color: "slate" },
-          { key: "positronNoLabels", label: "☀️ Positron Sin Etiquetas", color: "slate" },
-          { key: "darkMatter", label: "🌙 Dark Matter", color: "gray" },
-          { key: "darkMatterNoLabels", label: "🌙 Dark Matter Sin Etiquetas", color: "gray" },
-          { key: "voyager", label: "⛵ Voyager", color: "cyan" },
-          { key: "voyagerNoLabels", label: "⛵ Voyager Sin Etiquetas", color: "cyan" },
+          { key: "positron", label: "☀️ Positron" },
+          { key: "positronNoLabels", label: "☀️ Sin Etiquetas" },
+          { key: "darkMatter", label: "🌙 Dark Matter" },
+          { key: "darkMatterNoLabels", label: "🌙 Sin Etiquetas" },
+          { key: "voyager", label: "⛵ Voyager" },
+          { key: "voyagerNoLabels", label: "⛵ Sin Etiquetas" },
         ],
       },
       {
         name: "ICGC",
         styles: [
-          { key: "icgc", label: "📍 ICGC", color: "orange" },
-          { key: "icgc_mapa_base_fosc", label: "🌑 Base Fosca", color: "orange" },
-          { key: "icgc_ombra_hipsometria_corbes", label: "⛰️ Hipsometría", color: "orange" },
-          { key: "icgc_ombra_fosca", label: "🏔️ Ombra Fosca", color: "orange" },
-          { key: "icgc_orto_estandard", label: "🛰️ Orto Estándar", color: "orange" },
-          { key: "icgc_orto_estandard_gris", label: "⚫ Orto Gris", color: "orange" },
-          { key: "icgc_orto_hibrida", label: "🗺️ Orto Híbrida", color: "orange" },
-          { key: "icgc_geologic_riscos", label: "🪨 Geológico", color: "orange" },
+          { key: "icgc", label: "📍 ICGC" },
+          { key: "icgc_mapa_base_fosc", label: "🌑 Base Fosca" },
+          { key: "icgc_ombra_hipsometria_corbes", label: "⛰️ Hipsometría" },
+          { key: "icgc_ombra_fosca", label: "🏔️ Ombra Fosca" },
+          { key: "icgc_orto_estandard", label: "🛰️ Orto Estándar" },
+          { key: "icgc_orto_estandard_gris", label: "⚫ Orto Gris" },
+          { key: "icgc_orto_hibrida", label: "🗺️ Orto Híbrida" },
+          { key: "icgc_geologic_riscos", label: "🪨 Geológico" },
         ],
       },
     ],
     [],
   );
 
-  // Función para obtener el estilo actual
   const getCurrentMapStyle = useCallback(() => {
     return mapStyles[currentMapStyle] || mapStyles.satellite;
   }, [currentMapStyle, mapStyles]);
 
-  // Memoizar capas para evitar re-renderizados
   const citiesLayerCircle = useMemo(
     () => ({
       id: "cities-circle",
@@ -336,32 +290,36 @@ const AdvancedGlobeMapV2 = () => {
     [],
   );
 
-  // Optimizar función de movimiento con useCallback
   const handleMove = useCallback((evt) => {
     setViewState(evt.viewState);
   }, []);
 
-  // Optimizar cambio de proyección
   const handleProjectionChange = useCallback((newProjection) => {
-    if (rotationRef.current) {
-      cancelAnimationFrame(rotationRef.current);
-      rotationRef.current = null;
-    }
     setProjection(newProjection);
   }, []);
 
-  // Optimizar navegación a ciudades
   const navigateToCity = useCallback((city) => {
     setViewState((prev) => ({
       ...prev,
       longitude: city.geometry.coordinates[0],
       latitude: city.geometry.coordinates[1],
       zoom: 8,
+      transitionDuration: 1000,
     }));
   }, []);
 
+  const getStyleLabel = (styleKey) => {
+    const labels = {
+      satellite: "🛰️ Satélite",
+      terrain: "🏔️ Terreno",
+      street: "🛣️ Calles",
+      vector: "🗺️ Vector",
+    };
+    return labels[styleKey] || styleKey;
+  };
+
   return (
-    <div className="w-full h-screen relative map-with-starry-bg">
+    <div className="w-full h-screen relative">
       <Map
         ref={mapRef}
         {...viewState}
@@ -371,88 +329,83 @@ const AdvancedGlobeMapV2 = () => {
         style={{ width: "100%", height: "100%" }}
         maxZoom={18}
         minZoom={1}
-        // Optimizaciones de rendimiento
         antialias={true}
         preserveDrawingBuffer={false}
-        failIfMajorPerformanceCaveat={false}
-        transitionDuration={200}
-        transitionInterpolator={null}
         renderWorldCopies={false}
         reuseMaps={true}
-        // Configuraciones de interacción
-        dragRotate={true}
-        doubleClickZoom={true}
-        keyboard={true}
-        scrollZoom={true}
-        touchZoom={true}
-        touchRotate={true}
       >
-        {/* Fuente de datos de ciudades */}
         <Source id="cities" type="geojson" data={citiesData}>
           <Layer {...citiesLayerCircle} />
           <Layer {...citiesLayerLabel} />
         </Source>
 
-        {/* Controles */}
         <NavigationControl position="top-right" visualizePitch={true} />
         <GeolocateControl position="top-left" />
 
-        {/* Panel de controles personalizados optimizado */}
-        <div className="absolute top-4 left-4 bg-white rounded-lg shadow-lg p-4 space-y-2 backdrop-blur-sm bg-opacity-95">
-          <h3 className="font-semibold text-sm mb-2">Controles del Globo</h3>
+        {/* Panel de controles optimizado con scroll */}
+        <div className="absolute top-4 left-4 bg-white rounded-lg shadow-xl p-4 max-h-[90vh] overflow-y-auto w-64">
+          <h3 className="font-bold text-base mb-3 sticky top-0 bg-white pb-2">
+            Controles del Globo
+          </h3>
 
-          {/* Botones de proyección */}
-          <div className="flex space-x-2">
-            <button
-              type="button"
-              onClick={() => handleProjectionChange("globe")}
-              className={`px-3 py-1 text-xs rounded transition-colors duration-200 ${projection === "globe" ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300"}`}
-              disabled={projection === "globe"}
-            >
-              🌍 Globo
-            </button>
-            <button
-              onClick={() => handleProjectionChange("mercator")}
-              className={`px-3 py-1 text-xs rounded transition-colors duration-200 ${
-                projection === "mercator"
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-              }`}
-              disabled={projection === "mercator"}
-            >
-              🗺️ Plano
-            </button>
-          </div>
-
-          {/* Control de estilo de mapa */}
-          <div className="border-t pt-2">
-            <p className="text-xs font-medium mb-1">Estilo del Mapa:</p>
-            <div className="grid grid-cols-2 gap-1">
-              {Object.entries(mapStyles).map(([key, value]) => (
-                <button
-                  key={key}
-                  onClick={() => setCurrentMapStyle(key)}
-                  className={`px-2 py-1 text-xs rounded transition-colors duration-150 ${
-                    currentMapStyle === value
-                      ? "bg-blue-500 text-white"
-                      : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                  }`}
-                >
-                  {key}
-                </button>
-              ))}
+          {/* Proyección */}
+          <div className="mb-3">
+            <p className="text-xs font-semibold mb-2 text-gray-700">Proyección:</p>
+            <div className="flex gap-2">
+              <button
+                onClick={() => handleProjectionChange("globe")}
+                className={`flex-1 px-3 py-2 text-xs rounded font-medium transition-all ${
+                  projection === "globe"
+                    ? "bg-blue-500 text-white shadow-md"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                }`}
+              >
+                🌍 Globo
+              </button>
+              <button
+                onClick={() => handleProjectionChange("mercator")}
+                className={`flex-1 px-3 py-2 text-xs rounded font-medium transition-all ${
+                  projection === "mercator"
+                    ? "bg-blue-500 text-white shadow-md"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                }`}
+              >
+                🗺️ Plano
+              </button>
             </div>
           </div>
 
-          {/* Botones de navegación rápida */}
-          <div className="space-y-1 border-t pt-2">
-            <p className="text-xs font-medium">Ir a:</p>
+          {/* Estilos agrupados */}
+          {styleGroups.map((group) => (
+            <div key={group.name} className="mb-3 pb-3 border-b border-gray-200 last:border-b-0">
+              <p className="text-xs font-semibold mb-2 text-gray-700">{group.name}:</p>
+              <div className="grid grid-cols-2 gap-1">
+                {group.styles.map((style) => (
+                  <button
+                    key={style.key}
+                    onClick={() => setCurrentMapStyle(style.key)}
+                    className={`px-2 py-1.5 text-xs rounded font-medium transition-all ${
+                      currentMapStyle === style.key
+                        ? "bg-blue-500 text-white shadow-md"
+                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    }`}
+                  >
+                    {style.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))}
+
+          {/* Navegación rápida */}
+          <div className="pt-3 border-t border-gray-200">
+            <p className="text-xs font-semibold mb-2 text-gray-700">Ir a ciudad:</p>
             <div className="grid grid-cols-2 gap-1">
-              {citiesData.features.map((city, index) => (
+              {citiesData.features.map((city) => (
                 <button
-                  key={`${city.properties.name}-${index}`}
+                  key={city.properties.name}
                   onClick={() => navigateToCity(city)}
-                  className="px-2 py-1 text-xs bg-gray-700 text-white hover:bg-gray-500 rounded transition-colors duration-150"
+                  className="px-2 py-1.5 text-xs bg-gray-800 text-white hover:bg-gray-700 rounded font-medium transition-all"
                 >
                   {city.properties.name}
                 </button>
@@ -461,19 +414,14 @@ const AdvancedGlobeMapV2 = () => {
           </div>
         </div>
 
-        {/* Información del estado actual optimizada */}
-        <div className="absolute bottom-4 left-4 bg-black bg-opacity-75 text-white px-3 py-1 rounded text-sm backdrop-blur-sm">
-          <div className="flex items-center space-x-2">
-            <span>Zoom: {viewState.zoom.toFixed(1)}</span>
-            <span>|</span>
+        {/* Información de estado */}
+        <div className="absolute bottom-4 left-4 bg-black bg-opacity-80 text-white px-4 py-2 rounded-lg text-xs backdrop-blur-sm">
+          <div className="flex items-center gap-3">
+            <span className="font-mono">Zoom: {viewState.zoom.toFixed(1)}</span>
+            <span>•</span>
             <span>{projection === "globe" ? "🌍 Globo" : "🗺️ Plano"}</span>
-            <span>|</span>
-            <span>
-              {currentMapStyle === "satellite" && "🛰️ Satélite"}
-              {currentMapStyle === "terrain" && "🏔️ Terreno"}
-              {currentMapStyle === "street" && "🛣️ Calles"}
-              {currentMapStyle === "vector" && "🗺️ Vector"}
-            </span>
+            <span>•</span>
+            <span>{getStyleLabel(currentMapStyle)}</span>
           </div>
         </div>
       </Map>
