@@ -3,23 +3,21 @@
 import { useCallback, useMemo, useState } from "react";
 import Map, { GeolocateControl, NavigationControl } from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
+import Legend from "./legend";
 
 const GlobeMap = () => {
     const [viewState, setViewState] = useState({
-        longitude: -78.5, // --> ACTUALIZADO: Centrado en Cajamarca, Perú
-        latitude: -7.1, // --> ACTUALIZADO: Centrado en Cajamarca, Perú
+        longitude: -78.5,
+        latitude: -7.1,
         zoom: 5,
         pitch: 0,
         bearing: 0,
     });
 
-    // --> AÑADIDO: Obtenemos una fecha reciente para la capa de la NASA.
-    // GIBS puede tardar 1-2 días en procesar los datos, así que usamos el día de antier.
     const date = new Date();
     date.setDate(date.getDate() - 2);
     const nasaDateString = date.toISOString().split("T")[0];
 
-    // Memoizar el estilo del mapa para evitar re-renderizados innecesarios
     const mapStyle = useMemo(
         () => ({
             version: 8,
@@ -30,7 +28,6 @@ const GlobeMap = () => {
                     tileSize: 256,
                     attribution: "© OpenStreetMap contributors",
                 },
-                // --> AÑADIDO: Nueva fuente de datos para la capa NDVI de la NASA (GIBS)
                 "nasa-gibs-ndvi": {
                     type: "raster",
                     tiles: [`https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/MODIS_Terra_NDVI_8Day/default/${nasaDateString}/GoogleMapsCompatible_Level9/{z}/{y}/{x}.png`],
@@ -44,27 +41,26 @@ const GlobeMap = () => {
                     type: "raster",
                     source: "osm-tiles",
                 },
-                // --> AÑADIDO: Nueva capa para visualizar los datos NDVI sobre el mapa base
                 {
                     id: "nasa-gibs-ndvi-layer",
                     type: "raster",
                     source: "nasa-gibs-ndvi",
                     paint: {
-                        "raster-opacity": 0.6, // Le damos algo de transparencia para ver el mapa de abajo
+                        "raster-opacity": 0.6,
                     },
                 },
             ],
         }),
-        [nasaDateString] // --> ACTUALIZADO: El estilo depende de la fecha
+        [nasaDateString]
     );
 
-    // Usar useCallback para optimizar la función de movimiento
     const handleMove = useCallback((evt) => {
         setViewState(evt.viewState);
     }, []);
 
     return (
-        <div className="w-full h-screen">
+        // --> PASO 2: AÑADE `position: 'relative'` AL CONTENEDOR
+        <div className="w-full h-screen" style={{ position: "relative" }}>
             <Map
                 {...viewState}
                 onMove={handleMove}
@@ -89,6 +85,9 @@ const GlobeMap = () => {
                 <NavigationControl position="top-right" visualizePitch={true} />
                 <GeolocateControl position="top-left" trackUserLocation showUserHeading />
             </Map>
+
+            {/* --> PASO 3: COLOCA EL COMPONENTE DE LA LEYENDA AQUÍ */}
+            <Legend />
         </div>
     );
 };
