@@ -1,16 +1,37 @@
 const DatePicker = ({ selectedDate, onDateChange }) => {
-  // Formateamos la fecha al formato YYYY-MM-DD que el input[type=date] requiere
-  const dateValue = selectedDate.toISOString().split("T")[0];
+  // Es posible que `selectedDate` sea inválido si el estado se corrompe,
+  // así que nos aseguramos de no fallar aquí.
+  const dateValue =
+    selectedDate && !Number.isNaN(selectedDate.getTime())
+      ? selectedDate.toISOString().split("T")[0]
+      : "";
 
-  // La fecha máxima seleccionable es ayer (los datos de GIBS suelen tener 1-2 días de retraso)
   const maxDate = new Date();
-  maxDate.setDate(maxDate.getDate() - 1);
+  // Usamos el retraso seguro de 3 días que establecimos antes
+  maxDate.setDate(maxDate.getDate() - 3);
   const maxDateValue = maxDate.toISOString().split("T")[0];
 
   const handleDateChange = (e) => {
-    // Creamos un nuevo objeto Date a partir del valor del input.
-    // Añadimos 'T00:00:00' para evitar problemas con la zona horaria.
-    const newDate = new Date(`${e.target.value}T00:00:00`);
+    const dateString = e.target.value;
+
+    // Si el usuario borra la fecha, el valor es un string vacío.
+    // En este caso, no hacemos nada para evitar un error.
+    if (!dateString) {
+      return;
+    }
+
+    // Creamos la fecha tentativa
+    const newDate = new Date(`${dateString}T00:00:00`);
+
+    // ===== VALIDACIÓN CLAVE =====
+    // `isNaN(date.getTime())` es la forma estándar y más segura en JavaScript
+    // para comprobar si un objeto Date es válido.
+    // Si no es válido (ej: por un input vacío o corrupto), simplemente no actualizamos el estado.
+    if (Number.isNaN(newDate.getTime())) {
+      return;
+    }
+
+    // Solo si la fecha es válida, llamamos a la función del padre.
     onDateChange(newDate);
   };
 
