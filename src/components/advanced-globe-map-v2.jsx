@@ -12,18 +12,32 @@ const AVAILABLE_LAYERS = [
     label: "Índice de Vegetación (NDVI)",
     urlTemplate: (date) =>
       `https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/MODIS_Terra_NDVI_8Day/default/${date}/GoogleMapsCompatible_Level9/{z}/{y}/{x}.png`,
+    // --- NUEVO: Información de la leyenda ---
+    legend: {
+      title: "Índice de Vegetación (NDVI)",
+      gradient: "linear-gradient(to right, #CEB595, #F2EEA6, #A9D9A2, #6BC483, #2D9C58, #006C2D)",
+      labels: ["Menos vegetación", "Más vegetación"],
+    },
   },
   {
     id: "trueColor",
     label: "Color Real (Visible)",
     urlTemplate: (date) =>
       `https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/MODIS_Terra_CorrectedReflectance_TrueColor/default/${date}/GoogleMapsCompatible_Level9/{z}/{y}/{x}.jpg`,
+    // --- NUEVO: Sin leyenda para esta capa ---
+    legend: null,
   },
   {
     id: "landTemp",
     label: "Temperatura Superficial",
     urlTemplate: (date) =>
       `https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/VIIRS_SNPP_Land_Surface_Temp_Day/default/${date}/GoogleMapsCompatible_Level7/{z}/{y}/{x}.png`,
+    // --- NUEVO: Leyenda para la temperatura ---
+    legend: {
+      title: "Temperatura Superficial (Día)",
+      gradient: "linear-gradient(to right, #000080, #0000FF, #00FFFF, #FFFF00, #FF0000, #800000)",
+      labels: ["Frío", "Cálido"],
+    },
   },
 ];
 
@@ -355,7 +369,7 @@ const LayerSelector = ({ activeLayers, onToggleLayer }) => (
 // Componente de grupo de estilos
 const StyleGroup = ({ group, currentMapStyle, onStyleChange }) => {
   return (
-    <div className="mb-3 pb-3 border-b border-gray-200 last:border-b-0">
+    <div className="mb pb-3 border-b border-gray-200 last:border-b-0">
       <p className="text-xs font-semibold mb-2 text-gray-700">{group.name}:</p>
       <div className="grid grid-cols-2 gap-1">
         {group.styles.map((style) => (
@@ -379,7 +393,7 @@ const StyleGroup = ({ group, currentMapStyle, onStyleChange }) => {
 // Componente de navegación a ciudades
 const CityNavigation = ({ cities, onCityClick }) => {
   return (
-    <div className="pt-3 border-t border-gray-200">
+    <div className="border-t border-gray-200">
       <p className="text-xs font-semibold mb-2 text-gray-700">Ir a ciudad:</p>
       <div className="grid grid-cols-2 gap-1">
         {cities.map((city) => (
@@ -529,7 +543,7 @@ const AdvancedGlobeMapV2 = () => {
   });
   const [projection, setProjection] = useState("globe");
   const [currentMapStyle, setCurrentMapStyle] = useState("satellite");
-  const [activeLayers, setActiveLayers] = useState({ ndvi: true });
+  const [activeLayers, setActiveLayers] = useState({});
 
   // Hooks personalizados
   const citiesData = useCitiesData();
@@ -542,6 +556,13 @@ const AdvancedGlobeMapV2 = () => {
     date.setDate(date.getDate() - 2);
     return date.toISOString().split("T")[0];
   }, []);
+
+  const activeLegendsData = useMemo(() => {
+    // Filtramos las capas para quedarnos con las que están activas Y tienen leyenda
+    return AVAILABLE_LAYERS.filter((layer) => activeLayers[layer.id] && layer.legend).map(
+      (layer) => layer.legend,
+    ); // Creamos un array solo con los datos de la leyenda
+  }, [activeLayers]);
 
   const handleToggleLayer = useCallback((layerId) => {
     setActiveLayers((prev) => ({ ...prev, [layerId]: !prev[layerId] }));
@@ -627,7 +648,7 @@ const AdvancedGlobeMapV2 = () => {
         />
       </Map>
 
-      {activeLayers.ndvi && <Legend />}
+      <Legend legends={activeLegendsData} />
     </div>
   );
 };
