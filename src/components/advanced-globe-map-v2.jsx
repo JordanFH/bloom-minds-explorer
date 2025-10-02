@@ -1,8 +1,17 @@
 "use client";
 
-import { useCallback, useMemo, useRef, useState } from "react";
-import Map, { GeolocateControl, Layer, NavigationControl, Source } from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
+
+import { useCallback, useMemo, useRef, useState } from "react";
+
+import Map, {
+  GeolocateControl,
+  Layer,
+  NavigationControl,
+  Popup,
+  Source,
+} from "react-map-gl/maplibre";
+
 import DatePicker from "./date-picker";
 import Legend from "./legend";
 
@@ -38,35 +47,6 @@ const AVAILABLE_LAYERS = [
       title: "Temperatura Superficial (Día)",
       gradient: "linear-gradient(to right, #000080, #0000FF, #00FFFF, #FFFF00, #FF0000, #800000)",
       labels: ["Frío", "Cálido"],
-    },
-  },
-  {
-    id: "soilMoisture",
-    label: "Humedad del Suelo",
-    urlTemplate: (date) =>
-      `https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/SMAP_L3_SM_P_E_Soil_Moisture/default/${date}/GoogleMapsCompatible_Level6/{z}/{y}/{x}.png`,
-    legend: {
-      title: "Humedad del Suelo",
-      gradient: "linear-gradient(to right, #de7121, #f5f5f5, #2239c0)",
-      labels: ["Seco", "Húmedo"],
-    },
-  },
-  {
-    id: "fires",
-    label: "Incendios Activos",
-    urlTemplate: (date) =>
-      `https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/VIIRS_SNPP_Thermal_Anomalies_375m_Day/default/${date}/GoogleMapsCompatible_Level8/{z}/{y}/{x}.png`,
-    legend: null, // Los incendios son puntos, no necesitan una leyenda de gradiente
-  },
-  {
-    id: "precipitation",
-    label: "Tasa de Precipitación",
-    urlTemplate: (date) =>
-      `https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GPM_3IMERGD_DAY_Precipitation_Rate/default/${date}/GoogleMapsCompatible_Level6/{z}/{y}/{x}.png`,
-    legend: {
-      title: "Precipitación (mm/hora)",
-      gradient: "linear-gradient(to right, #ffffff, #00aaff, #0000ff, #ffff00, #ff0000, #ff00ff)",
-      labels: ["Seco", "Lluvioso"],
     },
   },
 ];
@@ -377,6 +357,47 @@ const ProjectionControls = ({ projection, onProjectionChange }) => {
   );
 };
 
+const ClimateChart = ({ data }) => {
+  if (data.loading) {
+    return <div className="text-sm">Cargando datos climáticos...</div>;
+  }
+  if (data.error) {
+    return <div className="text-sm text-red-500">Error: {data.error}</div>;
+  }
+  if (!data.temp && !data.precip) {
+    return <div className="text-sm">No hay datos climáticos disponibles.</div>;
+  }
+
+  // Esto es una visualización simple. En un proyecto real, usarías una librería de gráficos.
+  return (
+    <div className="text-sm space-y-2">
+      <h4 className="font-bold text-base mb-1">Datos Climáticos (Promedio)</h4>
+      {data.temp && (
+        <div>
+          <strong>Temperatura:</strong> {data.temp.toFixed(2)} °C
+          <div className="w-full bg-gray-200 rounded-full h-2.5">
+            <div
+              className="bg-gradient-to-r from-blue-500 to-red-500 h-2.5 rounded-full"
+              style={{ width: `${(data.temp + 10) * 2}%` }}
+            ></div>
+          </div>
+        </div>
+      )}
+      {data.precip && (
+        <div>
+          <strong>Precipitación:</strong> {data.precip.toFixed(2)} mm/día
+          <div className="w-full bg-gray-200 rounded-full h-2.5">
+            <div
+              className="bg-blue-600 h-2.5 rounded-full"
+              style={{ width: `${data.precip * 5}%` }}
+            ></div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
 const LayerSelector = ({ activeLayers, onToggleLayer }) => (
   <div className="mb-3 pb-3 border-b border-gray-200">
     <p className="text-xs font-semibold mb-2 text-gray-700">Capas de Datos (NASA):</p>
@@ -577,7 +598,8 @@ const AdvancedGlobeMapV2 = () => {
   });
   const [projection, setProjection] = useState("globe");
   const [currentMapStyle, setCurrentMapStyle] = useState("satellite");
-  const [activeLayers, setActiveLayers] = useState({});
+  const [activeLayers, setActiveLayers] = useState({ ndvi: true });
+  const [clickedInfo, setClickedInfo] = useState(null);
 
   // Hooks personalizados
   const citiesData = useCitiesData();
@@ -594,7 +616,7 @@ const AdvancedGlobeMapV2 = () => {
 
   const [selectedDate, setSelectedDate] = useState(() => {
     const date = new Date();
-    date.setDate(date.getDate() - 2); // Estado inicial: hace 2 días
+    date.setDate(date.getDate() - 4); // Latencia segura
     return date;
   });
 
@@ -611,6 +633,40 @@ const AdvancedGlobeMapV2 = () => {
     return mapStyles[currentMapStyle] || mapStyles.satellite;
   }, [currentMapStyle, mapStyles]);
 
+  const fetchPowerData = async (lng, lat) => {
+    // Obtenemos el año de la fecha seleccionada para la consulta
+    const year = selectedDate.getFullYear();
+    const startDate = `${year}0101`;
+    const endDate = `${year}1231`;
+
+    // Parámetros que queremos obtener
+    const parameters = "T2M,PRECTOTCORR"; // T2M: Temperatura a 2m, PRECTOTCORR: Precipitación
+
+    // Construimos la URL de la API
+    const apiUrl = `https://power.larc.nasa.gov/api/temporal/daily/point?parameters=${parameters}&community=RE&longitude=${lng}&latitude=${lat}&start=${startDate}&end=${endDate}&format=JSON`;
+
+    try {
+      const response = await fetch(apiUrl);
+      if (!response.ok) {
+        throw new Error(`El servidor respondió con estado ${response.status}`);
+      }
+      const data = await response.json();
+
+      // Calculamos el promedio anual (esto es una simplificación)
+      const temps = Object.values(data.properties.parameter.T2M);
+      const precips = Object.values(data.properties.parameter.PRECTOTCORR);
+
+      const avgTemp = temps.reduce((a, b) => a + b, 0) / temps.length;
+      const avgPrecip = precips.reduce((a, b) => a + b, 0) / precips.length;
+
+      // Actualizamos el estado con los datos obtenidos
+      setClickedInfo((prev) => ({ ...prev, climateData: { temp: avgTemp, precip: avgPrecip } }));
+    } catch (error) {
+      console.error("Error al obtener datos de POWER API:", error);
+      setClickedInfo((prev) => ({ ...prev, climateData: { error: error.message } }));
+    }
+  };
+
   const handleMove = useCallback((evt) => setViewState(evt.viewState), []);
   const handleProjectionChange = useCallback((newProjection) => setProjection(newProjection), []);
   const handleStyleChange = useCallback((styleKey) => setCurrentMapStyle(styleKey), []);
@@ -623,6 +679,23 @@ const AdvancedGlobeMapV2 = () => {
       transitionDuration: 1000,
     }));
   }, []);
+  const handleMapClick = useCallback(
+    (event) => {
+      const { lngLat } = event;
+      const { lng, lat } = lngLat;
+
+      // Guardamos la info del clic e iniciamos la carga de datos climáticos
+      setClickedInfo({
+        lng,
+        lat,
+        climateData: { loading: true },
+      });
+
+      // Llamamos a la función que contacta a la API POWER
+      fetchPowerData(lng, lat);
+    },
+    [selectedDate],
+  );
 
   return (
     <div className="w-full h-screen relative map-with-starry-bg">
@@ -639,7 +712,28 @@ const AdvancedGlobeMapV2 = () => {
         preserveDrawingBuffer={false}
         renderWorldCopies={false}
         reuseMaps={true}
+        onClick={handleMapClick}
+        cursor="crosshair"
       >
+        {clickedInfo && (
+          <Popup
+            longitude={clickedInfo.lng}
+            latitude={clickedInfo.lat}
+            onClose={() => setClickedInfo(null)}
+            closeOnClick={false}
+            anchor="bottom"
+          >
+            <div className="p-2" style={{ width: "250px" }}>
+              <div className="text-xs">
+                <strong>Lon:</strong> {clickedInfo.lng.toFixed(4)}, <strong>Lat:</strong>{" "}
+                {clickedInfo.lat.toFixed(4)}
+              </div>
+              <hr className="my-2" />
+              <ClimateChart data={clickedInfo.climateData} />
+            </div>
+          </Popup>
+        )}
+
         <CitiesLayer citiesData={citiesData} circleLayer={circleLayer} labelLayer={labelLayer} />
 
         {/* ===== RENDERIZADO DINÁMICO DE CAPAS DE LA NASA ===== */}
