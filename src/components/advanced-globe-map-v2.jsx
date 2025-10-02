@@ -58,6 +58,17 @@ const AVAILABLE_LAYERS = [
       `https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/VIIRS_SNPP_Thermal_Anomalies_375m_Day/default/${date}/GoogleMapsCompatible_Level8/{z}/{y}/{x}.png`,
     legend: null, // Los incendios son puntos, no necesitan una leyenda de gradiente
   },
+  {
+    id: "precipitation",
+    label: "Tasa de Precipitación",
+    urlTemplate: (date) =>
+      `https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GPM_3IMERGD_DAY_Precipitation_Rate/default/${date}/GoogleMapsCompatible_Level6/{z}/{y}/{x}.png`,
+    legend: {
+      title: "Precipitación (mm/hora)",
+      gradient: "linear-gradient(to right, #ffffff, #00aaff, #0000ff, #ffff00, #ff0000, #ff00ff)",
+      labels: ["Seco", "Lluvioso"],
+    },
+  },
 ];
 
 // ==================== HOOKS PERSONALIZADOS ====================
