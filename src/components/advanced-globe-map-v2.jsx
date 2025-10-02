@@ -359,41 +359,175 @@ const ProjectionControls = ({ projection, onProjectionChange }) => {
 
 const ClimateChart = ({ data }) => {
   if (data.loading) {
-    return <div className="text-sm">Cargando datos climáticos...</div>;
-  }
-  if (data.error) {
-    return <div className="text-sm text-red-500">Error: {data.error}</div>;
-  }
-  if (!data.temp && !data.precip) {
-    return <div className="text-sm">No hay datos climáticos disponibles.</div>;
+    return (
+      <div className="flex items-center justify-center py-8">
+        <div className="flex items-center space-x-3">
+          <div className="animate-spin rounded-full h-6 w-6 border-2 border-blue-500 border-t-transparent"></div>
+          <span className="text-sm text-gray-600 font-medium">Cargando datos climáticos...</span>
+        </div>
+      </div>
+    );
   }
 
-  // Esto es una visualización simple. En un proyecto real, usarías una librería de gráficos.
+  if (data.error) {
+    return (
+      <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+        <div className="flex items-center space-x-2">
+          <svg
+            className="w-5 h-5 text-red-500 flex-shrink-0"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path
+              fillRule="evenodd"
+              d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+              clipRule="evenodd"
+            />
+          </svg>
+          <div>
+            <span className="text-sm text-red-700 font-medium block">Error al cargar datos</span>
+            <p className="text-xs text-red-600 mt-1">{data.error}</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!data.temp && !data.precip) {
+    return (
+      <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 text-center">
+        <svg
+          className="w-8 h-8 text-gray-400 mx-auto mb-3"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+          />
+        </svg>
+        <p className="text-sm text-gray-600">No hay datos climáticos disponibles</p>
+      </div>
+    );
+  }
+
+  // Función para obtener el color de temperatura basado en el valor
+  const getTempColor = (temp) => {
+    if (temp < 0) return "from-blue-600 to-blue-400";
+    if (temp < 10) return "from-blue-500 to-cyan-400";
+    if (temp < 20) return "from-green-500 to-yellow-400";
+    if (temp < 30) return "from-yellow-500 to-orange-400";
+    return "from-orange-500 to-red-500";
+  };
+
+  // Función para obtener el color de precipitación
+  const getPrecipColor = (precip) => {
+    if (precip < 1) return "from-gray-300 to-blue-200";
+    if (precip < 3) return "from-blue-300 to-blue-400";
+    if (precip < 6) return "from-blue-400 to-blue-500";
+    return "from-blue-500 to-blue-600";
+  };
+
   return (
-    <div className="text-sm space-y-2">
-      <h4 className="font-bold text-base mb-1">Datos Climáticos (Promedio)</h4>
+    <div className="space-y-4">
+      {/* Header de datos climáticos */}
+      <div className="flex items-center space-x-2 border-b border-gray-200 pb-3">
+        <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+          <path
+            fillRule="evenodd"
+            d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+            clipRule="evenodd"
+          />
+        </svg>
+        <h4 className="font-bold text-gray-800 text-base">Datos Climáticos Anuales</h4>
+      </div>
+
+      {/* Tarjeta de temperatura */}
       {data.temp && (
-        <div>
-          <strong>Temperatura:</strong> {data.temp.toFixed(2)} °C
-          <div className="w-full bg-gray-200 rounded-full h-2.5">
-            <div
-              className="bg-gradient-to-r from-blue-500 to-red-500 h-2.5 rounded-full"
-              style={{ width: `${(data.temp + 10) * 2}%` }}
-            ></div>
+        <div className="climate-data-card bg-gradient-to-r from-blue-50 to-orange-50 rounded-lg p-4 border border-gray-200">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center space-x-2">
+              <svg
+                className="w-5 h-5 text-orange-500 popup-icon"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v6a1 1 0 00.293.707l3 3a1 1 0 001.414-1.414L11 11.586V5z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              <span className="font-semibold text-gray-700 text-sm">Temperatura Promedio</span>
+            </div>
+            <span className="text-xl font-bold text-gray-800">{data.temp.toFixed(1)}°C</span>
+          </div>
+          <div className="relative">
+            <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden shadow-inner">
+              <div
+                className={`bg-gradient-to-r ${getTempColor(data.temp)} h-3 rounded-full climate-progress-bar shadow-sm`}
+                style={{ width: `${Math.min(Math.max((data.temp + 20) * 2, 5), 100)}%` }}
+              ></div>
+            </div>
+            <div className="flex justify-between text-xs text-gray-500 mt-2">
+              <span>Frío</span>
+              <span>Cálido</span>
+            </div>
           </div>
         </div>
       )}
+
+      {/* Tarjeta de precipitación */}
       {data.precip && (
-        <div>
-          <strong>Precipitación:</strong> {data.precip.toFixed(2)} mm/día
-          <div className="w-full bg-gray-200 rounded-full h-2.5">
-            <div
-              className="bg-blue-600 h-2.5 rounded-full"
-              style={{ width: `${data.precip * 5}%` }}
-            ></div>
+        <div className="climate-data-card bg-gradient-to-r from-gray-50 to-blue-50 rounded-lg p-4 border border-gray-200">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center space-x-2">
+              <svg
+                className="w-5 h-5 text-blue-500 popup-icon"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              <span className="font-semibold text-gray-700 text-sm">Precipitación Promedio</span>
+            </div>
+            <span className="text-xl font-bold text-gray-800">{data.precip.toFixed(2)} mm/día</span>
+          </div>
+          <div className="relative">
+            <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden shadow-inner">
+              <div
+                className={`bg-gradient-to-r ${getPrecipColor(data.precip)} h-3 rounded-full climate-progress-bar shadow-sm`}
+                style={{ width: `${Math.min(Math.max(data.precip * 10, 5), 100)}%` }}
+              ></div>
+            </div>
+            <div className="flex justify-between text-xs text-gray-500 mt-2">
+              <span>Seco</span>
+              <span>Húmedo</span>
+            </div>
           </div>
         </div>
       )}
+
+      {/* Footer con información de la fuente */}
+      <div className="text-xs text-gray-500 text-center pt-3 border-t border-gray-100">
+        <div className="flex items-center justify-center space-x-1">
+          <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+            <path
+              fillRule="evenodd"
+              d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+              clipRule="evenodd"
+            />
+          </svg>
+          <span>Datos: NASA POWER API</span>
+        </div>
+      </div>
     </div>
   );
 };
@@ -722,14 +856,77 @@ const AdvancedGlobeMapV2 = () => {
             onClose={() => setClickedInfo(null)}
             closeOnClick={false}
             anchor="bottom"
+            closeButton={false}
+            className="map-popup"
           >
-            <div className="p-2" style={{ width: "250px" }}>
-              <div className="text-xs">
-                <strong>Lon:</strong> {clickedInfo.lng.toFixed(4)}, <strong>Lat:</strong>{" "}
-                {clickedInfo.lat.toFixed(4)}
+            <div className="popup-container bg-white rounded-lg shadow-2xl border border-gray-200 overflow-hidden">
+              {/* Header del popup */}
+              <div className="popup-header bg-gradient-to-r from-blue-600 to-blue-700 px-4 py-3 flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                      fillRule="evenodd"
+                      d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  <h3 className="text-white font-semibold text-sm">Información Climática</h3>
+                </div>
+                <button
+                  onClick={() => setClickedInfo(null)}
+                  className="text-white hover:text-gray-200 transition-colors p-1 rounded-full hover:bg-white hover:bg-opacity-20 popup-close-btn"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
               </div>
-              <hr className="my-2" />
-              <ClimateChart data={clickedInfo.climateData} />
+
+              {/* Contenido del popup */}
+              <div className="popup-content">
+                {/* Coordenadas */}
+                <div className="bg-gray-50 rounded-lg p-3 mb-4 border border-gray-100">
+                  <div className="flex items-center space-x-2 mb-3">
+                    <svg
+                      className="w-4 h-4 text-gray-600 popup-icon"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011 1v1H8V5zm1 5a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    <span className="font-semibold text-gray-700 text-sm">Coordenadas</span>
+                  </div>
+                  <div className="coordinates-grid">
+                    <div className="coordinate-item">
+                      <div className="coordinate-label">Longitud:</div>
+                      <div className="coordinate-value">{clickedInfo.lng.toFixed(6)}°</div>
+                    </div>
+                    <div className="coordinate-item">
+                      <div className="coordinate-label">Latitud:</div>
+                      <div className="coordinate-value">{clickedInfo.lat.toFixed(6)}°</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Datos climáticos */}
+                <ClimateChart data={clickedInfo.climateData} />
+              </div>
+
+              {/* Footer */}
+              <div className="popup-footer bg-gray-50 px-4 py-2 border-t border-gray-100">
+                <p className="text-xs text-gray-500 text-center">
+                  Haz clic en cualquier punto del mapa para obtener datos climáticos
+                </p>
+              </div>
             </div>
           </Popup>
         )}
