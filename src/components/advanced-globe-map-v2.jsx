@@ -219,43 +219,32 @@ const useStyleGroups = () => {
   return useMemo(
     () => [
       {
-        name: "Básicos",
+        name: "Estilos de Mapa",
         styles: [
+          // *** Base ***
           { key: "satellite", label: "🛰️ Satélite" },
           { key: "terrain", label: "🏔️ Terreno" },
           { key: "street", label: "🛣️ Calles" },
           { key: "vector", label: "🗺️ Vector" },
-        ],
-      },
-      //   {
-      //     name: "OpenStreetMap",
-      //     styles: [
-      //       { key: "openStreetMap", label: "🌍 OSM" },
-      //       { key: "arcgis_hybrid", label: "🗺️ ArcGIS Hybrid" },
-      //     ],
-      //   },
-      {
-        name: "CartoCDN",
-        styles: [
+          // *** OpenStreetMap ***
+          // { key: "openStreetMap", label: "🌍 OSM" },
+          // { key: "arcgis_hybrid", label: "🗺️ ArcGIS Hybrid" },
+          // *** CartoCDN ***
           { key: "positron", label: "☀️ Positron" },
           { key: "positronNoLabels", label: "☀️ Positron Sin Etiquetas" },
           { key: "darkMatter", label: "🌙 Dark Matter" },
           { key: "darkMatterNoLabels", label: "🌙 Dark Matter Sin Etiquetas" },
           { key: "voyager", label: "⛵ Voyager" },
           { key: "voyagerNoLabels", label: "⛵ Voyager Sin Etiquetas" },
-        ],
-      },
-      {
-        name: "ICGC",
-        styles: [
+          // *** ICGC ***
           { key: "icgc", label: "📍 ICGC" },
           { key: "icgc_mapa_base_fosc", label: "🌑 Base Fosca" },
-          //   { key: "icgc_ombra_hipsometria_corbes", label: "⛰️ Hipsometría" },
-          //   { key: "icgc_ombra_fosca", label: "🏔️ Ombra Fosca" },
-          //   { key: "icgc_orto_estandard", label: "🛰️ Orto Estándar" },
+          // { key: "icgc_ombra_hipsometria_corbes", label: "⛰️ Hipsometría" },
+          // { key: "icgc_ombra_fosca", label: "🏔️ Ombra Fosca" },
+          // { key: "icgc_orto_estandard", label: "🛰️ Orto Estándar" },
           { key: "icgc_orto_estandard_gris", label: "⚫ Orto Gris" },
           { key: "icgc_orto_hibrida", label: "🗺️ Orto Híbrida" },
-          //   { key: "icgc_geologic_riscos", label: "🪨 Geológico" },
+          // { key: "icgc_geologic_riscos", label: "🪨 Geológico" },
         ],
       },
     ],
