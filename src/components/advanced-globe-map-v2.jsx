@@ -3,6 +3,7 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 import Map, { GeolocateControl, Layer, NavigationControl, Source } from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
+import DatePicker from "./date-picker";
 import Legend from "./legend";
 
 // ==================== DEFINICIÓN DE CAPAS Y SELECTOR ====================
@@ -38,6 +39,24 @@ const AVAILABLE_LAYERS = [
       gradient: "linear-gradient(to right, #000080, #0000FF, #00FFFF, #FFFF00, #FF0000, #800000)",
       labels: ["Frío", "Cálido"],
     },
+  },
+  {
+    id: "soilMoisture",
+    label: "Humedad del Suelo",
+    urlTemplate: (date) =>
+      `https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/SMAP_L3_SM_P_E_Soil_Moisture/default/${date}/GoogleMapsCompatible_Level6/{z}/{y}/{x}.png`,
+    legend: {
+      title: "Humedad del Suelo",
+      gradient: "linear-gradient(to right, #de7121, #f5f5f5, #2239c0)",
+      labels: ["Seco", "Húmedo"],
+    },
+  },
+  {
+    id: "fires",
+    label: "Incendios Activos",
+    urlTemplate: (date) =>
+      `https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/VIIRS_SNPP_Thermal_Anomalies_375m_Day/default/${date}/GoogleMapsCompatible_Level8/{z}/{y}/{x}.png`,
+    legend: null, // Los incendios son puntos, no necesitan una leyenda de gradiente
   },
 ];
 
@@ -421,6 +440,8 @@ const ControlPanel = ({
   onCityClick,
   activeLayers,
   onToggleLayer,
+  selectedDate,
+  onDateChange,
 }) => {
   const [isOpen, setIsOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
@@ -480,6 +501,8 @@ const ControlPanel = ({
           <h3 className="font-bold text-base mb-3 sticky top-0 bg-white pb-2">
             Controles del Globo
           </h3>
+
+          <DatePicker selectedDate={selectedDate} onDateChange={onDateChange} />
 
           <LayerSelector activeLayers={activeLayers} onToggleLayer={onToggleLayer} />
 
@@ -551,18 +574,22 @@ const AdvancedGlobeMapV2 = () => {
   const styleGroups = useStyleGroups();
   const { circleLayer, labelLayer } = useCityLayers();
 
-  const nasaDateString = useMemo(() => {
-    const date = new Date();
-    date.setDate(date.getDate() - 2);
-    return date.toISOString().split("T")[0];
-  }, []);
-
   const activeLegendsData = useMemo(() => {
     // Filtramos las capas para quedarnos con las que están activas Y tienen leyenda
     return AVAILABLE_LAYERS.filter((layer) => activeLayers[layer.id] && layer.legend).map(
       (layer) => layer.legend,
     ); // Creamos un array solo con los datos de la leyenda
   }, [activeLayers]);
+
+  const [selectedDate, setSelectedDate] = useState(() => {
+    const date = new Date();
+    date.setDate(date.getDate() - 2); // Estado inicial: hace 2 días
+    return date;
+  });
+
+  const nasaDateString = useMemo(() => {
+    return selectedDate.toISOString().split("T")[0];
+  }, [selectedDate]);
 
   const handleToggleLayer = useCallback((layerId) => {
     setActiveLayers((prev) => ({ ...prev, [layerId]: !prev[layerId] }));
@@ -638,6 +665,8 @@ const AdvancedGlobeMapV2 = () => {
           onCityClick={navigateToCity}
           activeLayers={activeLayers}
           onToggleLayer={handleToggleLayer}
+          selectedDate={selectedDate}
+          onDateChange={setSelectedDate}
         />
 
         <MapStatusInfo
