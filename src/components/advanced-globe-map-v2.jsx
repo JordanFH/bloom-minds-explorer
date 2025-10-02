@@ -3,6 +3,29 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 import Map, { GeolocateControl, Layer, NavigationControl, Source } from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
+import Legend from "./legend";
+
+// ==================== DEFINICIÓN DE CAPAS Y SELECTOR ====================
+const AVAILABLE_LAYERS = [
+  {
+    id: "ndvi",
+    label: "Índice de Vegetación (NDVI)",
+    urlTemplate: (date) =>
+      `https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/MODIS_Terra_NDVI_8Day/default/${date}/GoogleMapsCompatible_Level9/{z}/{y}/{x}.png`,
+  },
+  {
+    id: "trueColor",
+    label: "Color Real (Visible)",
+    urlTemplate: (date) =>
+      `https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/MODIS_Terra_CorrectedReflectance_TrueColor/default/${date}/GoogleMapsCompatible_Level9/{z}/{y}/{x}.jpg`,
+  },
+  {
+    id: "landTemp",
+    label: "Temperatura Superficial",
+    urlTemplate: (date) =>
+      `https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/VIIRS_SNPP_Land_Surface_Temp_Day/default/${date}/GoogleMapsCompatible_Level7/{z}/{y}/{x}.png`,
+  },
+];
 
 // ==================== HOOKS PERSONALIZADOS ====================
 
@@ -321,6 +344,25 @@ const ProjectionControls = ({ projection, onProjectionChange }) => {
   );
 };
 
+const LayerSelector = ({ activeLayers, onToggleLayer }) => (
+  <div className="mb-3 pb-3 border-b border-gray-200">
+    <p className="text-xs font-semibold mb-2 text-gray-700">Capas de Datos (NASA):</p>
+    <div className="space-y-2">
+      {AVAILABLE_LAYERS.map((layer) => (
+        <label key={layer.id} className="flex items-center cursor-pointer">
+          <input
+            type="checkbox"
+            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+            checked={activeLayers[layer.id] || false}
+            onChange={() => onToggleLayer(layer.id)}
+          />
+          <span className="ml-2 text-sm text-gray-800">{layer.label}</span>
+        </label>
+      ))}
+    </div>
+  </div>
+);
+
 // Componente de grupo de estilos
 const StyleGroup = ({ group, currentMapStyle, onStyleChange }) => {
   return (
@@ -374,6 +416,8 @@ const ControlPanel = ({
   onStyleChange,
   cities,
   onCityClick,
+  activeLayers,
+  onToggleLayer,
 }) => {
   const [isOpen, setIsOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
@@ -402,6 +446,7 @@ const ControlPanel = ({
       >
         {isOpen ? (
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <title>Close</title>
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -411,6 +456,7 @@ const ControlPanel = ({
           </svg>
         ) : (
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <title>Open</title>
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -431,6 +477,8 @@ const ControlPanel = ({
           <h3 className="font-bold text-base mb-3 sticky top-0 bg-white pb-2">
             Controles del Globo
           </h3>
+
+          <LayerSelector activeLayers={activeLayers} onToggleLayer={onToggleLayer} />
 
           <ProjectionControls projection={projection} onProjectionChange={onProjectionChange} />
 
@@ -484,38 +532,40 @@ const CitiesLayer = ({ citiesData, circleLayer, labelLayer }) => {
 const AdvancedGlobeMapV2 = () => {
   const mapRef = useRef();
   const [viewState, setViewState] = useState({
-    longitude: -74.5,
-    latitude: 40,
-    zoom: 2,
+    longitude: -78.5,
+    latitude: -7.1,
+    zoom: 4,
     pitch: 0,
     bearing: 0,
   });
   const [projection, setProjection] = useState("globe");
   const [currentMapStyle, setCurrentMapStyle] = useState("satellite");
+  const [activeLayers, setActiveLayers] = useState({ ndvi: true });
 
-  // Usar hooks personalizados
+  // Hooks personalizados
   const citiesData = useCitiesData();
   const mapStyles = useMapStyles();
   const styleGroups = useStyleGroups();
   const { circleLayer, labelLayer } = useCityLayers();
+
+  const nasaDateString = useMemo(() => {
+    const date = new Date();
+    date.setDate(date.getDate() - 2);
+    return date.toISOString().split("T")[0];
+  }, []);
+
+  const handleToggleLayer = useCallback((layerId) => {
+    setActiveLayers((prev) => ({ ...prev, [layerId]: !prev[layerId] }));
+  }, []);
 
   // Callbacks optimizados
   const getCurrentMapStyle = useCallback(() => {
     return mapStyles[currentMapStyle] || mapStyles.satellite;
   }, [currentMapStyle, mapStyles]);
 
-  const handleMove = useCallback((evt) => {
-    setViewState(evt.viewState);
-  }, []);
-
-  const handleProjectionChange = useCallback((newProjection) => {
-    setProjection(newProjection);
-  }, []);
-
-  const handleStyleChange = useCallback((styleKey) => {
-    setCurrentMapStyle(styleKey);
-  }, []);
-
+  const handleMove = useCallback((evt) => setViewState(evt.viewState), []);
+  const handleProjectionChange = useCallback((newProjection) => setProjection(newProjection), []);
+  const handleStyleChange = useCallback((styleKey) => setCurrentMapStyle(styleKey), []);
   const navigateToCity = useCallback((city) => {
     setViewState((prev) => ({
       ...prev,
@@ -544,6 +594,27 @@ const AdvancedGlobeMapV2 = () => {
       >
         <CitiesLayer citiesData={citiesData} circleLayer={circleLayer} labelLayer={labelLayer} />
 
+        {/* ===== RENDERIZADO DINÁMICO DE CAPAS DE LA NASA ===== */}
+        {AVAILABLE_LAYERS.map(
+          (layer) =>
+            activeLayers[layer.id] && (
+              <Source
+                key={`source-${layer.id}`}
+                id={`nasa-${layer.id}`}
+                type="raster"
+                tiles={[layer.urlTemplate(nasaDateString)]}
+                tileSize={256}
+              >
+                <Layer
+                  id={`layer-${layer.id}`}
+                  type="raster"
+                  source={`nasa-${layer.id}`}
+                  paint={{ "raster-opacity": 0.7 }}
+                />
+              </Source>
+            ),
+        )}
+
         <NavigationControl position="top-right" visualizePitch={true} />
         <GeolocateControl position="top-left" />
 
@@ -555,6 +626,8 @@ const AdvancedGlobeMapV2 = () => {
           onStyleChange={handleStyleChange}
           cities={citiesData.features}
           onCityClick={navigateToCity}
+          activeLayers={activeLayers}
+          onToggleLayer={handleToggleLayer}
         />
 
         <MapStatusInfo
@@ -564,6 +637,8 @@ const AdvancedGlobeMapV2 = () => {
           currentMapStyle={currentMapStyle}
         />
       </Map>
+
+      {activeLayers.ndvi && <Legend />}
     </div>
   );
 };
