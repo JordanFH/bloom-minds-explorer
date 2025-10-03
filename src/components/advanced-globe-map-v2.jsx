@@ -734,6 +734,9 @@ const AdvancedGlobeMapV2 = () => {
   const [currentMapStyle, setCurrentMapStyle] = useState("satellite");
   const [activeLayers, setActiveLayers] = useState({ ndvi: true });
   const [clickedInfo, setClickedInfo] = useState(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const isDraggingRef = useRef(false);
+  const abortControllerRef = useRef(null);
 
   // Hooks personalizados
   const citiesData = useCitiesData();
@@ -767,8 +770,7 @@ const AdvancedGlobeMapV2 = () => {
     return mapStyles[currentMapStyle] || mapStyles.satellite;
   }, [currentMapStyle, mapStyles]);
 
-  const fetchPowerData = async (lng, lat) => {
-    // Obtenemos el año de la fecha seleccionada para la consulta
+  const fetchPowerData = async (lng, lat, signal) => {
     const year = selectedDate.getFullYear();
     const startDate = `${year}0101`;
     const endDate = `${year}1231`;
@@ -780,27 +782,42 @@ const AdvancedGlobeMapV2 = () => {
     const apiUrl = `https://power.larc.nasa.gov/api/temporal/daily/point?parameters=${parameters}&community=RE&longitude=${lng}&latitude=${lat}&start=${startDate}&end=${endDate}&format=JSON`;
 
     try {
-      const response = await fetch(apiUrl);
-      if (!response.ok) {
-        throw new Error(`El servidor respondió con estado ${response.status}`);
-      }
+      // Pasamos la señal al fetch. Si se llama a abort(), esta promesa se rechazará.
+      const response = await fetch(apiUrl, { signal });
+      if (!response.ok) throw new Error(`El servidor respondió con estado ${response.status}`);
+
       const data = await response.json();
 
-      // Calculamos el promedio anual (esto es una simplificación)
       const temps = Object.values(data.properties.parameter.T2M);
       const precips = Object.values(data.properties.parameter.PRECTOTCORR);
-
       const avgTemp = temps.reduce((a, b) => a + b, 0) / temps.length;
       const avgPrecip = precips.reduce((a, b) => a + b, 0) / precips.length;
 
-      // Actualizamos el estado con los datos obtenidos
-      setClickedInfo((prev) => ({ ...prev, climateData: { temp: avgTemp, precip: avgPrecip } }));
+      setClickedInfo((prev) =>
+        prev ? { ...prev, climateData: { temp: avgTemp, precip: avgPrecip } } : null,
+      );
     } catch (error) {
+      if (error.name === "AbortError") {
+        console.log("Petición a la API cancelada por el usuario.");
+        return; // La operación fue cancelada, es un comportamiento esperado.
+      }
       console.error("Error al obtener datos de POWER API:", error);
-      setClickedInfo((prev) => ({ ...prev, climateData: { error: error.message } }));
+      setClickedInfo((prev) => (prev ? { ...prev, climateData: { error: error.message } } : null));
     }
   };
 
+  const handleDragStart = useCallback(() => {
+    setIsDragging(true);
+    isDraggingRef.current = true;
+  }, []);
+
+  const handleDragEnd = useCallback(() => {
+    setIsDragging(false);
+    // Usamos un pequeño delay para asegurar que el evento 'click' no se dispare
+    setTimeout(() => {
+      isDraggingRef.current = false;
+    }, 300);
+  }, []);
   const handleMove = useCallback((evt) => setViewState(evt.viewState), []);
   const handleProjectionChange = useCallback((newProjection) => setProjection(newProjection), []);
   const handleStyleChange = useCallback((styleKey) => setCurrentMapStyle(styleKey), []);
@@ -815,21 +832,37 @@ const AdvancedGlobeMapV2 = () => {
   }, []);
   const handleMapClick = useCallback(
     (event) => {
-      const { lngLat } = event;
-      const { lng, lat } = lngLat;
+      if (isDraggingRef.current) return;
 
-      // Guardamos la info del clic e iniciamos la carga de datos climáticos
+      // Si ya hay una petición en curso, la cancelamos antes de empezar una nueva.
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+
+      // Creamos un nuevo controlador para la nueva petición.
+      const controller = new AbortController();
+      abortControllerRef.current = controller;
+
+      const { lng, lat } = event.lngLat;
       setClickedInfo({
         lng,
         lat,
         climateData: { loading: true },
       });
 
-      // Llamamos a la función que contacta a la API POWER
-      fetchPowerData(lng, lat);
+      // Pasamos la señal del controlador a la función de fetch.
+      fetchPowerData(lng, lat, controller.signal);
     },
     [selectedDate],
   );
+
+  const handleClosePopup = useCallback(() => {
+    // Antes de cerrar, cancelamos cualquier petición de datos en curso.
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    setClickedInfo(null);
+  }, []);
 
   return (
     <div className="w-full h-screen relative map-with-starry-bg">
@@ -847,13 +880,15 @@ const AdvancedGlobeMapV2 = () => {
         renderWorldCopies={false}
         reuseMaps={true}
         onClick={handleMapClick}
-        cursor="crosshair"
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+        cursor={isDragging ? "grabbing" : "crosshair"}
       >
         {clickedInfo && (
           <Popup
             longitude={clickedInfo.lng}
             latitude={clickedInfo.lat}
-            onClose={() => setClickedInfo(null)}
+            onClose={handleClosePopup}
             closeOnClick={false}
             anchor="bottom"
             closeButton={false}
@@ -908,11 +943,11 @@ const AdvancedGlobeMapV2 = () => {
                   <div className="coordinates-grid">
                     <div className="coordinate-item">
                       <div className="coordinate-label">Longitud:</div>
-                      <div className="coordinate-value">{clickedInfo.lng.toFixed(6)}°</div>
+                      <div className="coordinate-value">{clickedInfo?.lng?.toFixed(6)}°</div>
                     </div>
                     <div className="coordinate-item">
                       <div className="coordinate-label">Latitud:</div>
-                      <div className="coordinate-value">{clickedInfo.lat.toFixed(6)}°</div>
+                      <div className="coordinate-value">{clickedInfo?.lat?.toFixed(6)}°</div>
                     </div>
                   </div>
                 </div>
