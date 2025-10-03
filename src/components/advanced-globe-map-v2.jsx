@@ -534,7 +534,7 @@ const ClimateChart = ({ data }) => {
 
 const LayerSelector = ({ activeLayers, onToggleLayer }) => (
   <div className="mb-3 pb-3 border-b border-gray-200">
-    <p className="text-xs font-semibold mb-2 text-gray-700">Capas de Datos (NASA):</p>
+    <p className="text-xs font-semibold mb-2 text-gray-700">Capas de Datos (NASA GIBS):</p>
     <div className="space-y-2">
       {AVAILABLE_LAYERS.map((layer) => (
         <label key={layer.id} className="flex items-center cursor-pointer">
