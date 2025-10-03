@@ -661,7 +661,7 @@ const ControlPanel = ({
       <div
         className={`absolute top-2.5 bg-white rounded-lg shadow-xl max-h-[90vh] overflow-y-auto w-64 z-10 transition-all duration-300 ${
           isOpen ? "translate-x-0 opacity-100" : "-translate-x-full opacity-0 pointer-events-none"
-        } ${isMobile ? "mt-14" : "mt-14 md:mt-0 md:ml-14"}`}
+        } ${isMobile ? "mt-20 ml-2.5" : "mt-14 md:mt-0 md:ml-14"}`}
       >
         <div className="p-4">
           <h3 className="font-bold text-base mb-3 sticky top-0 bg-white pb-2">
