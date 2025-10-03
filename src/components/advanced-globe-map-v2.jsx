@@ -888,7 +888,7 @@ const AdvancedGlobeMapV2 = () => {
               </div>
 
               {/* Contenido del popup */}
-              <div className="popup-content">
+              <div className="popup-content overflow-y-auto" style={{ maxHeight: "310px" }}>
                 {/* Coordenadas */}
                 <div className="bg-gray-50 rounded-lg p-3 mb-4 border border-gray-100">
                   <div className="flex items-center space-x-2 mb-3">
