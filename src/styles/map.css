@@ -89,3 +89,187 @@
     image-rendering: crisp-edges;
   }
 }
+
+/* ===== ESTILOS CORREGIDOS PARA EL POPUP ===== */
+
+/* Estilos base del popup - CORREGIDOS */
+.maplibregl-popup .maplibregl-popup-content {
+  padding: 0 !important;
+  border-radius: 12px !important;
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+  border: 1px solid #e5e7eb !important;
+  background: white !important;
+  max-width: none !important;
+  min-width: 320px !important; /* Ancho mínimo */
+  width: auto !important; /* Permite que se ajuste al contenido */
+  overflow: visible !important; /* Asegura que todo el contenido sea visible */
+}
+
+/* Asegurar que el popup se ajuste al contenido */
+.maplibregl-popup {
+  max-width: none !important;
+  animation: popupFadeIn 0.3s ease-out;
+}
+
+/* Contenedor del popup mejorado */
+.popup-container {
+  width: 320px !important;
+  max-width: 90vw !important;
+  min-width: 280px !important;
+  box-sizing: border-box !important;
+}
+
+/* Estilos para la flecha del popup */
+.maplibregl-popup .maplibregl-popup-tip {
+  border-top-color: #2563eb !important;
+  border-bottom-color: #2563eb !important;
+}
+
+.maplibregl-popup-anchor-bottom .maplibregl-popup-tip {
+  border-top-color: #2563eb !important;
+}
+
+.maplibregl-popup-anchor-top .maplibregl-popup-tip {
+  border-bottom-color: #2563eb !important;
+}
+
+.maplibregl-popup-anchor-left .maplibregl-popup-tip {
+  border-right-color: #2563eb !important;
+}
+
+.maplibregl-popup-anchor-right .maplibregl-popup-tip {
+  border-left-color: #2563eb !important;
+}
+
+/* Animación de entrada para el popup */
+@keyframes popupFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Animación suave para las barras de progreso */
+.climate-progress-bar {
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Efecto hover para el botón de cerrar */
+.popup-close-btn {
+  transition: all 0.2s ease-in-out;
+}
+
+.popup-close-btn:hover {
+  transform: scale(1.1);
+  background-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Sombra suave para las tarjetas de datos climáticos */
+.climate-data-card {
+  box-shadow:
+    0 1px 3px 0 rgba(0, 0, 0, 0.1),
+    0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease-in-out;
+}
+
+.climate-data-card:hover {
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transform: translateY(-1px);
+}
+
+/* Mejoras visuales para los iconos SVG */
+.popup-icon {
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+}
+
+/* Estilo para el spinner de carga */
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Grid para coordenadas mejorado */
+.coordinates-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  width: 100%;
+}
+
+.coordinate-item {
+  text-align: left;
+}
+
+.coordinate-label {
+  font-size: 0.75rem;
+  color: #6b7280;
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+
+.coordinate-value {
+  font-family: "Monaco", "Menlo", "Ubuntu Mono", monospace;
+  font-size: 0.875rem;
+  color: #1f2937;
+  font-weight: 600;
+}
+
+/* Responsive design mejorado */
+@media (max-width: 768px) {
+  .maplibregl-popup .maplibregl-popup-content {
+    max-width: calc(100vw - 40px) !important;
+    min-width: 280px !important;
+  }
+
+  .popup-container {
+    width: calc(100vw - 40px) !important;
+    max-width: 340px !important;
+    min-width: 280px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .maplibregl-popup .maplibregl-popup-content {
+    max-width: calc(100vw - 20px) !important;
+    min-width: 260px !important;
+  }
+
+  .popup-container {
+    width: calc(100vw - 20px) !important;
+    max-width: 300px !important;
+    min-width: 260px !important;
+  }
+
+  .coordinates-grid {
+    gap: 8px;
+  }
+}
+
+/* Mejoras adicionales para el contenido */
+.popup-header {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  padding: 12px 16px;
+}
+
+.popup-content {
+  padding: 16px;
+}
+
+.popup-footer {
+  background-color: #f9fafb;
+  padding: 8px 16px;
+  border-top: 1px solid #e5e7eb;
+}
