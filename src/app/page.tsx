@@ -1,17 +1,32 @@
 import { Database, Globe, Leaf, Satellite, TrendingUp, Users } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
 export default function Home() {
   return (
-    <div className="min-h-screen">
+    <div
+      className="min-h-screen"
+      style={{
+        backgroundImage: 'url("/bg-2.png")',
+        backgroundRepeat: "repeat",
+        backgroundSize: "auto", // o el tamaño que prefieras
+      }}
+    >
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 border-b border-border/40 backdrop-blur-lg bg-background/80">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <img src="/logo.png" alt="Bloom Minds Logo" className="w-10 h-10" />
-            <span className="text-xl font-bold">
+            <Image
+              src="/logo.png"
+              alt="Bloom Minds Logo"
+              className="w-10 h-10"
+              width={100}
+              height={100}
+            />
+            <span className="text-xl fon  t-bold">
               Bloom <span className="text-primary">Minds</span> Explorer
             </span>
           </div>
@@ -29,9 +44,11 @@ export default function Home() {
               Team
             </a>
           </nav>
-          <Button size="sm" className="hidden md:inline-flex">
-            Try Explorer
-          </Button>
+          <Link href={"/explore"}>
+            <Button size="sm" className="hidden md:inline-flex">
+              Try Explorer
+            </Button>
+          </Link>
         </div>
       </header>
 
@@ -57,10 +74,12 @@ export default function Home() {
               detects plant blooming events around the globe
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="text-lg px-8">
-                <Globe className="w-5 h-5 mr-2" />
-                Explore the Globe
-              </Button>
+              <Link href={"/explore"}>
+                <Button size="lg" className="text-lg px-8">
+                  <Globe className="w-5 h-5 mr-2" />
+                  Explore the Globe
+                </Button>
+              </Link>
               <Button
                 size="lg"
                 variant="outline"
