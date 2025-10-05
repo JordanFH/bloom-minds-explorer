@@ -5,6 +5,7 @@ import { Card } from "../ui/card";
 export default function ProductShowcase() {
   return (
     <section className="py-20 bg-gradient-to-br from-gray/5 via-gray/5 to-background relative overflow-hidden">
+      {/* === Background Glows === */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute top-10 left-20 w-40 h-40 bg-primary rounded-full blur-3xl animate-pulse" />
         <div className="absolute bottom-10 right-20 w-48 h-48 bg-accent rounded-full blur-3xl animate-pulse delay-500" />
@@ -13,8 +14,8 @@ export default function ProductShowcase() {
 
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-6xl mx-auto">
+          {/* === Title === */}
           <div className="text-center mb-12">
-            {/* className="mb-4 bg-primary/20 text-primary border-primary/30" */}
             <Badge variant="secondary" className="mb-4">
               <Globe className="w-3 h-3 mr-1" />
               Interactive Platform
@@ -25,14 +26,15 @@ export default function ProductShowcase() {
                 Explorer
               </span>
             </h2>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto text-pretty">
+            <p className="text-xl text-black max-w-3xl mx-auto text-pretty">
               An interactive 3D visualization platform that leverages NASA GIBS data
               to track vegetation changes and flowering events in real-time
             </p>
           </div>
 
-          <div className="relative">
-            <div className="rounded-2xl overflow-hidden shadow-2xl shadow-primary/20 border border-primary/20 bg-card w-[80%] ml-12 flex">
+          {/* === Main Image with Cards === */}
+          <div className="relative flex justify-center">
+            <div className="rounded-2xl overflow-hidden shadow-2xl shadow-primary/20 border border-primary/20 bg-card w-[65%]">
               <img
                 src="/explore.png"
                 alt="Bloom Minds Explorer Interface"
@@ -40,8 +42,10 @@ export default function ProductShowcase() {
               />
             </div>
 
+            {/* === Floating Info Cards === */}
             <div className="hidden lg:block">
-              <div className="absolute left-4 top-1/4 transform -translate-x-full">
+              {/* Top Left */}
+              <div className="absolute left-28 top-1/4 transform -translate-x-full">
                 <Card className="p-4 bg-card border-primary/30 shadow-lg max-w-xs">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
@@ -55,7 +59,8 @@ export default function ProductShowcase() {
                 </Card>
               </div>
 
-              <div className="absolute right-32 top-1/3 transform translate-x-full">
+              {/* Top Right */}
+              <div className="absolute right-28 top-1/4 transform translate-x-full">
                 <Card className="p-4 bg-card border-accent/30 shadow-lg max-w-xs">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0">
@@ -69,7 +74,8 @@ export default function ProductShowcase() {
                 </Card>
               </div>
 
-              <div className="absolute left-4 bottom-1/4 transform -translate-x-full">
+              {/* Bottom Left */}
+              <div className="absolute left-28 bottom-1/4 transform -translate-x-full">
                 <Card className="p-4 bg-card border-primary/30 shadow-lg max-w-xs">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
@@ -83,7 +89,8 @@ export default function ProductShowcase() {
                 </Card>
               </div>
 
-              <div className="absolute right-32 bottom-1/3 transform translate-x-full">
+              {/* Bottom Right */}
+              <div className="absolute right-28 bottom-1/4 transform translate-x-full">
                 <Card className="p-4 bg-card border-accent/30 shadow-lg max-w-xs">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0">
@@ -99,6 +106,7 @@ export default function ProductShowcase() {
             </div>
           </div>
 
+          {/* === Stats Row === */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-12 max-w-4xl mx-auto">
             <div className="text-center">
               <div className="text-3xl md:text-4xl font-bold text-primary mb-2">3D</div>
