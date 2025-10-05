@@ -12,9 +12,9 @@ export function ButtonOpenExplorer({ type = "default" }: Props) {
       <Link href={"/explore"}>
         <Button
           size="sm"
-          className="hidden md:inline-flex bg-white hover:bg-lime-600/90 hover:text-white transition-all duration-300"
+          className="hidden md:inline-flex bg-white text-green-800 hover:bg-yellow-500 hover:text-white transition-all duration-300"
         >
-          Try Explorer
+          ir al explorador
         </Button>
       </Link>
     );
