@@ -37,7 +37,7 @@ const DatePicker = ({ selectedDate, onDateChange }) => {
 
   return (
     <div className="mb-3 pb-3 border-b border-gray-200">
-      <p className="text-xs font-semibold mb-2 text-gray-700">Fecha de Visualización:</p>
+      <p className="text-xs font-semibold mb-2 text-gray-700">Viewing Date:</p>
       <input
         type="date"
         className="w-full p-2 border border-gray-300 rounded-md text-sm"
