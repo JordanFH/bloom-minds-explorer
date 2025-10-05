@@ -20,34 +20,31 @@ import { clasificarNDVI, clasificarNDVIColor, getFirstDayOfMonthFormatted, getLa
 const AVAILABLE_LAYERS = [
   {
     id: "ndvi",
-    label: "Índice de Vegetación (NDVI)",
+    label: "Vegetation Index (NDVI)",
     urlTemplate: (date) =>
       `https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/MODIS_Terra_NDVI_8Day/default/${date}/GoogleMapsCompatible_Level9/{z}/{y}/{x}.png`,
-    // --- NUEVO: Información de la leyenda ---
     legend: {
-      title: "Índice de Vegetación (NDVI)",
+      title: "Vegetation Index (NDVI)",
       gradient: "linear-gradient(to right, #CEB595, #F2EEA6, #A9D9A2, #6BC483, #2D9C58, #006C2D)",
-      labels: ["Menos vegetación", "Más vegetación"],
+      labels: ["Less vegetation", "More vegetation"],
     },
   },
   {
     id: "trueColor",
-    label: "Color Real (Visible)",
+    label: "True Color (Visible)",
     urlTemplate: (date) =>
       `https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/MODIS_Terra_CorrectedReflectance_TrueColor/default/${date}/GoogleMapsCompatible_Level9/{z}/{y}/{x}.jpg`,
-    // --- NUEVO: Sin leyenda para esta capa ---
     legend: null,
   },
   {
     id: "landTemp",
-    label: "Temperatura Superficial",
+    label: "Land Surface Temperature",
     urlTemplate: (date) =>
       `https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/VIIRS_SNPP_Land_Surface_Temp_Day/default/${date}/GoogleMapsCompatible_Level7/{z}/{y}/{x}.png`,
-    // --- NUEVO: Leyenda para la temperatura ---
     legend: {
-      title: "Temperatura Superficial (Día)",
+      title: "Land Surface Temperature (Day)",
       gradient: "linear-gradient(to right, #000080, #0000FF, #00FFFF, #FFFF00, #FF0000, #800000)",
-      labels: ["Frío", "Cálido"],
+      labels: ["Cold", "Warm"],
     },
   },
 ];
@@ -244,32 +241,23 @@ const useStyleGroups = () => {
   return useMemo(
     () => [
       {
-        name: "Estilos de Mapa",
+        name: "Map styles",
         styles: [
           // *** Base ***
-          { key: "satellite", label: "🛰️ Satélite" },
-          { key: "terrain", label: "🏔️ Terreno" },
-          { key: "street", label: "🛣️ Calles" },
+          { key: "satellite", label: "🛰️ Satellite" },
+          { key: "terrain", label: "🏔️ Terrain" },
+          { key: "street", label: "🛣️ Streets" },
           { key: "vector", label: "🗺️ Vector" },
-          // *** OpenStreetMap ***
-          // { key: "openStreetMap", label: "🌍 OSM" },
-          // { key: "arcgis_hybrid", label: "🗺️ ArcGIS Hybrid" },
-          // *** CartoCDN ***
           { key: "positron", label: "☀️ Positron" },
-          { key: "positronNoLabels", label: "☀️ Positron Sin Etiquetas" },
+          { key: "positronNoLabels", label: "☀️ Positron No Labels" },
           { key: "darkMatter", label: "🌙 Dark Matter" },
-          { key: "darkMatterNoLabels", label: "🌙 Dark Matter Sin Etiquetas" },
+          { key: "darkMatterNoLabels", label: "🌙 Dark Matter No Labels" },
           { key: "voyager", label: "⛵ Voyager" },
-          { key: "voyagerNoLabels", label: "⛵ Voyager Sin Etiquetas" },
-          // *** ICGC ***
+          { key: "voyagerNoLabels", label: "⛵ Voyager No Labels" },
           { key: "icgc", label: "📍 ICGC" },
-          { key: "icgc_mapa_base_fosc", label: "🌑 Base Fosca" },
-          // { key: "icgc_ombra_hipsometria_corbes", label: "⛰️ Hipsometría" },
-          // { key: "icgc_ombra_fosca", label: "🏔️ Ombra Fosca" },
-          // { key: "icgc_orto_estandard", label: "🛰️ Orto Estándar" },
-          { key: "icgc_orto_estandard_gris", label: "⚫ Orto Gris" },
-          { key: "icgc_orto_hibrida", label: "🗺️ Orto Híbrida" },
-          // { key: "icgc_geologic_riscos", label: "🪨 Geológico" },
+          { key: "icgc_mapa_base_fosc", label: "🌑 Dark Base" },
+          { key: "icgc_orto_estandard_gris", label: "⚫ Gray Ortho" },
+          { key: "icgc_orto_hibrida", label: "🗺️ Hybrid Ortho" },
         ],
       },
     ],
@@ -331,7 +319,7 @@ const useCityLayers = () => {
 const ProjectionControls = ({ projection, onProjectionChange }) => {
   return (
     <div className="mb-3">
-      <p className="text-xs font-semibold mb-2 text-gray-700">Proyección:</p>
+      <p className="text-xs font-semibold mb-2 text-gray-700">Proyection:</p>
       <div className="flex gap-2">
         <button
           onClick={() => onProjectionChange("globe")}
@@ -340,7 +328,7 @@ const ProjectionControls = ({ projection, onProjectionChange }) => {
             : "bg-gray-100 text-gray-700 hover:bg-gray-200"
             }`}
         >
-          🌍 Globo
+          🌍 Globe
         </button>
         <button
           onClick={() => onProjectionChange("mercator")}
@@ -349,7 +337,7 @@ const ProjectionControls = ({ projection, onProjectionChange }) => {
             : "bg-gray-100 text-gray-700 hover:bg-gray-200"
             }`}
         >
-          🗺️ Plano
+          🗺️ flat
         </button>
       </div>
     </div>
@@ -362,7 +350,7 @@ const ClimateChart = ({ data, dataCoordenadas }) => {
       <div className="flex items-center justify-center py-8">
         <div className="flex items-center space-x-3">
           <div className="animate-spin rounded-full h-6 w-6 border-2 border-blue-500 border-t-transparent"></div>
-          <span className="text-sm text-gray-600 font-medium">Cargando datos climáticos...</span>
+          <span className="text-sm text-gray-600 font-medium">Loading climate data ...</span>
         </div>
       </div>
     );
@@ -384,7 +372,7 @@ const ClimateChart = ({ data, dataCoordenadas }) => {
             />
           </svg>
           <div>
-            <span className="text-sm text-red-700 font-medium block">Error al cargar datos</span>
+            <span className="text-sm text-red-700 font-medium block">Error loading data</span>
             <p className="text-xs text-red-600 mt-1">{data.error}</p>
           </div>
         </div>
@@ -408,7 +396,7 @@ const ClimateChart = ({ data, dataCoordenadas }) => {
             d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
           />
         </svg>
-        <p className="text-sm text-gray-600">No hay datos climáticos disponibles</p>
+        <p className="text-sm text-gray-600">No climate data available</p>
       </div>
     );
   }
@@ -441,7 +429,7 @@ const ClimateChart = ({ data, dataCoordenadas }) => {
             clipRule="evenodd"
           />
         </svg>
-        <h4 className="font-bold text-gray-800 text-base">Datos Climáticos Anuales</h4>
+        <h4 className="font-bold text-gray-800 text-base">Annual Climate Data</h4>
       </div>
 
       {/* Tarjeta de temperatura */}
@@ -460,7 +448,7 @@ const ClimateChart = ({ data, dataCoordenadas }) => {
                   clipRule="evenodd"
                 />
               </svg>
-              <span className="font-semibold text-gray-700 text-sm">Temperatura Promedio</span>
+              <span className="font-semibold text-gray-700 text-sm">Average Temperature</span>
             </div>
             <span className="text-xl font-bold text-gray-800">{data.temp.toFixed(1)}°C</span>
           </div>
@@ -472,8 +460,8 @@ const ClimateChart = ({ data, dataCoordenadas }) => {
               ></div>
             </div>
             <div className="flex justify-between text-xs text-gray-500 mt-2">
-              <span>Frío</span>
-              <span>Cálido</span>
+              <span>Cold</span>
+              <span>Warm</span>
             </div>
           </div>
         </div>
@@ -495,9 +483,9 @@ const ClimateChart = ({ data, dataCoordenadas }) => {
                   clipRule="evenodd"
                 />
               </svg>
-              <span className="font-semibold text-gray-700 text-sm">Precipitación Promedio</span>
+              <span className="font-semibold text-gray-700 text-sm">Average Precipitation</span>
             </div>
-            <span className="text-xl font-bold text-gray-800">{data.precip.toFixed(2)} mm/día</span>
+            <span className="text-xl font-bold text-gray-800">{data.precip.toFixed(2)} mm/day</span>
           </div>
           <div className="relative">
             <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden shadow-inner">
@@ -507,8 +495,8 @@ const ClimateChart = ({ data, dataCoordenadas }) => {
               ></div>
             </div>
             <div className="flex justify-between text-xs text-gray-500 mt-2">
-              <span>Seco</span>
-              <span>Húmedo</span>
+              <span>Dry</span>
+              <span>Wet</span>
             </div>
           </div>
         </div>
@@ -517,7 +505,7 @@ const ClimateChart = ({ data, dataCoordenadas }) => {
       {/* Footer con información de la fuente */}
       <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200">
         <div className="flex items-center space-x-2 mb-4">
-          <h4 className="font-bold text-gray-800">Historial Reciente</h4>
+          <h4 className="font-bold text-gray-800">Recent History</h4>
         </div>
 
         <div className="space-y-2">
@@ -526,7 +514,7 @@ const ClimateChart = ({ data, dataCoordenadas }) => {
           </pre>
           {dataCoordenadas === null ? (
             <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 text-center">
-              <p className="text-sm text-gray-600">No hay datos disponibles para el mes seleccionado</p>
+              <p className="text-sm text-gray-600">No data available for the selected month</p>
             </div>
           ) : (
             dataCoordenadas?.serie_temporal_ndvi.map((item, index) => {
@@ -557,7 +545,7 @@ const ClimateChart = ({ data, dataCoordenadas }) => {
 
 const LayerSelector = ({ activeLayers, onToggleLayer }) => (
   <div className="mb-3 pb-3 border-b border-gray-200">
-    <p className="text-xs font-semibold mb-2 text-gray-700">Capas de Datos (NASA GIBS):</p>
+    <p className="text-xs font-semibold mb-2 text-gray-700">Data Layers (NASA GIBS):</p>
     <div className="space-y-2">
       {AVAILABLE_LAYERS.map((layer) => (
         <label key={layer.id} className="flex items-center cursor-pointer">
@@ -601,7 +589,7 @@ const StyleGroup = ({ group, currentMapStyle, onStyleChange }) => {
 const CityNavigation = ({ cities, onCityClick }) => {
   return (
     <div className="border-t border-gray-200">
-      <p className="text-xs font-semibold mb-2 text-gray-700">Ir a ciudad:</p>
+      <p className="text-xs font-semibold mb-2 text-gray-700">go to city:</p>
       <div className="grid grid-cols-2 gap-1">
         {cities.map((city) => (
           <button
@@ -686,7 +674,7 @@ const ControlPanel = ({
       >
         <div className="p-4">
           <h3 className="font-bold text-base mb-3 sticky top-0 bg-white pb-2">
-            Controles del Globo
+            Globe controls
           </h3>
 
           <DatePicker selectedDate={selectedDate} onDateChange={onDateChange} />
@@ -953,7 +941,7 @@ const AdvancedGlobeMapV2 = () => {
                       clipRule="evenodd"
                     />
                   </svg>
-                  <h3 className="text-white font-semibold text-sm">Información Climática</h3>
+                  <h3 className="text-white font-semibold text-sm">Climate Information</h3>
                 </div>
                 <button
                   onClick={() => setClickedInfo(null)}
@@ -986,15 +974,15 @@ const AdvancedGlobeMapV2 = () => {
                         clipRule="evenodd"
                       />
                     </svg>
-                    <span className="font-semibold text-gray-700 text-sm">Coordenadas</span>
+                    <span className="font-semibold text-gray-700 text-sm">Coordinates</span>
                   </div>
                   <div className="coordinates-grid">
                     <div className="coordinate-item">
-                      <div className="coordinate-label">Longitud:</div>
+                      <div className="coordinate-label">Longitude: </div>
                       <div className="coordinate-value">{clickedInfo?.lng?.toFixed(6)}°</div>
                     </div>
                     <div className="coordinate-item">
-                      <div className="coordinate-label">Latitud:</div>
+                      <div className="coordinate-label">Latitude: </div>
                       <div className="coordinate-value">{clickedInfo?.lat?.toFixed(6)}°</div>
                     </div>
                   </div>
@@ -1007,7 +995,7 @@ const AdvancedGlobeMapV2 = () => {
               {/* Footer */}
               <div className="popup-footer bg-gray-50 px-4 py-2 border-t border-gray-100">
                 <p className="text-xs text-gray-500 text-center">
-                  Haz clic en cualquier punto del mapa para obtener datos climáticos
+                  Click anywhere on the map for weather data.
                 </p>
               </div>
             </div>
