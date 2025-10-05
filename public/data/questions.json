@@ -1,0 +1,315 @@
+{
+	"subjects": [
+		{
+			"name": "Fenología y Floración",
+			"image": "/images/flower.jpg",
+			"questions": [
+				{
+					"question": "¿Qué es la fenología en plantas?",
+					"options": [
+						"El estudio del suelo y los nutrientes",
+						"El proceso de fotosíntesis",
+						"El estudio de los ciclos de vida y su relación con el clima",
+						"El tipo de floración en especies tropicales"
+					],
+					"answer": "El estudio de los ciclos de vida y su relación con el clima"
+				},
+				{
+					"question": "¿Qué evento marca el inicio de la floración?",
+					"options": [
+						"La falta de agua",
+						"El aumento de las temperaturas y la luz solar",
+						"La caída de hojas",
+						"El cambio de color del tallo"
+					],
+					"answer": "El aumento de las temperaturas y la luz solar"
+				},
+				{
+					"question": "¿Cuál de las siguientes plantas florece en primavera?",
+					"options": ["Cactus del desierto", "Tulipán", "Bambú", "Pino"],
+					"answer": "Tulipán"
+				},
+				{
+					"question": "¿Qué polinizador es más común en plantas con flores brillantes?",
+					"options": ["Murciélagos", "Viento", "Abejas", "Peces"],
+					"answer": "Abejas"
+				},
+				{
+					"question": "¿Qué parte de la flor produce el polen?",
+					"options": ["Pistilo", "Pétalo", "Estambre", "Sépalo"],
+					"answer": "Estambre"
+				}
+			]
+		},
+		{
+			"name": "Ecología y Polinización",
+			"image": "/images/polinizacion.jpg",
+			"questions": [
+				{
+					"question": "¿Qué tipo de relación ecológica ocurre entre plantas y polinizadores?",
+					"options": [
+						"Parasitismo",
+						"Mutualismo",
+						"Competencia",
+						"Depredación"
+					],
+					"answer": "Mutualismo"
+				},
+				{
+					"question": "¿Cómo afecta el cambio climático a la floración?",
+					"options": [
+						"Hace que todas las plantas florezcan al mismo tiempo",
+						"Aumenta la cantidad de flores",
+						"Adelanta o retrasa las fechas de floración",
+						"No tiene ningún efecto"
+					],
+					"answer": "Adelanta o retrasa las fechas de floración"
+				},
+				{
+					"question": "¿Qué insecto es considerado el polinizador más importante del mundo?",
+					"options": [
+						"Mariposa monarca",
+						"Abeja melífera",
+						"Escarabajo de la flor",
+						"Mosca de la fruta"
+					],
+					"answer": "Abeja melífera"
+				},
+				{
+					"question": "¿Por qué es importante la polinización cruzada?",
+					"options": [
+						"Evita que las flores se marchiten",
+						"Hace que las flores sean más grandes",
+						"Aumenta la diversidad genética de las plantas",
+						"Reduce el uso de agua"
+					],
+					"answer": "Aumenta la diversidad genética de las plantas"
+				},
+				{
+					"question": "¿Qué ocurre si disminuyen los polinizadores?",
+					"options": [
+						"Aumenta la cantidad de flores",
+						"Los suelos se vuelven más fértiles",
+						"Se reduce la producción de frutas y semillas",
+						"Las plantas florecen más rápido"
+					],
+					"answer": "Se reduce la producción de frutas y semillas"
+				}
+			]
+		},
+		{
+			"name": "Observación Satelital",
+			"image": "/images/satellite.jpg",
+			"questions": [
+				{
+					"question": "¿Qué mide el NDVI (Índice de Vegetación de Diferencia Normalizada)?",
+					"options": [
+						"La cantidad de vegetación verde activa",
+						"La altura de las plantas",
+						"La humedad del aire",
+						"La temperatura del suelo"
+					],
+					"answer": "La cantidad de vegetación verde activa"
+				},
+				{
+					"question": "¿Qué satélite de la NASA se utiliza comúnmente para monitorear la vegetación?",
+					"options": [
+						"Hubble",
+						"MODIS (Terra/Aqua)",
+						"James Webb",
+						"Voyager 2"
+					],
+					"answer": "MODIS (Terra/Aqua)"
+				},
+				{
+					"question": "¿Qué tipo de datos se usa para detectar eventos de floración desde el espacio?",
+					"options": [
+						"Temperaturas atmosféricas",
+						"Índices espectrales y reflectancia de luz",
+						"Fotografías a color",
+						"Datos de GPS"
+					],
+					"answer": "Índices espectrales y reflectancia de luz"
+				},
+				{
+					"question": "¿Qué fenómeno puede confundirse con floración en imágenes satelitales?",
+					"options": [
+						"Nubes altas",
+						"Cambio de follaje o humedad",
+						"Actividad volcánica",
+						"Sombras del terreno"
+					],
+					"answer": "Cambio de follaje o humedad"
+				},
+				{
+					"question": "¿Por qué es importante monitorear la floración globalmente?",
+					"options": [
+						"Ayuda a entender los efectos del clima en la biodiversidad y agricultura",
+						"Permite reducir el uso de satélites",
+						"Evita incendios forestales",
+						"Sirve solo para fines educativos"
+					],
+					"answer": "Ayuda a entender los efectos del clima en la biodiversidad y agricultura"
+				}
+			]
+		},
+		{
+			"name": "Cambio Climático y Adaptación",
+			"image": "/images/climate.jpeg",
+			"questions": [
+				{
+					"question": "¿Cómo puede afectar el calentamiento global a la sincronía entre flores y polinizadores?",
+					"options": [
+						"Hace que florezcan y polinicen todo el año",
+						"Puede desfasar el momento en que florecen y el momento en que los polinizadores están activos",
+						"No afecta su relación",
+						"Aumenta la cantidad de flores por estación"
+					],
+					"answer": "Puede desfasar el momento en que florecen y el momento en que los polinizadores están activos"
+				},
+				{
+					"question": "¿Qué acciones pueden ayudar a mitigar los efectos del cambio climático en los ecosistemas florales?",
+					"options": [
+						"Deforestación controlada",
+						"Uso de pesticidas",
+						"Restauración de hábitats y reducción de emisiones",
+						"Aumento de cultivos monoculturales"
+					],
+					"answer": "Restauración de hábitats y reducción de emisiones"
+				},
+				{
+					"question": "¿Qué región del planeta es más sensible a los cambios en los patrones de floración?",
+					"options": [
+						"Las zonas árticas y alpinas",
+						"Las regiones urbanas",
+						"Las selvas tropicales",
+						"Las zonas desérticas"
+					],
+					"answer": "Las zonas árticas y alpinas"
+				},
+				{
+					"question": "¿Qué tipo de datos permite estudiar tendencias de floración a largo plazo?",
+					"options": [
+						"Series temporales satelitales",
+						"Encuestas agrícolas",
+						"Fotografías locales",
+						"Observaciones diarias de turistas"
+					],
+					"answer": "Series temporales satelitales"
+				},
+				{
+					"question": "¿Cómo contribuye la ciencia ciudadana al monitoreo de floración?",
+					"options": [
+						"Aporta observaciones locales que complementan los datos satelitales",
+						"No tiene impacto real en la investigación",
+						"Reemplaza los sensores de los satélites",
+						"Solo sirve como educación ambiental"
+					],
+					"answer": "Aporta observaciones locales que complementan los datos satelitales"
+				}
+			]
+		},
+		{
+			"name": "Diversidad de Plantas",
+			"image": "/images/forest.jpg",
+			"questions": [
+				{
+					"question": "¿Qué característica distingue a las plantas angiospermas?",
+					"options": [
+						"Producen flores y frutos con semillas",
+						"Son exclusivamente acuáticas",
+						"Se reproducen solo por esporas",
+						"Carecen de raíces verdaderas"
+					],
+					"answer": "Producen flores y frutos con semillas"
+				},
+				{
+					"question": "¿Cuál de las siguientes plantas es una gimnosperma?",
+					"options": ["Orquídea", "Pino", "Girasol", "Rosa"],
+					"answer": "Pino"
+				},
+				{
+					"question": "¿Qué función cumple la clorofila en las plantas?",
+					"options": [
+						"Dar color a los pétalos",
+						"Captar la energía solar para producir alimento",
+						"Transportar agua desde las raíces",
+						"Fijar nitrógeno en el suelo"
+					],
+					"answer": "Captar la energía solar para producir alimento"
+				},
+				{
+					"question": "¿Qué tipo de plantas crecen en ambientes extremadamente secos?",
+					"options": ["Epífitas", "Criptófitas", "Xerófitas", "Hidrófitas"],
+					"answer": "Xerófitas"
+				},
+				{
+					"question": "¿Por qué son importantes los bosques tropicales para el planeta?",
+					"options": [
+						"Albergan gran parte de la biodiversidad mundial",
+						"Generan tormentas tropicales",
+						"Aumentan la temperatura global",
+						"Reducen la luz solar que llega a la Tierra"
+					],
+					"answer": "Albergan gran parte de la biodiversidad mundial"
+				}
+			]
+		},
+		{
+			"name": "Tecnología y Exploración",
+			"image": "/images/innovation.webp",
+			"questions": [
+				{
+					"question": "¿Qué es la teledetección?",
+					"options": [
+						"El uso de sensores a distancia para observar la Tierra",
+						"El estudio directo de plantas en campo",
+						"Un método para medir temperatura del aire",
+						"La plantación automática de árboles"
+					],
+					"answer": "El uso de sensores a distancia para observar la Tierra"
+				},
+				{
+					"question": "¿Qué tipo de imágenes usan los científicos para analizar la vegetación?",
+					"options": [
+						"Fotografías turísticas",
+						"Imágenes multiespectrales y satelitales",
+						"Videos de drones recreativos",
+						"Mapas de carreteras"
+					],
+					"answer": "Imágenes multiespectrales y satelitales"
+				},
+				{
+					"question": "¿Qué herramienta permite procesar grandes volúmenes de datos ambientales?",
+					"options": [
+						"Microscopio óptico",
+						"Inteligencia artificial y aprendizaje automático",
+						"Software de edición fotográfica",
+						"Plataforma de redes sociales"
+					],
+					"answer": "Inteligencia artificial y aprendizaje automático"
+				},
+				{
+					"question": "¿Cómo contribuye la NASA al monitoreo de la vegetación?",
+					"options": [
+						"Proporciona datos globales de observación de la Tierra mediante satélites",
+						"Controla directamente los cultivos agrícolas",
+						"Envía sondas a estudiar semillas en el espacio",
+						"Financia jardines botánicos en todo el mundo"
+					],
+					"answer": "Proporciona datos globales de observación de la Tierra mediante satélites"
+				},
+				{
+					"question": "¿Qué beneficio tiene integrar datos satelitales con observaciones locales?",
+					"options": [
+						"Aumenta la velocidad de descarga de datos",
+						"Sustituye la necesidad de sensores",
+						"Mejora la precisión en la detección de floración y cambios estacionales",
+						"Permite eliminar la variabilidad climática"
+					],
+					"answer": "Mejora la precisión en la detección de floración y cambios estacionales"
+				}
+			]
+		}
+	]
+}
