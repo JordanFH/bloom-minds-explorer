@@ -14,6 +14,7 @@ import Map, {
 
 import DatePicker from "@/components/date-picker";
 import Legend from "@/components/legend";
+import { clasificarNDVI, clasificarNDVIColor, getFirstDayOfMonthFormatted, getLastDayOfMonthFormatted, getStartOfWeekFormatted, transformDate } from "@/utils/clasificador-ndvi";
 
 // ==================== DEFINICIÓN DE CAPAS Y SELECTOR ====================
 const AVAILABLE_LAYERS = [
@@ -334,21 +335,19 @@ const ProjectionControls = ({ projection, onProjectionChange }) => {
       <div className="flex gap-2">
         <button
           onClick={() => onProjectionChange("globe")}
-          className={`flex-1 px-3 py-2 text-xs rounded font-medium transition-all ${
-            projection === "globe"
-              ? "bg-blue-500 text-white shadow-md"
-              : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-          }`}
+          className={`flex-1 px-3 py-2 text-xs rounded font-medium transition-all ${projection === "globe"
+            ? "bg-blue-500 text-white shadow-md"
+            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+            }`}
         >
           🌍 Globo
         </button>
         <button
           onClick={() => onProjectionChange("mercator")}
-          className={`flex-1 px-3 py-2 text-xs rounded font-medium transition-all ${
-            projection === "mercator"
-              ? "bg-blue-500 text-white shadow-md"
-              : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-          }`}
+          className={`flex-1 px-3 py-2 text-xs rounded font-medium transition-all ${projection === "mercator"
+            ? "bg-blue-500 text-white shadow-md"
+            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+            }`}
         >
           🗺️ Plano
         </button>
@@ -357,7 +356,7 @@ const ProjectionControls = ({ projection, onProjectionChange }) => {
   );
 };
 
-const ClimateChart = ({ data }) => {
+const ClimateChart = ({ data, dataCoordenadas }) => {
   if (data.loading) {
     return (
       <div className="flex items-center justify-center py-8">
@@ -516,16 +515,40 @@ const ClimateChart = ({ data }) => {
       )}
 
       {/* Footer con información de la fuente */}
-      <div className="text-xs text-gray-500 text-center pt-3 border-t border-gray-100">
-        <div className="flex items-center justify-center space-x-1">
-          <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-            <path
-              fillRule="evenodd"
-              d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-              clipRule="evenodd"
-            />
-          </svg>
-          <span>Datos: NASA POWER API</span>
+      <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200">
+        <div className="flex items-center space-x-2 mb-4">
+          <h4 className="font-bold text-gray-800">Historial Reciente</h4>
+        </div>
+
+        <div className="space-y-2">
+          <pre>
+            {/* {JSON.stringify(dataCoordenadas, null, 2)} */}
+          </pre>
+          {dataCoordenadas === null ? (
+            <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 text-center">
+              <p className="text-sm text-gray-600">No hay datos disponibles para el mes seleccionado</p>
+            </div>
+          ) : (
+            dataCoordenadas?.serie_temporal_ndvi.map((item, index) => {
+              const classification = clasificarNDVI(item);
+              const itemClass = clasificarNDVIColor(item);
+              return (
+                <div
+                  key={index}
+                  className={`p-3 rounded-lg ${itemClass} border transition-all hover:scale-[1.02]`}
+                >
+                  <div className="flex items-center space-x-3">
+                    <span className="text-sm font-medium text-gray-700">{item.fecha}</span>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <span className="text-sm font-bold">
+                      {classification}
+                    </span>
+                  </div>
+                </div>
+              );
+            })
+          )}
         </div>
       </div>
     </div>
@@ -561,11 +584,10 @@ const StyleGroup = ({ group, currentMapStyle, onStyleChange }) => {
           <button
             key={style.key}
             onClick={() => onStyleChange(style.key)}
-            className={`px-2 py-1.5 text-xs rounded font-medium transition-all ${
-              currentMapStyle === style.key
-                ? "bg-blue-500 text-white shadow-md"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-            }`}
+            className={`px-2 py-1.5 text-xs rounded font-medium transition-all ${currentMapStyle === style.key
+              ? "bg-blue-500 text-white shadow-md"
+              : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              }`}
           >
             {style.label}
           </button>
@@ -659,9 +681,8 @@ const ControlPanel = ({
 
       {/* Panel de controles */}
       <div
-        className={`absolute top-2.5 bg-white rounded-lg shadow-xl max-h-[90vh] overflow-y-auto w-64 z-10 transition-all duration-300 ${
-          isOpen ? "translate-x-0 opacity-100" : "-translate-x-full opacity-0 pointer-events-none"
-        } ${isMobile ? "mt-20 ml-2.5" : "mt-14 md:mt-0 md:ml-14"}`}
+        className={`absolute top-2.5 bg-white rounded-lg shadow-xl max-h-[90vh] overflow-y-auto w-64 z-10 transition-all duration-300 ${isOpen ? "translate-x-0 opacity-100" : "-translate-x-full opacity-0 pointer-events-none"
+          } ${isMobile ? "mt-20 ml-2.5" : "mt-14 md:mt-0 md:ml-14"}`}
       >
         <div className="p-4">
           <h3 className="font-bold text-base mb-3 sticky top-0 bg-white pb-2">
@@ -734,6 +755,7 @@ const AdvancedGlobeMapV2 = () => {
   const [currentMapStyle, setCurrentMapStyle] = useState("satellite");
   const [activeLayers, setActiveLayers] = useState({ ndvi: true });
   const [clickedInfo, setClickedInfo] = useState(null);
+  const [dataCoordenadas, setDataCoordenadas] = useState(null)
   const [isDragging, setIsDragging] = useState(false);
   const isDraggingRef = useRef(false);
   const abortControllerRef = useRef(null);
@@ -852,9 +874,35 @@ const AdvancedGlobeMapV2 = () => {
 
       // Pasamos la señal del controlador a la función de fetch.
       fetchPowerData(lng, lat, controller.signal);
+      fetchCoordenadas(lng, lat, selectedDate)
     },
     [selectedDate],
   );
+
+  const fetchCoordenadas = async (long, lat, date) => {
+    try {
+      const res = await fetch(
+        `https://api-vegetacion-251796456893.us-central1.run.app/api/v1/patrones_vegetacion?lat=${lat}&lon=${long}&fecha_inicio=${getFirstDayOfMonthFormatted(date)}&fecha_fin=${getLastDayOfMonthFormatted(date)}`,
+        {
+          next: { revalidate: 3600 }, // Revalidar cada hora (3600 segundos)
+          // O usa: cache: 'no-store' para datos en tiempo real
+          // O usa: cache: 'force-cache' para cachear permanentemente
+        }
+      );
+
+      if (!res.ok) {
+        // throw new Error(`HTTP error! status: ${res.status}`);
+        console.log(res.status)
+        setDataCoordenadas(null)
+      } else {
+        const data = await res.json();
+        setDataCoordenadas(data || null)
+      }
+    } catch (error) {
+      console.error('Error al obtener coordenadas:', error);
+      throw error;
+    }
+  };
 
   const handleClosePopup = useCallback(() => {
     // Antes de cerrar, cancelamos cualquier petición de datos en curso.
@@ -953,7 +1001,7 @@ const AdvancedGlobeMapV2 = () => {
                 </div>
 
                 {/* Datos climáticos */}
-                <ClimateChart data={clickedInfo.climateData} />
+                <ClimateChart data={clickedInfo.climateData} dataCoordenadas={dataCoordenadas} />
               </div>
 
               {/* Footer */}

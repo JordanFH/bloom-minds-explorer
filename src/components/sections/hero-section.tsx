@@ -19,14 +19,15 @@ export default function HeroSection() {
             <MapPinMinusIcon className="w-4 h-4 mr-2" /> Cajamarca
           </Badge>
           <h1 className="text-5xl md:text-7xl font-bold mb-6 text-balance leading-tight">
-            NASA Space Apps Challenge 2025 ·
+            NASA Space Apps Challenge 2025
+            <br />
             <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
               BloomMinds
             </span>
           </h1>
           <p className="text-xl md:text-2xl text-muted-foreground mb-8 text-pretty leading-relaxed">
-            Vive una experiencia visual única con datos de la NASA: explora el planeta con{" "}
-            <b>Bloom Explorer</b> o aprende sobre floración y vegetación en los <b>Bloom Quiz.</b>
+            Experience a unique visual journey with NASA data: explore the planet with{" "}
+            <b>Bloom Explorer</b> or learn about flowering and vegetation in the <b>Bloom Quiz.</b>
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <ButtonOpenExplorer />

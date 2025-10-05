@@ -17,17 +17,17 @@ export default function ProductShowcase() {
             {/* className="mb-4 bg-primary/20 text-primary border-primary/30" */}
             <Badge variant="secondary" className="mb-4">
               <Globe className="w-3 h-3 mr-1" />
-              Plataforma Interactiva
+              Interactive Platform
             </Badge>
             <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              Bloom Minds
+              Bloom Minds{" "}
               <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                 Explorer
               </span>
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto text-pretty">
-              Una plataforma interactiva de visualización 3D que aprovecha los datos de NASA GIBS
-              para rastrear cambios en la vegetación y eventos de floración en tiempo real
+              An interactive 3D visualization platform that leverages NASA GIBS data
+              to track vegetation changes and flowering events in real-time
             </p>
           </div>
 

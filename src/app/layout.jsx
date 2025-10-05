@@ -12,7 +12,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "Home || Bloom Minds Explorer",
+  title: "Home || Bloom Minds",
   description: "Visualize and analyze satellite data for monitoring plant blooms.",
 };
 
