@@ -20,7 +20,7 @@ export default function ProductShowcase() {
               Plataforma Interactiva
             </Badge>
             <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              Bloom Minds{" "}
+              Bloom Minds
               <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                 Explorer
               </span>
@@ -32,16 +32,16 @@ export default function ProductShowcase() {
           </div>
 
           <div className="relative">
-            <div className="rounded-2xl overflow-hidden shadow-2xl shadow-primary/20 border border-primary/20 bg-card">
+            <div className="rounded-2xl overflow-hidden shadow-2xl shadow-primary/20 border border-primary/20 bg-card w-[80%] ml-12 flex">
               <img
-                src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-kRL1VVssgDE9YfXAdLE9mfHGQXNMd5.png"
+                src="/explore.png"
                 alt="Bloom Minds Explorer Interface"
-                className="w-full h-auto"
+                className="w-full h-auto m-auto"
               />
             </div>
 
             <div className="hidden lg:block">
-              <div className="absolute -left-4 top-1/4 transform -translate-x-full">
+              <div className="absolute left-4 top-1/4 transform -translate-x-full">
                 <Card className="p-4 bg-card border-primary/30 shadow-lg max-w-xs">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
@@ -55,7 +55,7 @@ export default function ProductShowcase() {
                 </Card>
               </div>
 
-              <div className="absolute -right-4 top-1/3 transform translate-x-full">
+              <div className="absolute right-32 top-1/3 transform translate-x-full">
                 <Card className="p-4 bg-card border-accent/30 shadow-lg max-w-xs">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0">
@@ -69,7 +69,7 @@ export default function ProductShowcase() {
                 </Card>
               </div>
 
-              <div className="absolute -left-4 bottom-1/4 transform -translate-x-full">
+              <div className="absolute left-4 bottom-1/4 transform -translate-x-full">
                 <Card className="p-4 bg-card border-primary/30 shadow-lg max-w-xs">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
@@ -83,7 +83,7 @@ export default function ProductShowcase() {
                 </Card>
               </div>
 
-              <div className="absolute -right-4 bottom-1/3 transform translate-x-full">
+              <div className="absolute right-32 bottom-1/3 transform translate-x-full">
                 <Card className="p-4 bg-card border-accent/30 shadow-lg max-w-xs">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0">

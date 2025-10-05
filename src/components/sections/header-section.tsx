@@ -13,8 +13,8 @@ export default function HeaderSection() {
             width={100}
             height={100}
           />
-          <span className="text-xl fon  t-bold">
-            Bloom <span className="text-primary">Minds</span> Explorer
+          <span className="text-xl font-bold">
+            Bloom <span className="text-primary">Minds</span>
           </span>
         </div>
         <nav className="hidden md:flex items-center gap-6">
