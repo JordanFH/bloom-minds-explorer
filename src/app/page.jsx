@@ -1,11 +1,10 @@
 import { Database, Globe, Leaf, Satellite, TrendingUp, Users } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
-import ButtonBloomQuiz from "../components/buttons/button-bloom-quiz";
-import { ButtonOpenExplorer } from "../components/buttons/open-explorer";
-import { Badge } from "../components/ui/badge";
-import { Button } from "../components/ui/button";
-import { Card } from "../components/ui/card";
+import ButtonBloomQuiz from "@/components/buttons/button-bloom-quiz";
+import { ButtonOpenExplorer } from "@/components/buttons/open-explorer";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 
 export default function Home() {
   return (

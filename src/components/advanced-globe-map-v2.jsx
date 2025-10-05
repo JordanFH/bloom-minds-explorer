@@ -12,8 +12,8 @@ import Map, {
   Source,
 } from "react-map-gl/maplibre";
 
-import DatePicker from "./date-picker";
-import Legend from "./legend";
+import DatePicker from "@/components/date-picker";
+import Legend from "@/components/legend";
 
 // ==================== DEFINICIÓN DE CAPAS Y SELECTOR ====================
 const AVAILABLE_LAYERS = [

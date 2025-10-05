@@ -1,6 +1,6 @@
 import { Globe } from "lucide-react";
 import Link from "next/link";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 
 interface Props {
   type?: "default" | "navbar";
