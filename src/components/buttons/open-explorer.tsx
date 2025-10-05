@@ -14,7 +14,7 @@ export function ButtonOpenExplorer({ type = "default" }: Props) {
           size="sm"
           className="hidden md:inline-flex bg-white text-green-800 hover:bg-yellow-500 hover:text-white transition-all duration-300"
         >
-          explorador
+          Explorer
         </Button>
       </Link>
     );
@@ -25,7 +25,7 @@ export function ButtonOpenExplorer({ type = "default" }: Props) {
         className="bg-white hover:bg-gray-100/80 transition-all duration-300 text-lg px-8"
       >
         <Globe className="w-5 h-5 mr-2" />
-        Abrir explorador
+        Open Explorer
       </Button>
     </Link>
   );

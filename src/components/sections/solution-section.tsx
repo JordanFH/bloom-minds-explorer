@@ -6,13 +6,13 @@ export default function SolutionSection() {
     <section id="solution" className="py-20 map-with-starry-bg">
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">Nuestra solución</h2>
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">Our Solution</h2>
           <p className="text-xl text-muted-foreground text-pretty">
-            <b>BloomMinds</b> presenta <b>Bloom Explorer</b>, una plataforma interactiva en 3D que
-            visualiza el globo terráqueo y aprovecha los datos <b>GIBS</b> de la <b>NASA</b> para
-            rastrear los cambios en la vegetación y los eventos de floración en tiempo casi real.
-            Además, contamos con <b>Bloom Quiz</b>, una experiencia educativa diseñada para aprender
-            sobre la vegetación, los ciclos de floración y la polinización de las plantas.
+            <b>BloomMinds</b> presents <b>Bloom Explorer</b>, an interactive 3D platform that
+            visualizes the globe and leverages <b>NASA's GIBS</b> data to track vegetation changes
+            and flowering events in near real-time. Additionally, we offer <b>Bloom Quiz</b>, an
+            educational experience designed to learn about vegetation, flowering cycles, and plant
+            pollination.
           </p>
         </div>
 
@@ -21,10 +21,9 @@ export default function SolutionSection() {
             <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
               <Satellite className="w-6 h-6 text-primary" />
             </div>
-            <h3 className="text-xl font-bold mb-3">Integración con GIBS de la NASA</h3>
+            <h3 className="text-xl font-bold mb-3">NASA GIBS Integration</h3>
             <p className="text-muted-foreground leading-relaxed">
-              Acceso en tiempo real a NDVI, temperatura superficial e imágenes satelitales en color
-              real
+              Real-time access to NDVI, surface temperature, and true-color satellite imagery
             </p>
           </Card>
 
@@ -32,9 +31,9 @@ export default function SolutionSection() {
             <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
               <Globe className="w-6 h-6 text-primary" />
             </div>
-            <h3 className="text-xl font-bold mb-3">Globo terráqueo 3D interactivo</h3>
+            <h3 className="text-xl font-bold mb-3">Interactive 3D Globe</h3>
             <p className="text-muted-foreground leading-relaxed">
-              Explora datos de vegetación con múltiples proyecciones y estilos de mapa.
+              Explore vegetation data with multiple projections and map styles.
             </p>
           </Card>
 
@@ -44,8 +43,8 @@ export default function SolutionSection() {
             </div>
             <h3 className="text-xl font-bold mb-3">Bloom Quiz</h3>
             <p className="text-muted-foreground leading-relaxed">
-              Descubre cómo la Tierra vive y respira con cada estación. Aprende sobre fenología,
-              polinización, cambio climático y biodiversidad mientras floreces con cada respuesta.
+              Discover how the Earth lives and breathes with each season. Learn about phenology,
+              pollination, climate change, and biodiversity as you bloom with every answer.
             </p>
           </Card>
         </div>

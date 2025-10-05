@@ -1,118 +1,118 @@
 {
 	"subjects": [
 		{
-			"name": "Fenología y Floración",
+			"name": "Phenology and Flowering",
 			"image": "/images/flower.jpg",
 			"questions": [
 				{
-					"question": "¿Qué es la fenología en plantas?",
+					"question": "What is phenology in plants?",
 					"options": [
-						"El estudio del suelo y los nutrientes",
-						"El proceso de fotosíntesis",
-						"El estudio de los ciclos de vida y su relación con el clima",
-						"El tipo de floración en especies tropicales"
+						"The study of soil and nutrients",
+						"The process of photosynthesis",
+						"The study of life cycles and their relationship with climate",
+						"The type of flowering in tropical species"
 					],
-					"answer": "El estudio de los ciclos de vida y su relación con el clima"
+					"answer": "The study of life cycles and their relationship with climate"
 				},
 				{
-					"question": "¿Qué evento marca el inicio de la floración?",
+					"question": "What event marks the beginning of flowering?",
 					"options": [
-						"La falta de agua",
-						"El aumento de las temperaturas y la luz solar",
-						"La caída de hojas",
-						"El cambio de color del tallo"
+						"Lack of water",
+						"Increased temperatures and sunlight",
+						"Leaf fall",
+						"Stem color change"
 					],
-					"answer": "El aumento de las temperaturas y la luz solar"
+					"answer": "Increased temperatures and sunlight"
 				},
 				{
-					"question": "¿Cuál de las siguientes plantas florece en primavera?",
-					"options": ["Cactus del desierto", "Tulipán", "Bambú", "Pino"],
-					"answer": "Tulipán"
+					"question": "Which of the following plants blooms in spring?",
+					"options": ["Desert cactus", "Tulip", "Bamboo", "Pine"],
+					"answer": "Tulip"
 				},
 				{
-					"question": "¿Qué polinizador es más común en plantas con flores brillantes?",
-					"options": ["Murciélagos", "Viento", "Abejas", "Peces"],
-					"answer": "Abejas"
+					"question": "What pollinator is most common in plants with bright flowers?",
+					"options": ["Bats", "Wind", "Bees", "Fish"],
+					"answer": "Bees"
 				},
 				{
-					"question": "¿Qué parte de la flor produce el polen?",
-					"options": ["Pistilo", "Pétalo", "Estambre", "Sépalo"],
-					"answer": "Estambre"
+					"question": "What part of the flower produces pollen?",
+					"options": ["Pistil", "Petal", "Stamen", "Sepal"],
+					"answer": "Stamen"
 				}
 			]
 		},
 		{
-			"name": "Ecología y Polinización",
+			"name": "Ecology and Pollination",
 			"image": "/images/polinizacion.jpg",
 			"questions": [
 				{
-					"question": "¿Qué tipo de relación ecológica ocurre entre plantas y polinizadores?",
+					"question": "What type of ecological relationship occurs between plants and pollinators?",
 					"options": [
-						"Parasitismo",
-						"Mutualismo",
-						"Competencia",
-						"Depredación"
+						"Parasitism",
+						"Mutualism",
+						"Competition",
+						"Predation"
 					],
-					"answer": "Mutualismo"
+					"answer": "Mutualism"
 				},
 				{
-					"question": "¿Cómo afecta el cambio climático a la floración?",
+					"question": "How does climate change affect flowering?",
 					"options": [
-						"Hace que todas las plantas florezcan al mismo tiempo",
-						"Aumenta la cantidad de flores",
-						"Adelanta o retrasa las fechas de floración",
-						"No tiene ningún efecto"
+						"Makes all plants bloom at the same time",
+						"Increases the amount of flowers",
+						"Advances or delays flowering dates",
+						"Has no effect"
 					],
-					"answer": "Adelanta o retrasa las fechas de floración"
+					"answer": "Advances or delays flowering dates"
 				},
 				{
-					"question": "¿Qué insecto es considerado el polinizador más importante del mundo?",
+					"question": "What insect is considered the world's most important pollinator?",
 					"options": [
-						"Mariposa monarca",
-						"Abeja melífera",
-						"Escarabajo de la flor",
-						"Mosca de la fruta"
+						"Monarch butterfly",
+						"Honey bee",
+						"Flower beetle",
+						"Fruit fly"
 					],
-					"answer": "Abeja melífera"
+					"answer": "Honey bee"
 				},
 				{
-					"question": "¿Por qué es importante la polinización cruzada?",
+					"question": "Why is cross-pollination important?",
 					"options": [
-						"Evita que las flores se marchiten",
-						"Hace que las flores sean más grandes",
-						"Aumenta la diversidad genética de las plantas",
-						"Reduce el uso de agua"
+						"Prevents flowers from wilting",
+						"Makes flowers larger",
+						"Increases plant genetic diversity",
+						"Reduces water use"
 					],
-					"answer": "Aumenta la diversidad genética de las plantas"
+					"answer": "Increases plant genetic diversity"
 				},
 				{
-					"question": "¿Qué ocurre si disminuyen los polinizadores?",
+					"question": "What happens if pollinators decline?",
 					"options": [
-						"Aumenta la cantidad de flores",
-						"Los suelos se vuelven más fértiles",
-						"Se reduce la producción de frutas y semillas",
-						"Las plantas florecen más rápido"
+						"The amount of flowers increases",
+						"Soils become more fertile",
+						"Fruit and seed production is reduced",
+						"Plants bloom faster"
 					],
-					"answer": "Se reduce la producción de frutas y semillas"
+					"answer": "Fruit and seed production is reduced"
 				}
 			]
 		},
 		{
-			"name": "Observación Satelital",
+			"name": "Satellite Observation",
 			"image": "/images/satellite.jpg",
 			"questions": [
 				{
-					"question": "¿Qué mide el NDVI (Índice de Vegetación de Diferencia Normalizada)?",
+					"question": "What does NDVI (Normalized Difference Vegetation Index) measure?",
 					"options": [
-						"La cantidad de vegetación verde activa",
-						"La altura de las plantas",
-						"La humedad del aire",
-						"La temperatura del suelo"
+						"The amount of active green vegetation",
+						"Plant height",
+						"Air humidity",
+						"Soil temperature"
 					],
-					"answer": "La cantidad de vegetación verde activa"
+					"answer": "The amount of active green vegetation"
 				},
 				{
-					"question": "¿Qué satélite de la NASA se utiliza comúnmente para monitorear la vegetación?",
+					"question": "What NASA satellite is commonly used to monitor vegetation?",
 					"options": [
 						"Hubble",
 						"MODIS (Terra/Aqua)",
@@ -122,192 +122,192 @@
 					"answer": "MODIS (Terra/Aqua)"
 				},
 				{
-					"question": "¿Qué tipo de datos se usa para detectar eventos de floración desde el espacio?",
+					"question": "What type of data is used to detect flowering events from space?",
 					"options": [
-						"Temperaturas atmosféricas",
-						"Índices espectrales y reflectancia de luz",
-						"Fotografías a color",
-						"Datos de GPS"
+						"Atmospheric temperatures",
+						"Spectral indices and light reflectance",
+						"Color photographs",
+						"GPS data"
 					],
-					"answer": "Índices espectrales y reflectancia de luz"
+					"answer": "Spectral indices and light reflectance"
 				},
 				{
-					"question": "¿Qué fenómeno puede confundirse con floración en imágenes satelitales?",
+					"question": "What phenomenon can be confused with flowering in satellite images?",
 					"options": [
-						"Nubes altas",
-						"Cambio de follaje o humedad",
-						"Actividad volcánica",
-						"Sombras del terreno"
+						"High clouds",
+						"Foliage or moisture changes",
+						"Volcanic activity",
+						"Terrain shadows"
 					],
-					"answer": "Cambio de follaje o humedad"
+					"answer": "Foliage or moisture changes"
 				},
 				{
-					"question": "¿Por qué es importante monitorear la floración globalmente?",
+					"question": "Why is it important to monitor flowering globally?",
 					"options": [
-						"Ayuda a entender los efectos del clima en la biodiversidad y agricultura",
-						"Permite reducir el uso de satélites",
-						"Evita incendios forestales",
-						"Sirve solo para fines educativos"
+						"Helps understand climate effects on biodiversity and agriculture",
+						"Allows reducing satellite use",
+						"Prevents forest fires",
+						"Serves only for educational purposes"
 					],
-					"answer": "Ayuda a entender los efectos del clima en la biodiversidad y agricultura"
+					"answer": "Helps understand climate effects on biodiversity and agriculture"
 				}
 			]
 		},
 		{
-			"name": "Cambio Climático y Adaptación",
+			"name": "Climate Change and Adaptation",
 			"image": "/images/climate.jpeg",
 			"questions": [
 				{
-					"question": "¿Cómo puede afectar el calentamiento global a la sincronía entre flores y polinizadores?",
+					"question": "How can global warming affect the synchrony between flowers and pollinators?",
 					"options": [
-						"Hace que florezcan y polinicen todo el año",
-						"Puede desfasar el momento en que florecen y el momento en que los polinizadores están activos",
-						"No afecta su relación",
-						"Aumenta la cantidad de flores por estación"
+						"Makes them bloom and pollinate year-round",
+						"Can mismatch the timing of flowering and when pollinators are active",
+						"Does not affect their relationship",
+						"Increases the amount of flowers per season"
 					],
-					"answer": "Puede desfasar el momento en que florecen y el momento en que los polinizadores están activos"
+					"answer": "Can mismatch the timing of flowering and when pollinators are active"
 				},
 				{
-					"question": "¿Qué acciones pueden ayudar a mitigar los efectos del cambio climático en los ecosistemas florales?",
+					"question": "What actions can help mitigate the effects of climate change on floral ecosystems?",
 					"options": [
-						"Deforestación controlada",
-						"Uso de pesticidas",
-						"Restauración de hábitats y reducción de emisiones",
-						"Aumento de cultivos monoculturales"
+						"Controlled deforestation",
+						"Use of pesticides",
+						"Habitat restoration and emissions reduction",
+						"Increased monoculture crops"
 					],
-					"answer": "Restauración de hábitats y reducción de emisiones"
+					"answer": "Habitat restoration and emissions reduction"
 				},
 				{
-					"question": "¿Qué región del planeta es más sensible a los cambios en los patrones de floración?",
+					"question": "What region of the planet is most sensitive to changes in flowering patterns?",
 					"options": [
-						"Las zonas árticas y alpinas",
-						"Las regiones urbanas",
-						"Las selvas tropicales",
-						"Las zonas desérticas"
+						"Arctic and alpine zones",
+						"Urban regions",
+						"Tropical rainforests",
+						"Desert zones"
 					],
-					"answer": "Las zonas árticas y alpinas"
+					"answer": "Arctic and alpine zones"
 				},
 				{
-					"question": "¿Qué tipo de datos permite estudiar tendencias de floración a largo plazo?",
+					"question": "What type of data allows studying long-term flowering trends?",
 					"options": [
-						"Series temporales satelitales",
-						"Encuestas agrícolas",
-						"Fotografías locales",
-						"Observaciones diarias de turistas"
+						"Satellite time series",
+						"Agricultural surveys",
+						"Local photographs",
+						"Daily tourist observations"
 					],
-					"answer": "Series temporales satelitales"
+					"answer": "Satellite time series"
 				},
 				{
-					"question": "¿Cómo contribuye la ciencia ciudadana al monitoreo de floración?",
+					"question": "How does citizen science contribute to flowering monitoring?",
 					"options": [
-						"Aporta observaciones locales que complementan los datos satelitales",
-						"No tiene impacto real en la investigación",
-						"Reemplaza los sensores de los satélites",
-						"Solo sirve como educación ambiental"
+						"Provides local observations that complement satellite data",
+						"Has no real impact on research",
+						"Replaces satellite sensors",
+						"Only serves as environmental education"
 					],
-					"answer": "Aporta observaciones locales que complementan los datos satelitales"
+					"answer": "Provides local observations that complement satellite data"
 				}
 			]
 		},
 		{
-			"name": "Diversidad de Plantas",
+			"name": "Plant Diversity",
 			"image": "/images/forest.jpg",
 			"questions": [
 				{
-					"question": "¿Qué característica distingue a las plantas angiospermas?",
+					"question": "What characteristic distinguishes angiosperms?",
 					"options": [
-						"Producen flores y frutos con semillas",
-						"Son exclusivamente acuáticas",
-						"Se reproducen solo por esporas",
-						"Carecen de raíces verdaderas"
+						"Produce flowers and fruits with seeds",
+						"Are exclusively aquatic",
+						"Reproduce only by spores",
+						"Lack true roots"
 					],
-					"answer": "Producen flores y frutos con semillas"
+					"answer": "Produce flowers and fruits with seeds"
 				},
 				{
-					"question": "¿Cuál de las siguientes plantas es una gimnosperma?",
-					"options": ["Orquídea", "Pino", "Girasol", "Rosa"],
-					"answer": "Pino"
+					"question": "Which of the following plants is a gymnosperm?",
+					"options": ["Orchid", "Pine", "Sunflower", "Rose"],
+					"answer": "Pine"
 				},
 				{
-					"question": "¿Qué función cumple la clorofila en las plantas?",
+					"question": "What function does chlorophyll serve in plants?",
 					"options": [
-						"Dar color a los pétalos",
-						"Captar la energía solar para producir alimento",
-						"Transportar agua desde las raíces",
-						"Fijar nitrógeno en el suelo"
+						"Give color to petals",
+						"Capture solar energy to produce food",
+						"Transport water from roots",
+						"Fix nitrogen in soil"
 					],
-					"answer": "Captar la energía solar para producir alimento"
+					"answer": "Capture solar energy to produce food"
 				},
 				{
-					"question": "¿Qué tipo de plantas crecen en ambientes extremadamente secos?",
-					"options": ["Epífitas", "Criptófitas", "Xerófitas", "Hidrófitas"],
-					"answer": "Xerófitas"
+					"question": "What type of plants grow in extremely dry environments?",
+					"options": ["Epiphytes", "Cryptophytes", "Xerophytes", "Hydrophytes"],
+					"answer": "Xerophytes"
 				},
 				{
-					"question": "¿Por qué son importantes los bosques tropicales para el planeta?",
+					"question": "Why are tropical forests important for the planet?",
 					"options": [
-						"Albergan gran parte de la biodiversidad mundial",
-						"Generan tormentas tropicales",
-						"Aumentan la temperatura global",
-						"Reducen la luz solar que llega a la Tierra"
+						"Harbor much of the world's biodiversity",
+						"Generate tropical storms",
+						"Increase global temperature",
+						"Reduce sunlight reaching Earth"
 					],
-					"answer": "Albergan gran parte de la biodiversidad mundial"
+					"answer": "Harbor much of the world's biodiversity"
 				}
 			]
 		},
 		{
-			"name": "Tecnología y Exploración",
+			"name": "Technology and Exploration",
 			"image": "/images/innovation.webp",
 			"questions": [
 				{
-					"question": "¿Qué es la teledetección?",
+					"question": "What is remote sensing?",
 					"options": [
-						"El uso de sensores a distancia para observar la Tierra",
-						"El estudio directo de plantas en campo",
-						"Un método para medir temperatura del aire",
-						"La plantación automática de árboles"
+						"The use of remote sensors to observe Earth",
+						"Direct field study of plants",
+						"A method to measure air temperature",
+						"Automatic tree planting"
 					],
-					"answer": "El uso de sensores a distancia para observar la Tierra"
+					"answer": "The use of remote sensors to observe Earth"
 				},
 				{
-					"question": "¿Qué tipo de imágenes usan los científicos para analizar la vegetación?",
+					"question": "What type of images do scientists use to analyze vegetation?",
 					"options": [
-						"Fotografías turísticas",
-						"Imágenes multiespectrales y satelitales",
-						"Videos de drones recreativos",
-						"Mapas de carreteras"
+						"Tourist photographs",
+						"Multispectral and satellite images",
+						"Recreational drone videos",
+						"Road maps"
 					],
-					"answer": "Imágenes multiespectrales y satelitales"
+					"answer": "Multispectral and satellite images"
 				},
 				{
-					"question": "¿Qué herramienta permite procesar grandes volúmenes de datos ambientales?",
+					"question": "What tool allows processing large volumes of environmental data?",
 					"options": [
-						"Microscopio óptico",
-						"Inteligencia artificial y aprendizaje automático",
-						"Software de edición fotográfica",
-						"Plataforma de redes sociales"
+						"Optical microscope",
+						"Artificial intelligence and machine learning",
+						"Photo editing software",
+						"Social media platform"
 					],
-					"answer": "Inteligencia artificial y aprendizaje automático"
+					"answer": "Artificial intelligence and machine learning"
 				},
 				{
-					"question": "¿Cómo contribuye la NASA al monitoreo de la vegetación?",
+					"question": "How does NASA contribute to vegetation monitoring?",
 					"options": [
-						"Proporciona datos globales de observación de la Tierra mediante satélites",
-						"Controla directamente los cultivos agrícolas",
-						"Envía sondas a estudiar semillas en el espacio",
-						"Financia jardines botánicos en todo el mundo"
+						"Provides global Earth observation data through satellites",
+						"Directly controls agricultural crops",
+						"Sends probes to study seeds in space",
+						"Funds botanical gardens worldwide"
 					],
-					"answer": "Proporciona datos globales de observación de la Tierra mediante satélites"
+					"answer": "Provides global Earth observation data through satellites"
 				},
 				{
-					"question": "¿Qué beneficio tiene integrar datos satelitales con observaciones locales?",
+					"question": "What benefit does integrating satellite data with local observations have?",
 					"options": [
-						"Aumenta la velocidad de descarga de datos",
-						"Sustituye la necesidad de sensores",
-						"Mejora la precisión en la detección de floración y cambios estacionales",
-						"Permite eliminar la variabilidad climática"
+						"Increases data download speed",
+						"Replaces the need for sensors",
+						"Improves accuracy in detecting flowering and seasonal changes",
+						"Allows eliminating climate variability"
 					],
-					"answer": "Mejora la precisión en la detección de floración y cambios estacionales"
+					"answer": "Improves accuracy in detecting flowering and seasonal changes"
 				}
 			]
 		}

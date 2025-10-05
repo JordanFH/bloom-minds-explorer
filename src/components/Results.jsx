@@ -18,16 +18,16 @@ const Results = ({
   const [showConfetti, setShowConfetti] = useState(true);
   const { width, height } = useWindowSize();
 
-  // 🌿 Plant emojis para reemplazar el confeti
+  // 🌿 Plant emojis to replace confetti
   const plantEmojis = ["🌱", "🌿", "🍃", "🌸", "🌻", "🌼"];
 
-  // 🌧️ Generar piezas de confeti personalizadas
+  // 🌧️ Generate custom confetti pieces
   const pieces = Array.from({ length: 120 }).map(() => ({
     emoji: plantEmojis[Math.floor(Math.random() * plantEmojis.length)],
     x: Math.random() * width,
-    y: Math.random() * -height, // empieza desde arriba
+    y: Math.random() * -height, // starts from the top
     r: Math.random() * 360,
-    speed: 2 + Math.random() * 3, // velocidad más rápida
+    speed: 2 + Math.random() * 3, // faster speed
   }));
 
   useEffect(() => {
@@ -55,7 +55,7 @@ const Results = ({
           </span>
         ))}
 
-      {/* 🔽 Animación de caída */}
+      {/* 🔽 Fall animation */}
       <style>{`
         @keyframes fall {
           0% {
@@ -70,14 +70,14 @@ const Results = ({
       `}</style>
 
       <h2 className="text-3xl font-bold mb-6 text-center text-green-700">
-        🌸 Resultados del Quiz 🌿
+        🌸 Quiz Results 🌿
       </h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-4xl">
         {/* Total Points */}
         <div className="p-5 bg-white shadow-md rounded-lg flex items-center justify-between hover:shadow-lg transition">
           <div>
-            <p className="text-xl font-semibold">Puntos Totales</p>
+            <p className="text-xl font-semibold">Total Points</p>
             <p className="text-lg font-bold text-green-600">{score}</p>
           </div>
           <FaTrophy className="text-yellow-500 text-3xl" />
@@ -86,7 +86,7 @@ const Results = ({
         {/* Correct Answers */}
         <div className="p-5 bg-white shadow-md rounded-lg flex items-center justify-between hover:shadow-lg transition">
           <div>
-            <p className="text-xl font-semibold">Respuestas Correctas</p>
+            <p className="text-xl font-semibold">Correct Answers</p>
             <p className="text-lg font-bold text-green-600">{correctAnswers}</p>
           </div>
           <FaCheckCircle className="text-green-500 text-3xl" />
@@ -95,7 +95,7 @@ const Results = ({
         {/* Wrong Answers */}
         <div className="p-5 bg-white shadow-md rounded-lg flex items-center justify-between hover:shadow-lg transition">
           <div>
-            <p className="text-xl font-semibold">Respuestas Incorrectas</p>
+            <p className="text-xl font-semibold">Wrong Answers</p>
             <p className="text-lg font-bold text-red-600">{wrongAnswers}</p>
           </div>
           <FaTimesCircle className="text-red-500 text-3xl" />
@@ -104,34 +104,34 @@ const Results = ({
         {/* Unattempted */}
         <div className="p-5 bg-white shadow-md rounded-lg flex items-center justify-between hover:shadow-lg transition">
           <div>
-            <p className="text-xl font-semibold">No Respondidas</p>
+            <p className="text-xl font-semibold">Unanswered</p>
             <p className="text-lg font-bold text-yellow-600">{unattemptedQuestions}</p>
           </div>
           <FaQuestionCircle className="text-yellow-500 text-3xl" />
         </div>
 
-        {/* Porcentaje */}
+        {/* Percentage */}
         <div className="p-5 bg-white shadow-md rounded-lg flex items-center justify-between hover:shadow-lg transition">
           <div>
-            <p className="text-xl font-semibold">Porcentaje</p>
+            <p className="text-xl font-semibold">Percentage</p>
             <p className="text-lg font-bold text-blue-600">{percentage}%</p>
           </div>
           <FaPercentage className="text-blue-500 text-3xl" />
         </div>
 
-        {/* Tiempo total */}
+        {/* Total Time */}
         <div className="p-5 bg-white shadow-md rounded-lg flex items-center justify-between hover:shadow-lg transition">
           <div>
-            <p className="text-xl font-semibold">Tiempo Total</p>
+            <p className="text-xl font-semibold">Total Time</p>
             <p className="text-lg font-bold text-purple-600">{timeSpent.toFixed(2)}s</p>
           </div>
           <FaClock className="text-purple-500 text-3xl" />
         </div>
 
-        {/* Promedio */}
+        {/* Average */}
         <div className="p-5 bg-white shadow-md rounded-lg flex items-center justify-between hover:shadow-lg transition">
           <div>
-            <p className="text-xl font-semibold">Promedio por Pregunta</p>
+            <p className="text-xl font-semibold">Average per Question</p>
             <p className="text-lg font-bold text-indigo-600">{averageTimePerQuestion}s</p>
           </div>
           <FaStopwatch className="text-indigo-500 text-3xl" />
@@ -139,7 +139,7 @@ const Results = ({
       </div>
 
       <div className="mt-8 text-lg font-semibold text-green-700">
-        🌿 ¡Obtuviste {correctAnswers * 4} de {totalQuestions * 4} puntos! 🌼
+        🌿 You scored {correctAnswers * 4} out of {totalQuestions * 4} points! 🌼
       </div>
     </div>
   );

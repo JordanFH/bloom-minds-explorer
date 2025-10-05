@@ -18,7 +18,7 @@ export default function LandingFooter() {
             </span>
           </div>
           <p className="text-sm text-muted-foreground">
-            NASA Space Apps Challenge 2024 • Built with NASA GIBS Data
+            NASA Space Apps Challenge 2025 • Built with NASA GIBS Data
           </p>
         </div>
       </div>
