@@ -9,7 +9,7 @@ interface Props {
 
 
  
-export default function MemberCard({ id, name, role, image }: Props) {
+export default function MemberCard({ name, role, image }: Props) {
   return (
     <Card className="p-6 bg-card border-border hover:border-primary/50 transition-all hover:shadow-lg hover:shadow-primary/10 w-full max-w-sm">
       <div className="w-24 h-24 mx-auto mb-4">
