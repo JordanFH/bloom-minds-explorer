@@ -1,5 +1,5 @@
 export const metadata = {
-  title: "Explore || Bloom Minds Explorer",
+  title: "Explore || Bloom Minds",
   description: "Visualize and analyze satellite data for monitoring plant blooms.",
 };
 

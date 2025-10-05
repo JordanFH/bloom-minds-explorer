@@ -19,16 +19,16 @@ export default function HeaderSection() {
         </div>
         <nav className="hidden md:flex items-center gap-6">
           <a href="#challenge" className="text-sm hover:text-primary transition-colors">
-            Reto
+            Challenge
           </a>
           <a href="#solution" className="text-sm hover:text-primary transition-colors">
-            Solución
+            Solution
           </a>
           <a href="#features" className="text-sm hover:text-primary transition-colors">
-            Características
+            Features
           </a>
           <a href="#team" className="text-sm hover:text-primary transition-colors">
-            Equipo
+            Team
           </a>
         </nav>
         <ButtonOpenExplorer type="navbar" />

@@ -4,8 +4,8 @@ import Footer from "@/components/Footer";
 import { PointsProvider } from "@/context/PointsContext";
 
 export const metadata = {
-  title: "Quiz App",
-  description: "Quiz App For Students",
+  title: "Quiz || Bloom Minds",
+  description: "Visualize and analyze satellite data for monitoring plant blooms.",
 };
 
 export default function Layout({ children }) {
