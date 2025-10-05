@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import { Suspense } from "react";
 
 // Importación dinámica optimizada
-const AdvancedGlobeMapV2 = dynamic(() => import("../../components/advanced-globe-map-v2"), {
+const AdvancedGlobeMapV2 = dynamic(() => import("@/components/advanced-globe-map-v2"), {
   ssr: false,
   loading: () => <MapLoading />,
 });
