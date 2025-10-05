@@ -7,7 +7,7 @@ export default function SolutionSection() {
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">Our Solution</h2>
-          <p className="text-xl text-muted-foreground text-pretty">
+          <p className="text-xl text-muted-foreground text-pretty text-white">
             <b>BloomMinds</b> presents <b>Bloom Explorer</b>, an interactive 3D platform that
             visualizes the globe and leverages <b>NASA's GIBS</b> data to track vegetation changes
             and flowering events in near real-time. Additionally, we offer <b>Bloom Quiz</b>, an
