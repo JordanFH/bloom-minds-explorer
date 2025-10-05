@@ -1,12 +1,12 @@
 export function clasificarNDVI(item) {
     if (item.ndvi < 0) {
-        return "Agua, nieve o nubes";
+        return "Water, snow or clouds";
     } else if (item.ndvi < 0.2) {
-        return "Muy poca o ninguna vegetación. Suelo desnudo, rocas, arena, zonas urbanas.";
+        return "Very little or no vegetation. Bare soil, rocks, sand, urban areas.";
     } else if (item.ndvi < 0.6) {
-        return "Vegetación moderada. Pastizales, arbustos, o plantas al inicio o final de su temporada de crecimiento.";
+        return "Moderate vegetation. Grasslands, shrubs, or plants at the beginning or end of their growing season.";
     } else {
-        return "Vegetación muy densa y saludable. Piensa en un bosque en pleno verano o un cultivo próspero.";
+        return "Very dense and healthy vegetation. Think of a forest in midsummer or a thriving crop.";
     }
 }
 
