@@ -354,29 +354,43 @@ const PredictionPanel = ({ lat, lon, onPredict, onForecast, result, loading, err
     return future.toISOString().split("T")[0];
   });
 
+  const [cropType, setCropType] = useState('corn');
+
+
   return (
     <div className="space-y-4">
       {/* --- Header --- */}
       <div className="flex items-center space-x-2 border-b border-gray-200 pb-3">
-        <svg className="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-          <path d="M3 12v3c0 1.1.9 2 2 2h10a2 2 0 002-2v-3a1 1 0 10-2 0v3H5v-3a1 1 0 10-2 0zM17 6a1 1 0 00-1-1h-2a1 1 0 100 2h2a1 1 0 001-1zM4 5a1 1 0 100 2h2a1 1 0 100-2H4z" />
-          <path fillRule="evenodd" d="M10 2a1 1 0 00-1 1v1.335A3.99 3.99 0 006.01 7.422a1 1 0 101.98.204A1.99 1.99 0 0110 5.5a1 1 0 000-2zM12.01 7.422a1 1 0 10-1.98.204A1.99 1.99 0 0110 5.5a1 1 0 100-2 3.99 3.99 0 00-3.99 3.087A1 1 0 104.02 7.626 5.99 5.99 0 0110 3.5a1 1 0 000 2 1.99 1.99 0 01-1.99 1.913z" clipRule="evenodd" />
-        </svg>
         <h4 className="font-bold text-gray-800 text-base">NDVI Prediction</h4>
       </div>
 
-      {/* --- Controls --- */}
-      <div>
-        <label className="block text-xs font-medium text-gray-700 mb-1">Date for Single Prediction:</label>
-        <input
-          type="date"
-          value={targetDate}
-          onChange={(e) => setTargetDate(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-sm"
-        />
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label className="block text-xs font-medium text-gray-700 mb-1">Target Date</label>
+          <input
+            type="date"
+            value={targetDate}
+            onChange={(e) => setTargetDate(e.target.value)}
+            className="w-full px-2 py-1.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-sm"
+          />
+        </div>
+        <div>
+          <label className="block text-xs font-medium text-gray-700 mb-1">Crop Type</label>
+          <select
+            value={cropType}
+            onChange={(e) => setCropType(e.target.value)}
+            className="w-full px-2 py-1.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-sm"
+          >
+            <option value="forest">Forest</option>
+            <option value="corn">Corn</option>
+            <option value="pasture">Pasture</option>
+            <option value="generic">Generic Veg.</option>
+          </select>
+        </div>
       </div>
       <div className="flex gap-3">
-        <button onClick={() => onPredict(lat, lon, targetDate)} disabled={loading} className="flex-1 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 disabled:bg-gray-400 transition-colors">
+        {/* Pasamos el cropType a la función onPredict */}
+        <button onClick={() => onPredict(lat, lon, targetDate, cropType)} disabled={loading} className="flex-1 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 disabled:bg-gray-400 transition-colors">
           {loading ? "Calculating..." : "📊 Single Prediction"}
         </button>
         <button onClick={() => onForecast(lat, lon)} disabled={loading} className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 disabled:bg-gray-400 transition-colors">
@@ -388,48 +402,31 @@ const PredictionPanel = ({ lat, lon, onPredict, onForecast, result, loading, err
       {error && <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-3 text-sm"><p className="font-bold">Error:</p><p>{error}</p></div>}
       {loading && <div className="text-center text-sm text-gray-600">Performing prediction...</div>}
 
-      {/* --- Results Visualization --- */}
+      {/* --- Visualización de Resultados --- */}
       {result && (
         <div className="space-y-6 pt-4 border-t border-gray-200">
 
-          {/* Single Prediction Result */}
+          {/* Resultado de Predicción Única con Interpretación */}
           {result.prediction && (
             <div className="space-y-3">
               <h3 className="text-lg font-medium text-gray-800">📊 Prediction for {result.prediction.targetDate}</h3>
               <div className="grid grid-cols-2 gap-3">
-                <div className="bg-green-50 p-3 rounded-lg text-center"><p className="text-sm text-gray-600">Predicted NDVI</p><p className="text-2xl font-bold text-green-700">{result.prediction.ndvi}</p></div>
-                <div className="bg-blue-50 p-3 rounded-lg text-center"><p className="text-sm text-gray-600">Confidence</p><p className="text-2xl font-bold text-blue-700">{result.confidence.percentage}%</p></div>
-                <div className="bg-gray-100 p-3 rounded-lg text-center"><p className="text-xs text-gray-500">Lower Range</p><p className="text-md font-semibold text-gray-700">{result.prediction.lowerBound}</p></div>
-                <div className="bg-gray-100 p-3 rounded-lg text-center"><p className="text-xs text-gray-500">Upper Range</p><p className="text-md font-semibold text-gray-700">{result.prediction.upperBound}</p></div>
-              </div>
-            </div>
-          )}
-
-          {/* Recommendations Result */}
-          {result.recommendations && (
-            <div className="space-y-3">
-              <h3 className="text-lg font-medium text-gray-800">🌾 Recommendations</h3>
-              <div className="bg-blue-50 p-4 rounded-lg text-sm text-blue-900 font-medium">{result.recommendations.summary}</div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <div className="border border-gray-200 p-3 rounded-lg"><p className="font-medium text-gray-700">💧 Irrigation</p><p className="text-sm text-gray-600">{result.recommendations.irrigation?.action}</p><p className="text-xs text-gray-500 mt-1">Priority: {result.recommendations.irrigation?.priority}</p></div>
-                <div className="border border-gray-200 p-3 rounded-lg"><p className="font-medium text-gray-700">🌱 Fertilization</p><p className="text-sm text-gray-600">{result.recommendations.fertilization?.action}</p><p className="text-xs text-gray-500 mt-1">Type: {result.recommendations.fertilization?.type}</p></div>
-              </div>
-            </div>
-          )}
-
-          {/* Forecast Result */}
-          {result.predictions && (
-            <div className="space-y-2">
-              <h3 className="text-lg font-medium text-gray-800">📈 Forecast ({result.predictions.length} predictions)</h3>
-              {result.predictions.map((pred, idx) => (
-                <div key={idx} className="flex justify-between items-center p-3 bg-gray-100 rounded-lg">
-                  <span className="text-sm font-medium text-gray-700">{pred.prediction.targetDate}</span>
-                  <div className="flex gap-4 items-center">
-                    <span className="text-sm">NDVI: <span className="font-semibold text-green-700">{pred.prediction.ndvi}</span></span>
-                    <span className="text-sm">Confidence: <span className="font-semibold text-blue-700">{pred.confidence.percentage}%</span></span>
-                  </div>
+                <div className="bg-green-50 p-3 rounded-lg text-center col-span-2">
+                  <p className="text-sm text-gray-600">Predicted NDVI</p>
+                  <p className="text-3xl font-bold text-green-700">{result.prediction.ndvi}</p>
                 </div>
-              ))}
+
+                {/* ===== NUEVO: Tarjeta de Interpretación ===== */}
+                <div className={`p-3 rounded-lg text-center col-span-2 ${clasificarNDVI(result.prediction.ndvi).bg}`}>
+                  <p className="text-sm text-gray-600">Interpretation</p>
+                  <p className={`text-md font-bold ${clasificarNDVI(result.prediction.ndvi).color}`}>
+                    {clasificarNDVI(result.prediction.ndvi).estado}
+                  </p>
+                </div>
+
+                <div className="bg-blue-50 p-3 rounded-lg text-center"><p className="text-sm text-gray-600">Confidence</p><p className="text-xl font-bold text-blue-700">{result.confidence.percentage}%</p></div>
+                <div className="bg-gray-100 p-3 rounded-lg text-center"><p className="text-xs text-gray-500">Confidence Range</p><p className="text-md font-semibold text-gray-700">{result.prediction.lowerBound} - {result.prediction.upperBound}</p></div>
+              </div>
             </div>
           )}
 
@@ -605,7 +602,7 @@ const ClimateChart = ({ data, dataCoordenadas }) => {
       {/* Footer con información de la fuente */}
       <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200">
         <div className="flex items-center space-x-2 mb-4">
-          <h4 className="font-bold text-gray-800">Recent History</h4>
+          <h4 className="font-bold text-gray-800">Recommendations for this month</h4>
         </div>
 
         <div className="space-y-2">
