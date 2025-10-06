@@ -1,0 +1,2213 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <title>🌿 The Last Botanist: Complete Edition</title>
+    <style>
+        :root {
+            --bg-dark: #0a0e27;
+            --bg-card: rgba(15, 31, 61, 0.6);
+            --bloom: #66d19e;
+            --glow: #a8e6cf;
+            --purple: #a855f7;
+            --gold: #ffc233;
+            --red: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, var(--bg-dark) 0%, #1a1f3a 100%);
+            color: #e2e8f0;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        #gameCanvas {
+            display: block;
+            background: var(--bg-dark);
+            image-rendering: pixelated;
+            z-index: 0;
+        }
+
+        /* ===== HUD ===== */
+        .hud {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            display: flex;
+            justify-content: space-between;
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        .stat-bar {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 12px 24px;
+            display: flex;
+            gap: 20px;
+            font-size: 16px;
+            font-weight: 900;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .health-bar {
+            width: 200px;
+            height: 20px;
+            background: rgba(239,68,68,0.2);
+            border: 2px solid var(--red);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .health-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--red), #ff8844);
+            box-shadow: 0 0 10px var(--red);
+            transition: width 0.3s;
+        }
+
+        /* ===== LEVEL INFO ===== */
+        .level-info {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 12px 32px;
+            font-size: 20px;
+            font-weight: 900;
+            color: var(--gold);
+            z-index: 100;
+            border: 2px solid var(--gold);
+            backdrop-filter: blur(20px);
+        }
+
+        /* ===== MISSION TRACKER ===== */
+        .mission-panel {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 20px;
+            max-width: 300px;
+            z-index: 100;
+            border: 2px solid var(--gold);
+            backdrop-filter: blur(20px);
+        }
+
+        .mission-title {
+            color: var(--gold);
+            font-size: 18px;
+            margin-bottom: 12px;
+            font-weight: 900;
+        }
+
+        .mission-objective {
+            font-size: 14px;
+            color: #e2e8f0;
+            margin: 8px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .mission-objective::before {
+            content: '●';
+            position: absolute;
+            left: 0;
+            color: var(--bloom);
+        }
+
+        .mission-objective.completed::before {
+            content: '✓';
+            color: var(--gold);
+        }
+
+        /* ===== INVENTORY ===== */
+        .inventory {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            gap: 12px;
+            z-index: 100;
+            border: 2px solid var(--bloom);
+            backdrop-filter: blur(20px);
+        }
+
+        .inv-slot {
+            width: 70px;
+            height: 70px;
+            background: rgba(102, 209, 158, 0.2);
+            border: 2px solid var(--bloom);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .inv-slot:hover:not(.locked) {
+            transform: translateY(-5px);
+            box-shadow: 0 0 20px var(--bloom);
+        }
+
+        .inv-slot.selected {
+            border-color: var(--gold);
+            box-shadow: 0 0 30px var(--gold);
+            background: linear-gradient(135deg, rgba(255,194,51,0.2), rgba(168,85,247,0.1));
+        }
+
+        .inv-slot.locked {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .inv-slot.locked::after {
+            content: '🔒';
+            position: absolute;
+            font-size: 20px;
+        }
+
+        .inv-icon {
+            font-size: 36px;
+        }
+
+        .inv-count {
+            font-size: 12px;
+            color: var(--gold);
+            font-weight: 900;
+            margin-top: 4px;
+        }
+
+        .inv-hotkey {
+            position: absolute;
+            top: -12px;
+            right: -12px;
+            background: var(--gold);
+            color: #000;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 900;
+        }
+
+        /* ===== DNA SHOP ===== */
+        .dna-shop {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            z-index: 700;
+            display: none;
+            border: 2px solid var(--bloom);
+            backdrop-filter: blur(20px);
+        }
+
+        .shop-title {
+            font-size: 28px;
+            color: var(--bloom);
+            margin-bottom: 24px;
+            text-align: center;
+            font-weight: 900;
+        }
+
+        .shop-items {
+            display: grid;
+            gap: 16px;
+        }
+
+        .shop-item {
+            background: rgba(102, 209, 158, 0.1);
+            border: 2px solid var(--bloom);
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s;
+        }
+
+        .shop-item:hover:not(:disabled) {
+            background: rgba(102, 209, 158, 0.2);
+            transform: translateX(5px);
+            border-color: var(--gold);
+        }
+
+        .shop-item:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .shop-item-info {
+            flex: 1;
+        }
+
+        .shop-item-name {
+            font-size: 18px;
+            color: var(--gold);
+            margin-bottom: 4px;
+            font-weight: 900;
+        }
+
+        .shop-item-desc {
+            font-size: 12px;
+            color: #aaa;
+        }
+
+        .shop-buy-btn {
+            background: linear-gradient(135deg, var(--bloom), #2d8659);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 24px;
+            font-weight: 900;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .shop-buy-btn:hover:not(:disabled) {
+            background: linear-gradient(135deg, var(--gold), var(--bloom));
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(102,209,158,0.4);
+        }
+
+        .shop-buy-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .shop-close {
+            margin-top: 24px;
+            text-align: center;
+        }
+
+        .shop-close-btn {
+            background: #444;
+            color: #fff;
+            border: 2px solid #666;
+            border-radius: 8px;
+            padding: 12px 32px;
+            font-weight: 900;
+            cursor: pointer;
+        }
+
+        /* ===== LEVEL COMPLETE ===== */
+        .level-complete {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.95);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 600;
+        }
+
+        .complete-content {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            text-align: center;
+            border: 2px solid var(--gold);
+            backdrop-filter: blur(20px);
+        }
+
+        .complete-title {
+            font-size: 48px;
+            color: var(--gold);
+            margin-bottom: 24px;
+            font-weight: 900;
+        }
+
+        .complete-stats {
+            font-size: 18px;
+            line-height: 2;
+            margin-bottom: 32px;
+            color: #e2e8f0;
+        }
+
+        .complete-btn {
+            background: linear-gradient(135deg, var(--bloom), #2d8659);
+            border: none;
+            border-radius: 12px;
+            padding: 16px 48px;
+            color: white;
+            font-weight: 900;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin: 0 10px;
+        }
+
+        .complete-btn:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px var(--bloom);
+        }
+
+        .complete-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        /* ===== DIALOG ===== */
+        .dialog-box {
+            position: fixed;
+            bottom: 120px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 24px;
+            max-width: 600px;
+            width: 90%;
+            z-index: 200;
+            display: none;
+            animation: slideUp 0.3s;
+            border: 2px solid var(--bloom);
+            backdrop-filter: blur(20px);
+        }
+
+        @keyframes slideUp {
+            from { transform: translateX(-50%) translateY(50px); opacity: 0; }
+            to { transform: translateX(-50%) translateY(0); opacity: 1; }
+        }
+
+        .dialog-speaker {
+            color: var(--gold);
+            font-size: 18px;
+            margin-bottom: 12px;
+            font-weight: 900;
+        }
+
+        .dialog-text {
+            font-size: 15px;
+            line-height: 1.6;
+            color: #e2e8f0;
+        }
+
+        /* ===== CONTROLS ===== */
+        .controls {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--bg-card);
+            border: 2px solid var(--bloom);
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 12px;
+            z-index: 100;
+            backdrop-filter: blur(20px);
+        }
+
+        .controls kbd {
+            background: var(--bloom);
+            color: #000;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: 900;
+            margin: 0 4px;
+        }
+
+        /* ===== TUTORIAL ===== */
+        .tutorial-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.95);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 300;
+        }
+
+        .tutorial-content {
+            background: var(--bg-card);
+            border-radius: 20px;
+            border: 2px solid var(--bloom);
+            padding: 32px;
+            max-width: 600px;
+            text-align: center;
+            backdrop-filter: blur(20px);
+        }
+
+        .tutorial-title {
+            font-size: 40px;
+            color: var(--gold);
+            margin-bottom: 22px;
+            font-weight: 600;
+        }
+
+        .tutorial-text {
+            font-size: 16px;
+            line-height: 1.5;
+            margin-bottom: 18px;
+            color: #e2e8f0;
+        }
+
+        .tutorial-btn {
+            background: linear-gradient(135deg, var(--bloom), #2d8659);
+            border: none;
+            border-radius: 12px;
+            padding: 16px 48px;
+            color: white;
+            font-weight: 900;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tutorial-btn:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px var(--bloom);
+        }
+
+        .tutorial-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        /* ===== GLOBE ===== */
+        .globe-screen {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.98);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 650;
+        }
+
+        .globe-content {
+            background: var(--bg-card);
+            border-radius: 20px;
+            border: 2px solid var(--bloom);
+            padding: 22px;
+            max-width: 500px;
+            text-align: center;
+            backdrop-filter: blur(20px);
+        }
+
+        .globe-title {
+            font-size: 24px;
+            color: var(--bloom);
+            margin-bottom: 14px;
+            font-weight: 800;
+        }
+
+        #globeCanvas {
+            width: 300px;
+            height: 300px;
+            margin: 0 auto;
+            display: block;
+            cursor: grab;
+            border-radius: 12px;
+            background: radial-gradient(circle, #0a2a4a, #000);
+        }
+
+        #globeCanvas:active {
+            cursor: grabbing;
+        }
+
+        .globe-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin: 16px 0;
+        }
+
+        .globe-stat {
+            background: rgba(102, 209, 158, 0.1);
+            border: 2px solid var(--bloom);
+            border-radius: 12px;
+            padding: 12px;
+        }
+
+        .globe-stat-label {
+            display: block;
+            font-size: 14px;
+            color: #aaa;
+            margin-bottom: 8px;
+        }
+
+        .globe-stat-value {
+            font-size: 18px;
+            color: var(--gold);
+            font-weight: 900;
+        }
+
+        .zone-list {
+            max-height: 150px;
+            overflow-y: auto;
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 16px;
+            margin: 20px 0;
+        }
+
+        .zone-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 10px;
+            margin-bottom: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            border-left: 4px solid var(--red);
+            transition: all 0.3s;
+        }
+
+        .zone-item.restored {
+            border-left-color: var(--bloom);
+            background: rgba(102, 209, 158, 0.1);
+        }
+
+        .zone-name {
+            font-weight: 700;
+        }
+
+        .zone-status {
+            font-size: 12px;
+        }
+
+        .zone-status.infected {
+            color: var(--red);
+        }
+
+        .zone-status.restored {
+            color: var(--bloom);
+        }
+
+        #victoryCanvas {
+            display: block;
+            margin: 0 auto;
+            border-radius: 12px;
+            background: radial-gradient(circle, #0a2a1a, #000);
+        }
+
+        /* ===== MINI GLOBE ===== */
+        #miniGlobeStats {
+            color: var(--bloom);
+            font-size: 11px;
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1400px) {
+            .hud, .level-info, .mission-panel, .inventory, .controls, .dialog-box, .dna-shop, .level-complete, .globe-screen {
+                max-width: 95vw;
+                font-size: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Tutorial -->
+<div class="tutorial-overlay" id="tutorial">
+    <div class="tutorial-content" style="max-width: 900px;">
+        <div class="tutorial-title">🌿 THE LAST BOTANIST</div>
+
+        <!-- Globe Preview -->
+        <div style="display: flex; gap: 30px; align-items: center; margin-bottom: 20px;">
+            <div style="flex: 1;">
+                <canvas id="tutorialGlobe" width="250" height="250" style="border-radius: 12px;"></canvas>
+                <div style="margin-top: 12px; font-size: 12px; color: #ff4444; text-align: center;">
+                    🔴 12 Infected Zones Detected
+                </div>
+            </div>
+
+            <div style="flex: 1; text-align: left;">
+                <div class="tutorial-text" style="text-align: left;">
+                    <strong>YEAR 2095</strong><br><br>
+                    Climate change pushed nature beyond its limits.
+                    A new species of mutated insects — the <strong>Xylophages</strong> — emerged, feeding on roots and plant matter.
+                    Within years, forests withered, and deserts expanded.<br><br>
+
+                    <strong style="color: #ffc233;">YOUR MISSION:</strong><br>
+                    🏜️ Level 1: Toxic Desert (3 zones)<br>
+                    🌲 Level 2: Corrupted Forest (3 zones)<br>
+                    🌾 Level 3: Radioactive Swamp (3 zones)<br>
+                    🏚️ Level 4: Ruins + BOSS (3 zones)<br><br>
+
+                    <strong style="color: #66d19e;">IN EACH LEVEL:</strong><br>
+                    ☠️ Eliminate enemies<br>
+                    🌱 Replant native flora<br>
+                    🧬 Collect DNA to unlock upgrades
+                </div>
+            </div>
+        </div>
+
+        <div class="tutorial-text" style="margin-top: 20px;">
+            <strong style="color: #66d19e;">CONTROLS:</strong><br>
+            WASD = Move | SPACE = Shoot | E = Plant / Collect | T = Shop
+        </div>
+
+        <button class="tutorial-btn" onclick="startGame()">START MISSION</button>
+    </div>
+</div>
+
+
+<!-- Level Complete Screen -->
+<div class="level-complete" id="levelComplete">
+    <div class="complete-content">
+        <div class="complete-title">🎉 LEVEL COMPLETE</div>
+        <div class="complete-stats" id="levelStats"></div>
+        <button class="complete-btn" onclick="nextLevel()">NEXT LEVEL →</button>
+        <button class="complete-btn" onclick="openShop()">🧬 DNA LAB</button>
+    </div>
+</div>
+
+
+<!-- 3D Globe Progress -->
+<div class="globe-screen" id="globeScreen">
+    <div class="globe-content">
+        <div class="globe-title">🌍 GLOBAL TERRAFORMING STATUS</div>
+        <canvas id="globeCanvas"></canvas>
+        <div class="globe-stats">
+            <div class="globe-stat">
+                <span class="globe-stat-label">🟢 Restored Zones:</span>
+                <span class="globe-stat-value" id="restoredZones">0</span>
+            </div>
+            <div class="globe-stat">
+                <span class="globe-stat-label">🔴 Infected Zones:</span>
+                <span class="globe-stat-value" id="infectedZones">0</span>
+            </div>
+            <div class="globe-stat">
+                <span class="globe-stat-label">🌿 Total Progress:</span>
+                <span class="globe-stat-value" id="globalProgress">0%</span>
+            </div>
+        </div>
+        <div class="zone-list" id="zoneList"></div>
+        <button class="complete-btn" onclick="closeGlobe()">CONTINUE →</button>
+    </div>
+</div>
+
+<!-- Victory Globe -->
+<div class="globe-screen" id="victoryGlobe" style="z-index: 800;">
+    <div class="globe-content" style="max-width: 600px;">
+        <div class="globe-title" style="color: #66d19e; font-size: 36px;">
+            🎉 MISSION ACCOMPLISHED! 🎉
+        </div>
+        <div style="font-size: 18px; color: #ffc233; margin-bottom: 20px;">
+            🎉 EARTH HAS BEEN RESTORED! 🎉
+        </div>
+
+        <canvas id="victoryCanvas" width="400" height="400"></canvas>
+
+        <div class="globe-stats" style="margin-top: 15px;">
+            <div class="globe-stat">
+                <span class="globe-stat-label">🌍 Restored Zones:</span>
+                <span class="globe-stat-value" style="color: #66d19e;">12/12</span>
+            </div>
+            <div class="globe-stat">
+                <span class="globe-stat-label">🧬 Total DNA:</span>
+                <span class="globe-stat-value" id="finalDNA">0</span>
+            </div>
+            <div class="globe-stat">
+                <span class="globe-stat-label">⏱️ Time:</span>
+                <span class="globe-stat-value" id="finalTime">0:00</span>
+            </div>
+        </div>
+
+        <button class="complete-btn" onclick="location.reload()" style="margin-top: 30px;">
+            🔄 PLAY AGAIN
+        </button>
+    </div>
+</div>
+
+<!-- Defeat / Game Over -->
+<div class="globe-screen" id="defeatGlobe" style="z-index: 800; display: none;">
+    <div class="globe-content" style="max-width: 600px;">
+        <div class="globe-title" style="color: #ff4444; font-size: 30px;">
+            💀 MISSION FAILED 💀
+        </div>
+        <div style="font-size: 18px; color: #ff4444; margin-bottom: 15px;">
+            The Xylophages have prevailed.<br>The Earth remains infected...
+        </div>
+        <canvas id="defeatCanvas" width="350" height="350"></canvas>
+        <div class="globe-stats" style="margin-top: 5px;">
+            <div class="globe-stat">
+                <span class="globe-stat-label">🌍 Zones Restored:</span>
+                <span class="globe-stat-value" style="color: #66d19e;" id="defeatRestored">0</span>
+            </div>
+            <div class="globe-stat">
+                <span class="globe-stat-label">🧬 DNA Collected:</span>
+                <span class="globe-stat-value" id="defeatDNA">0</span>
+            </div>
+        </div>
+        <button class="complete-btn" onclick="location.reload()" style="margin-top: 30px;">
+            🔄 TRY AGAIN
+        </button>
+    </div>
+</div>
+
+<!-- DNA Shop -->
+<div class="dna-shop" id="dnaShop">
+    <div class="shop-title">🧬 UPGRADE SHOP</div>
+    <div class="shop-items" id="shopItems"></div>
+    <div class="shop-close">
+        <button class="shop-close-btn" onclick="closeShop()">CLOSE</button>
+    </div>
+</div>
+
+<!-- HUD -->
+<div class="hud">
+    <div class="stat-bar">
+        <div class="stat-item">
+            ❤️ <div class="health-bar"><div class="health-fill" id="healthBar" style="width: 100%"></div></div>
+        </div>
+        <div class="stat-item">🧬 DNA: <span id="dna">0</span></div>
+    </div>
+</div>
+
+<!-- Level Info -->
+<div class="level-info" id="levelInfo">LEVEL 1: TOXIC DESERT</div>
+
+<!-- Mission Tracker -->
+<div class="mission-panel">
+    <div class="mission-title">📋 OBJECTIVES</div>
+    <div class="mission-objective" id="obj1">Eliminate enemies</div>
+    <div class="mission-objective" id="obj2">Plant native flora</div>
+    <div class="mission-objective" id="obj3">Collect DNA</div>
+</div>
+
+<!-- Inventory -->
+<div class="inventory">
+    <div class="inv-slot selected" onclick="selectWeapon(0)">
+        <div class="inv-hotkey">1</div>
+        <div class="inv-icon">💧</div>
+        <div class="inv-count">∞</div>
+    </div>
+    <div class="inv-slot" onclick="selectWeapon(1)">
+        <div class="inv-hotkey">2</div>
+        <div class="inv-icon">🌱</div>
+        <div class="inv-count" id="seedGun">0</div>
+    </div>
+    <div class="inv-slot locked" id="fireSlot" onclick="selectWeapon(2)">
+        <div class="inv-hotkey">3</div>
+        <div class="inv-icon">🔥</div>
+        <div class="inv-count" id="fireGun">0</div>
+    </div>
+    <div class="inv-slot locked" id="zapSlot" onclick="selectWeapon(3)">
+        <div class="inv-hotkey">4</div>
+        <div class="inv-icon">⚡</div>
+        <div class="inv-count" id="zapGun">0</div>
+    </div>
+</div>
+
+<!-- Dialog -->
+<div class="dialog-box" id="dialogBox">
+    <div class="dialog-speaker" id="dialogSpeaker"></div>
+    <div class="dialog-text" id="dialogText"></div>
+</div>
+
+<!-- Controls -->
+<div class="controls">
+    <kbd>WASD</kbd> Move | <kbd>SPACE</kbd> Fire | <kbd>E</kbd> Plant / Collect | <kbd>T</kbd> DNA Lab
+</div>
+
+<canvas id="gameCanvas"></canvas>
+
+<script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    // ===== LEVELS CONFIG =====
+    const LEVELS = [
+        {
+            id: 1,
+            name: '🏜️ TOXIC DESERT',
+            biome: 'desert',
+            color: '#c4a661',
+            enemyCount: 8,
+            plantsRequired: 3,
+            dnaTarget: 30,
+            plantType: '🌵',
+            story: 'The Sahara Desert has become uninhabitable. Restore the native cacti to bring life back.'
+        },
+        {
+            id: 2,
+            name: '🌲 CONTAMINATED FOREST',
+            biome: 'forest',
+            color: '#2d5016',
+            enemyCount: 12,
+            plantsRequired: 5,
+            dnaTarget: 50,
+            plantType: '🌳',
+            story: 'The Amazon is dying. The trees must rise again to cleanse the air.'
+        },
+        {
+            id: 3,
+            name: '🌾 RADIOACTIVE SWAMP',
+            biome: 'swamp',
+            color: '#3d5c3d',
+            enemyCount: 15,
+            plantsRequired: 7,
+            dnaTarget: 70,
+            plantType: '🍄',
+            story: 'The swamps hold the key to purification. Plant bioluminescent fungi to absorb the toxins.'
+        },
+        {
+            id: 4,
+            name: '🏚️ INDUSTRIAL RUINS',
+            biome: 'ruins',
+            color: '#4a4a5c',
+            enemyCount: 20,
+            plantsRequired: 10,
+            dnaTarget: 100,
+            plantType: '🌿',
+            hasBoss: true,
+            story: 'The final battle awaits. Defeat the Xylophage Queen and restore hope to Earth.'
+        }
+    ];
+
+    const WORLD_ZONES = [
+        // Level 1: Deserts
+        { id: 1, name: 'Sahara', region: 'Africa', lat: 23, lon: 13, level: 0 },
+        { id: 2, name: 'Gobi', region: 'Asia', lat: 42, lon: 105, level: 0 },
+        { id: 3, name: 'Mojave', region: 'America', lat: 35, lon: -115, level: 0 },
+
+        // Level 2: Forests
+        { id: 4, name: 'Amazon Rainforest', region: 'America', lat: -3, lon: -60, level: 1 },
+        { id: 5, name: 'Congo Basin', region: 'Africa', lat: 0, lon: 25, level: 1 },
+        { id: 6, name: 'Siberian Taiga', region: 'Asia', lat: 60, lon: 100, level: 1 },
+
+        // Level 3: Swamps
+        { id: 7, name: 'Everglades', region: 'America', lat: 25, lon: -80, level: 2 },
+        { id: 8, name: 'Okavango Delta', region: 'Africa', lat: -19, lon: 23, level: 2 },
+        { id: 9, name: 'Sundarbans', region: 'Asia', lat: 22, lon: 89, level: 2 },
+
+        // Level 4: Ruined Cities
+        { id: 10, name: 'New York', region: 'America', lat: 40, lon: -74, level: 3 },
+        { id: 11, name: 'Tokyo', region: 'Asia', lat: 35, lon: 139, level: 3 },
+        { id: 12, name: 'London', region: 'Europe', lat: 51, lon: 0, level: 3 }
+    ];
+
+    let globeState = {
+        restoredZones: [],
+        rotation: 0,
+        isDragging: false,
+        lastX: 0
+    };
+
+
+    const SHOP_ITEMS = [
+        { id: 'health', name: '❤️ +20 Max Health', cost: 30, desc: 'Increases your resistance' },
+        { id: 'speed', name: '⚡ +1 Speed', cost: 25, desc: 'Move faster across the wastelands' },
+        { id: 'damage', name: '💥 +10 Damage', cost: 40, desc: 'Stronger weapon impact' },
+        { id: 'ammo', name: '🔋 +20 Ammo (all)', cost: 20, desc: 'More shots available' },
+        { id: 'regen', name: '💚 Regeneration', cost: 50, desc: '+1 health every 3 seconds' }
+    ];
+
+    // ===== GAME STATE =====
+    let game = {
+        currentLevel: 0,
+        player: {
+            x: 200,
+            y: 400,
+            vx: 0,
+            vy: 0,
+            health: 100,
+            maxHealth: 100,
+            speed: 5,
+            weapon: 0,
+            facing: 1,
+            damageBonus: 0,
+            hasRegen: false
+        },
+        camera: { x: 0, y: 0 },
+        keys: {},
+        enemies: [],
+        bullets: [],
+        plants: [],
+        particles: [],
+        explosions: [],
+        dna: 0,
+        weapons: [
+            { name: 'Water', ammo: Infinity, damage: 10, cooldown: 0, speed: 8, color: '#4af', unlocked: true },
+            { name: 'Seeds', ammo: 0, damage: 20, cooldown: 0, speed: 6, color: '#6d6', unlocked: true },
+            { name: 'Fire', ammo: 0, damage: 30, cooldown: 0, speed: 7, color: '#f60', aoe: true, unlocked: false },
+            { name: 'Lightning', ammo: 0, damage: 25, cooldown: 0, speed: 10, color: '#fe4', piercing: true, unlocked: false }
+        ],
+        objectives: {
+            enemiesKilled: 0,
+            plantsPlanted: 0,
+            dnaCollected: 0
+        },
+        worldWidth: 2000,
+        worldHeight: 800,
+        levelCompleted: false,
+        gameOver: false,
+        chestPositions: []
+    };
+
+    // ===== ENEMY CLASS =====
+    class Enemy {
+        constructor(x, y, type = 'basic') {
+            this.x = x;
+            this.y = y;
+            this.type = type;
+            this.health = type === 'boss' ? 500 : 50;
+            this.maxHealth = this.health;
+            this.size = type === 'boss' ? 80 : 30;
+            this.color = type === 'boss' ? '#8b0000' : '#ff4444';
+            this.damage = type === 'boss' ? 30 : 10;
+            this.speed = type === 'boss' ? 1.5 : 2;
+            this.shootCooldown = 0;
+            this.burning = 0;
+            this.stunned = 0;
+        }
+
+        update() {
+            if (this.burning > 0) {
+                this.health -= 0.5;
+                this.burning--;
+                createParticles(this.x, this.y, '#ff6600', 2);
+            }
+
+            if (this.stunned > 0) {
+                this.stunned--;
+                return;
+            }
+
+            const dx = game.player.x - this.x;
+            const dy = game.player.y - this.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+
+            if (dist > 50) {
+                this.vx = (dx / dist) * this.speed;
+                this.vy = (dy / dist) * this.speed;
+                this.x += this.vx;
+                this.y += this.vy;
+            }
+
+            if (this.type === 'boss') {
+                this.shootCooldown--;
+                if (this.shootCooldown <= 0) {
+                    this.shoot();
+                    this.shootCooldown = 60;
+                }
+            }
+
+            const playerDist = Math.hypot(this.x - game.player.x, this.y - game.player.y);
+            if (playerDist < this.size + 20) {
+                game.player.health -= this.damage * 0.1;
+                updateHealth();
+            }
+        }
+
+        shoot() {
+            for (let i = 0; i < 8; i++) {
+                const angle = (Math.PI * 2 / 8) * i;
+                game.bullets.push({
+                    x: this.x,
+                    y: this.y,
+                    vx: Math.cos(angle) * 5,
+                    vy: Math.sin(angle) * 5,
+                    damage: 15,
+                    color: '#8b0000',
+                    fromEnemy: true
+                });
+            }
+        }
+
+        draw() {
+            const sx = this.x - game.camera.x;
+            const sy = this.y - game.camera.y;
+
+            if (this.stunned > 0) {
+                ctx.strokeStyle = '#fe4';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.arc(sx, sy, this.size + 5, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+
+            ctx.fillStyle = this.burning > 0 ? '#ff6600' : this.color;
+            ctx.beginPath();
+            ctx.arc(sx, sy, this.size, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.font = `${this.size}px Arial`;
+            ctx.fillText(this.type === 'boss' ? '👾' : '☠️', sx - this.size/2, sy + this.size/2);
+
+            if (this.health < this.maxHealth) {
+                ctx.fillStyle = 'rgba(0,0,0,0.5)';
+                ctx.fillRect(sx - this.size, sy - this.size - 10, this.size * 2, 6);
+                ctx.fillStyle = '#ff4444';
+                ctx.fillRect(sx - this.size, sy - this.size - 10, (this.health / this.maxHealth) * this.size * 2, 6);
+            }
+        }
+    }
+
+    // ===== PLANT CLASS =====
+    class Plant {
+        constructor(x, y, type) {
+            this.x = x;
+            this.y = y;
+            this.type = type;
+            this.size = 10;
+            this.maxSize = 40;
+            this.growthRate = 0.5;
+        }
+
+        update() {
+            if (this.size < this.maxSize) {
+                this.size += this.growthRate;
+            }
+        }
+
+        draw() {
+            const sx = this.x - game.camera.x;
+            const sy = this.y - game.camera.y;
+            ctx.font = `${this.size}px Arial`;
+            ctx.fillText(this.type, sx, sy);
+        }
+    }
+
+    // ===== INPUT =====
+    document.addEventListener('keydown', e => {
+        game.keys[e.key.toLowerCase()] = true;
+
+        if (e.key === ' ') shoot();
+        if (e.key === 'e' || e.key === 'E') plantSeed();
+        if (e.key === 't' || e.key === 'T') openShop();
+        if (e.key >= '1' && e.key <= '4') selectWeapon(parseInt(e.key) - 1);
+    });
+
+    document.addEventListener('keyup', e => {
+        game.keys[e.key.toLowerCase()] = false;
+    });
+
+    // ===== GAME LOOP =====
+    function update() {
+        if (game.levelCompleted || game.gameOver) return; // ← Cambiar esta línea
+
+        // Movement
+        game.player.vx = 0;
+        game.player.vy = 0;
+
+        if (game.keys['a'] || game.keys['arrowleft']) {
+            game.player.vx = -game.player.speed;
+            game.player.facing = -1;
+        }
+        if (game.keys['d'] || game.keys['arrowright']) {
+            game.player.vx = game.player.speed;
+            game.player.facing = 1;
+        }
+        if (game.keys['w'] || game.keys['arrowup']) game.player.vy = -game.player.speed;
+        if (game.keys['s'] || game.keys['arrowdown']) game.player.vy = game.player.speed;
+
+        game.player.x += game.player.vx;
+        game.player.y += game.player.vy;
+
+        game.player.x = Math.max(50, Math.min(game.worldWidth - 50, game.player.x));
+        game.player.y = Math.max(50, Math.min(game.worldHeight - 50, game.player.y));
+
+        // Camera
+        game.camera.x = game.player.x - canvas.width / 2;
+        game.camera.y = game.player.y - canvas.height / 2;
+        game.camera.x = Math.max(0, Math.min(game.worldWidth - canvas.width, game.camera.x));
+        game.camera.y = Math.max(0, Math.min(game.worldHeight - canvas.height, game.camera.y));
+
+        // Update entities
+        game.enemies.forEach(e => e.update());
+        game.plants.forEach(p => p.update());
+
+        // Bullets
+        game.bullets = game.bullets.filter(b => {
+            b.x += b.vx;
+            b.y += b.vy;
+
+            if (b.fromEnemy) {
+                const dist = Math.hypot(b.x - game.player.x, b.y - game.player.y);
+                if (dist < 20) {
+                    game.player.health -= b.damage;
+                    updateHealth();
+                    return false;
+                }
+            } else {
+                for (let i = game.enemies.length - 1; i >= 0; i--) {
+                    const e = game.enemies[i];
+                    const dist = Math.hypot(b.x - e.x, b.y - e.y);
+                    if (dist < e.size) {
+                        e.health -= b.damage + game.player.damageBonus;
+
+                        if (b.aoe) {
+                            game.explosions.push({ x: b.x, y: b.y, radius: 0, maxRadius: 80 });
+                            e.burning = 90;
+                        }
+
+                        if (b.piercing) {
+                            e.stunned = 45;
+                        }
+
+                        if (e.health <= 0) {
+                            game.enemies.splice(i, 1);
+                            game.objectives.enemiesKilled++;
+                            game.dna += 10;
+                            game.objectives.dnaCollected += 10;
+                            createParticles(e.x, e.y, '#66d19e', 30);
+
+                            if (Math.random() < 0.3) {
+                                game.weapons[1].ammo += 5;
+                                game.weapons[2].ammo += 2;
+                                game.weapons[3].ammo += 2;
+                                updateInventory();
+                            }
+
+                            checkLevelComplete();
+                        }
+
+                        if (!b.piercing) return false;
+                    }
+                }
+            }
+
+            return b.x > 0 && b.x < game.worldWidth && b.y > 0 && b.y < game.worldHeight;
+        });
+
+        // Explosions
+        game.explosions = game.explosions.filter(exp => {
+            exp.radius += 5;
+
+            game.enemies.forEach(e => {
+                const dist = Math.hypot(exp.x - e.x, exp.y - e.y);
+                if (dist < exp.radius && dist > exp.radius - 10) {
+                    e.health -= 2;
+                    e.burning = 90;
+                }
+            });
+
+            return exp.radius < exp.maxRadius;
+        });
+
+        // Particles
+        game.particles = game.particles.filter(p => {
+            p.x += p.vx;
+            p.y += p.vy;
+            p.life--;
+            return p.life > 0;
+        });
+
+        // Regeneration
+        if (game.player.hasRegen && Math.random() < 0.01) {
+            game.player.health = Math.min(game.player.maxHealth, game.player.health + 1);
+            updateHealth();
+        }
+
+        // Weapon cooldowns
+        game.weapons.forEach(w => w.cooldown = Math.max(0, w.cooldown - 1));
+
+        // Game over
+        if (game.player.health <= 0 && !game.gameOver) {
+            // Limpiar todas las compras guardadas
+            SHOP_ITEMS.forEach(item => {
+                localStorage.removeItem(`shop_${item.id}`);
+            });
+
+            game.gameOver = true;
+            setTimeout(() => {
+                showDefeatGlobe();
+            }, 100);
+        }
+        updateObjectives();
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const level = LEVELS[game.currentLevel];
+        ctx.fillStyle = level.color;
+        ctx.globalAlpha = 0.2;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.globalAlpha = 1;
+
+        // Background decorations
+        for (let x = 0; x < game.worldWidth; x += 150) {
+            for (let y = 0; y < game.worldHeight; y += 150) {
+                if (Math.random() < 0.3) {
+                    ctx.font = '40px Arial';
+                    ctx.fillText(level.plantType, x - game.camera.x, y - game.camera.y);
+                }
+            }
+        }
+
+        // Chests
+        game.chestPositions.forEach(pos => {
+            const dist = Math.hypot(pos.x - game.player.x, pos.y - game.player.y);
+
+            // Glow effect when the player is close
+            if (dist < 60) {
+                ctx.fillStyle = 'rgba(255, 194, 51, 0.3)';
+                ctx.beginPath();
+                ctx.arc(pos.x - game.camera.x, pos.y - game.camera.y, 50, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Text "Press E"
+                ctx.fillStyle = '#ffc233';
+                ctx.font = '14px Arial';
+                ctx.fillText('Press E', pos.x - game.camera.x - 25, pos.y - game.camera.y - 40);
+            }
+
+            ctx.font = '40px Arial';
+            ctx.fillText('📦', pos.x - game.camera.x, pos.y - game.camera.y);
+        });
+
+
+        // Plants
+        game.plants.forEach(p => p.draw());
+
+        // Player
+        const px = game.player.x - game.camera.x;
+        const py = game.player.y - game.camera.y;
+
+        ctx.save();
+        ctx.translate(px, py);
+        ctx.scale(game.player.facing, 1);
+        ctx.font = '40px Arial';
+        ctx.fillText('🧑‍🔬', -20, 20);
+        ctx.restore();
+
+        // Enemies
+        game.enemies.forEach(e => e.draw());
+
+        // Explosions
+        game.explosions.forEach(exp => {
+            ctx.strokeStyle = '#ff6600';
+            ctx.lineWidth = 8;
+            ctx.globalAlpha = 1 - (exp.radius / exp.maxRadius);
+            ctx.beginPath();
+            ctx.arc(exp.x - game.camera.x, exp.y - game.camera.y, exp.radius, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.globalAlpha = 1;
+        });
+
+        // Bullets
+        game.bullets.forEach(b => {
+            ctx.fillStyle = b.color;
+            ctx.beginPath();
+            ctx.arc(b.x - game.camera.x, b.y - game.camera.y, b.piercing ? 8 : 5, 0, Math.PI * 2);
+            ctx.fill();
+        });
+
+        // Particles
+        game.particles.forEach(p => {
+            ctx.fillStyle = p.color;
+            ctx.globalAlpha = p.life / 20;
+            ctx.fillRect(p.x - game.camera.x, p.y - game.camera.y, 4, 4);
+            ctx.globalAlpha = 1;
+        });
+    }
+
+    function gameLoop() {
+        update();
+        draw();
+        requestAnimationFrame(gameLoop);
+    }
+
+    // ===== ACTIONS =====
+    function shoot() {
+        const weapon = game.weapons[game.player.weapon];
+        if (weapon.cooldown > 0 || weapon.ammo <= 0 || !weapon.unlocked) return;
+
+        const angle = game.player.facing === 1 ? 0 : Math.PI;
+        game.bullets.push({
+            x: game.player.x + game.player.facing * 30,
+            y: game.player.y,
+            vx: Math.cos(angle) * weapon.speed,
+            vy: 0,
+            damage: weapon.damage,
+            color: weapon.color,
+            fromEnemy: false,
+            aoe: weapon.aoe || false,
+            piercing: weapon.piercing || false
+        });
+
+        weapon.cooldown = 10;
+        if (weapon.ammo !== Infinity) weapon.ammo--;
+        updateInventory();
+    }
+
+    function plantSeed() {
+        if (game.weapons[1].ammo <= 0) return;
+
+        const level = LEVELS[game.currentLevel];
+        game.plants.push(new Plant(game.player.x, game.player.y, level.plantType));
+        game.objectives.plantsPlanted++;
+        game.weapons[1].ammo--;
+        updateInventory();
+        showDialog('🌱 Flora planted', `${level.plantType} is growing.`);
+        checkLevelComplete();
+    }
+
+    function selectWeapon(index) {
+        if (!game.weapons[index].unlocked) return;
+        game.player.weapon = index;
+        document.querySelectorAll('.inv-slot').forEach((slot, i) => {
+            slot.classList.toggle('selected', i === index);
+        });
+    }
+
+    // ===== LEVEL MANAGEMENT =====
+    function loadLevel(levelIndex) {
+        game.currentLevel = levelIndex;
+        const level = LEVELS[levelIndex];
+
+        game.player.x = 200;
+        game.player.y = 400;
+        game.enemies = [];
+        game.bullets = [];
+        game.plants = [];
+        game.particles = [];
+        game.objectives = { enemiesKilled: 0, plantsPlanted: 0, dnaCollected: 0 };
+        game.levelCompleted = false;
+
+        // Spawn enemies
+        for (let i = 0; i < level.enemyCount; i++) {
+            const x = Math.random() * (game.worldWidth - 400) + 200;
+            const y = Math.random() * (game.worldHeight - 200) + 100;
+            game.enemies.push(new Enemy(x, y));
+        }
+
+        // Boss
+        if (level.hasBoss) {
+            game.enemies.push(new Enemy(game.worldWidth - 300, game.worldHeight / 2, 'boss'));
+        }
+
+        // 3 fixed chests
+        game.chestPositions = game.chestPositions.filter(chest => {
+            const dist = Math.hypot(chest.x - game.player.x, chest.y - game.player.y);
+            if (dist < 60 && game.keys['e']) {
+                game.weapons[1].ammo += 10;
+                game.weapons[2].ammo += 5;
+                game.weapons[3].ammo += 5;
+                game.dna += 15;
+                game.objectives.dnaCollected += 15;
+                createParticles(chest.x, chest.y, '#ffc233', 30);
+                showDialog('📦 Chest opened', '+10 Seeds, +5 Fire, +5 Lightning, +15 DNA');
+                updateInventory();
+                checkLevelComplete();
+                return false; // Remove chest
+            }
+            return true;
+        });
+
+        // Initial ammo
+        game.weapons[1].ammo = 20;
+
+        if (levelIndex >= 1) {
+            game.weapons[2].unlocked = true;
+            game.weapons[2].ammo = 15;
+            document.getElementById('fireSlot').classList.remove('locked');
+        }
+
+        if (levelIndex >= 2) {
+            game.weapons[3].unlocked = true;
+            game.weapons[3].ammo = 10;
+            document.getElementById('zapSlot').classList.remove('locked');
+        }
+
+        document.getElementById('levelInfo').textContent = level.name;
+        updateInventory();
+        updateObjectives();
+
+        showDialog('🧑‍🔬 Dr. Elena', level.story);
+    }
+
+    function checkLevelComplete() {
+        if (game.levelCompleted) return;
+
+        const level = LEVELS[game.currentLevel];
+
+        if (game.objectives.enemiesKilled >= level.enemyCount &&
+            game.objectives.plantsPlanted >= level.plantsRequired &&
+            game.objectives.dnaCollected >= level.dnaTarget) {
+
+            game.levelCompleted = true;
+
+            // Marcar zonas como restauradas
+            WORLD_ZONES.forEach(zone => {
+                if (zone.level === game.currentLevel && !globeState.restoredZones.includes(zone.id)) {
+                    globeState.restoredZones.push(zone.id);
+                }
+            });
+
+            // Mostrar globo primero
+            document.getElementById('globeScreen').style.display = 'flex';
+            showGlobe();
+
+            // Stats when closing the globe
+            document.getElementById('levelStats').innerHTML = `
+<strong>Enemies eliminated:</strong> ${game.objectives.enemiesKilled}<br>
+<strong>Plants planted:</strong> ${game.objectives.plantsPlanted}<br>
+<strong>DNA collected:</strong> ${game.objectives.dnaCollected}<br>
+<strong>Total DNA:</strong> ${game.dna}
+`;
+        }
+    }
+
+
+    function showGlobe() {
+        const canvas = document.getElementById('globeCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = 250;
+        canvas.height = 250;
+
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+        const radius = 120;
+
+        let rotation = 0;
+        let isDragging = false;
+        let lastX = 0;
+
+        // Mouse controls
+        canvas.addEventListener('mousedown', e => {
+            isDragging = true;
+            lastX = e.clientX;
+        });
+
+        canvas.addEventListener('mousemove', e => {
+            if (isDragging) {
+                const deltaX = e.clientX - lastX;
+                rotation += deltaX * 0.01;
+                lastX = e.clientX;
+            }
+        });
+
+        canvas.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+
+        function drawGlobe() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Auto-rotar
+            if (!isDragging) {
+                rotation += 0.005;
+            }
+
+            // Gradiente de tierra
+            const gradient = ctx.createRadialGradient(centerX, centerY, radius * 0.3, centerX, centerY, radius);
+            gradient.addColorStop(0, '#2a5a7a');
+            gradient.addColorStop(0.5, '#1a4a6a');
+            gradient.addColorStop(1, '#0a2a4a');
+
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Continentes simplificados
+            const continents = [
+                // América del Norte
+                {lat: 40, lon: -100, size: 35},
+                // América del Sur
+                {lat: -15, lon: -60, size: 28},
+                // Europa
+                {lat: 50, lon: 10, size: 22},
+                // África
+                {lat: 0, lon: 20, size: 32},
+                // Asia
+                {lat: 50, lon: 100, size: 40},
+                // Oceanía
+                {lat: -25, lon: 135, size: 18},
+            ];
+
+            ctx.fillStyle = '#3a7a5a';
+            continents.forEach(cont => {
+                const point = projectPoint(cont.lat, cont.lon + rotation * 50, radius, centerX, centerY);
+
+                if (point.visible && point.z > 0) {
+                    ctx.globalAlpha = Math.max(0.6, point.z / radius);
+                    ctx.beginPath();
+                    ctx.arc(point.x, point.y, cont.size * (point.z / radius), 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            });
+
+            ctx.globalAlpha = 1;
+
+            // Líneas de cuadrícula
+            ctx.strokeStyle = 'rgba(102, 209, 158, 0.2)';
+            ctx.lineWidth = 1;
+
+            for (let lat = -90; lat <= 90; lat += 30) {
+                ctx.beginPath();
+                for (let lon = -180; lon <= 180; lon += 10) {
+                    const point = projectPoint(lat, lon + rotation * 50, radius, centerX, centerY);
+                    if (point.visible && point.z > 0) {
+                        if (lon === -180) ctx.moveTo(point.x, point.y);
+                        else ctx.lineTo(point.x, point.y);
+                    }
+                }
+                ctx.stroke();
+            }
+
+            // Dibujar zonas sobre el mapa
+            WORLD_ZONES.forEach(zone => {
+                const point = projectPoint(zone.lat, zone.lon + rotation * 50, radius, centerX, centerY);
+
+                if (!point.visible || point.z <= 0) return;
+
+                const isRestored = globeState.restoredZones.includes(zone.id);
+
+                ctx.fillStyle = isRestored ? '#66d19e' : '#ff4444';
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = isRestored ? '#66d19e' : '#ff4444';
+
+                ctx.beginPath();
+                ctx.arc(point.x, point.y, 6, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.shadowBlur = 0;
+            });
+
+            // Enemigos restantes
+            if (game.enemies.length > 0) {
+                game.enemies.forEach((enemy, i) => {
+                    const angle = (i / game.enemies.length) * Math.PI * 2 + rotation;
+                    const lat = Math.sin(angle) * 40;
+                    const lon = Math.cos(angle) * 100;
+
+                    const point = projectPoint(lat, lon, radius, centerX, centerY);
+
+                    if (point.visible && point.z > 0) {
+                        ctx.fillStyle = 'rgba(139, 0, 0, 0.8)';
+                        ctx.shadowBlur = 8;
+                        ctx.shadowColor = '#8b0000';
+                        ctx.beginPath();
+                        ctx.arc(point.x, point.y, 5, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.shadowBlur = 0;
+                    }
+                });
+            }
+
+            requestAnimationFrame(drawGlobe);
+        }
+
+        drawGlobe();
+        updateGlobeUI();
+    }
+
+    function projectPoint(lat, lon, radius, centerX, centerY) {
+        const latRad = lat * Math.PI / 180;
+        const lonRad = lon * Math.PI / 180;
+
+        const x = radius * Math.cos(latRad) * Math.sin(lonRad);
+        const y = -radius * Math.sin(latRad);
+        const z = radius * Math.cos(latRad) * Math.cos(lonRad);
+
+        return {
+            x: centerX + x,
+            y: centerY + y,
+            z: z,
+            visible: z > 0
+        };
+    }
+
+    function updateGlobeUI() {
+        const currentZones = WORLD_ZONES.filter(z => z.level === game.currentLevel);
+        const restored = currentZones.filter(z => globeState.restoredZones.includes(z.id)).length;
+        const total = currentZones.length;
+
+        document.getElementById('restoredZones').textContent = `${restored}/${total}`;
+        document.getElementById('infectedZones').textContent = game.enemies.length;
+        document.getElementById('globalProgress').textContent =
+            Math.round((globeState.restoredZones.length / WORLD_ZONES.length) * 100) + '%';
+
+        const zoneList = document.getElementById('zoneList');
+        zoneList.innerHTML = currentZones.map(zone => {
+            const isRestored = globeState.restoredZones.includes(zone.id);
+            return `
+            <div class="zone-item ${isRestored ? 'restored' : ''}">
+                <span class="zone-name">${zone.name} (${zone.region})</span>
+                <span class="zone-status ${isRestored ? 'restored' : 'infected'}">
+                    ${isRestored ? '✓ RESTORED' : '⚠ INFECTED'}
+                </span>
+            </div>
+        `;
+        }).join('');
+    }
+
+    function closeGlobe() {
+        document.getElementById('globeScreen').style.display = 'none';
+        document.getElementById('levelComplete').style.display = 'flex';
+    }
+
+    function nextLevel() {
+        document.getElementById('levelComplete').style.display = 'none';
+
+        if (game.currentLevel < LEVELS.length - 1) {
+            loadLevel(game.currentLevel + 1);
+        } else {
+            alert('🎉 TOTAL VICTORY!\n\nYou have restored all biomes. Earth is saved!');
+            location.reload();
+        }
+    }
+
+    // ===== SHOP =====
+    function openShop() {
+        document.getElementById('levelComplete').style.display = 'none'; // ← Agregar esta línea
+
+        const shopDiv = document.getElementById('dnaShop');
+        const itemsDiv = document.getElementById('shopItems');
+
+        itemsDiv.innerHTML = '';
+
+        SHOP_ITEMS.forEach(item => {
+            const purchased = localStorage.getItem(`shop_${item.id}`) === 'true';
+            const canBuy = game.dna >= item.cost && !purchased;
+
+            itemsDiv.innerHTML += `
+        <div class="shop-item ${purchased ? 'purchased' : ''}">
+            <div class="shop-item-info">
+                <div class="shop-item-name">${item.name}</div>
+                <div class="shop-item-desc">${item.desc}</div>
+            </div>
+            <button
+                class="shop-buy-btn"
+                ${!canBuy ? 'disabled' : ''}
+                onclick="buyUpgrade('${item.id}', ${item.cost})">
+                ${purchased ? '✅ OWNED' : `${item.cost} DNA`}
+            </button>
+        </div>
+    `;
+        });
+
+        shopDiv.style.display = 'block';
+    }
+
+    function closeShop() {
+        document.getElementById('dnaShop').style.display = 'none';
+
+        if (game.levelCompleted) {
+            document.getElementById('levelComplete').style.display = 'flex';
+        }
+    }
+
+
+    function buyUpgrade(id, cost) {
+        if (game.dna < cost) return;
+
+        game.dna -= cost;
+        localStorage.setItem(`shop_${id}`, 'true');
+
+        switch(id) {
+            case 'health':
+                game.player.maxHealth += 20;
+                game.player.health += 20;
+                break;
+            case 'speed':
+                game.player.speed += 1;
+                break;
+            case 'damage':
+                game.player.damageBonus += 10;
+                break;
+            case 'ammo':
+                game.weapons[1].ammo += 20;
+                game.weapons[2].ammo += 20;
+                game.weapons[3].ammo += 20;
+                break;
+            case 'regen':
+                game.player.hasRegen = true;
+                break;
+        }
+
+        updateInventory();
+        updateHealth();
+        openShop(); // Refresh
+    }
+
+    // ===== UI =====
+    function updateHealth() {
+        const pct = Math.max(0, (game.player.health / game.player.maxHealth) * 100);
+        document.getElementById('healthBar').style.width = pct + '%';
+    }
+
+    function updateInventory() {
+        document.getElementById('dna').textContent = game.dna;
+        document.getElementById('seedGun').textContent = game.weapons[1].ammo;
+        document.getElementById('fireGun').textContent = game.weapons[2].ammo;
+        document.getElementById('zapGun').textContent = game.weapons[3].ammo;
+    }
+
+    function updateObjectives() {
+        const level = LEVELS[game.currentLevel];
+        document.getElementById('obj1').textContent = `Defeat ${game.objectives.enemiesKilled}/${level.enemyCount} enemies`;
+        document.getElementById('obj2').textContent = `Grow ${game.objectives.plantsPlanted}/${level.plantsRequired} ${level.plantType}`;
+        document.getElementById('obj3').textContent = `Gather ${game.objectives.dnaCollected}/${level.dnaTarget} DNA`;
+
+        document.getElementById('obj1').classList.toggle('completed', game.objectives.enemiesKilled >= level.enemyCount);
+        document.getElementById('obj2').classList.toggle('completed', game.objectives.plantsPlanted >= level.plantsRequired);
+        document.getElementById('obj3').classList.toggle('completed', game.objectives.dnaCollected >= level.dnaTarget);
+    }
+
+    function showDialog(speaker, text) {
+        document.getElementById('dialogSpeaker').textContent = speaker;
+        document.getElementById('dialogText').textContent = text;
+        document.getElementById('dialogBox').style.display = 'block';
+        setTimeout(() => {
+            document.getElementById('dialogBox').style.display = 'none';
+        }, 4000);
+    }
+
+    function createParticles(x, y, color, count = 20) {
+        for (let i = 0; i < count; i++) {
+            game.particles.push({
+                x, y,
+                vx: (Math.random() - 0.5) * 8,
+                vy: (Math.random() - 0.5) * 8,
+                life: 20,
+                color
+            });
+        }
+    }
+
+    function startGame() {
+        document.getElementById('tutorial').style.display = 'none';
+        initMiniGlobe();
+        loadLevel(0);
+        gameLoop();
+    }
+
+    // Mini globo persistente
+    let miniGlobe = {
+        rotation: 0,
+        autoRotate: true,
+        canvas: null,
+        ctx: null,
+        centerX: 0,
+        centerY: 0,
+        radius: 60
+    };
+
+    function initMiniGlobe() {
+        // Crear canvas del mini globo
+        const container = document.createElement('div');
+        container.style.cssText = `
+        position: fixed;
+        top: 120px;
+        left: 20px;
+        background: rgba(0, 0, 0, 0.9);
+        border: 3px solid #66d19e;
+        border-radius: 16px;
+        padding: 16px;
+        z-index: 150;
+        width: 180px;
+    `;
+
+        const title = document.createElement('div');
+        title.textContent = '🌍 ESTADO GLOBAL';
+        title.style.cssText = `
+        color: #66d19e;
+        font-size: 14px;
+        font-weight: 900;
+        margin-bottom: 12px;
+        text-align: center;
+    `;
+
+        miniGlobe.canvas = document.createElement('canvas');
+        miniGlobe.canvas.width = 140;
+        miniGlobe.canvas.height = 140;
+        miniGlobe.canvas.style.display = 'block';
+        miniGlobe.canvas.style.margin = '0 auto';
+
+        const stats = document.createElement('div');
+        stats.id = 'miniGlobeStats';
+        stats.style.cssText = `
+        margin-top: 12px;
+        font-size: 11px;
+        text-align: center;
+        line-height: 1.6;
+    `;
+
+        container.appendChild(title);
+        container.appendChild(miniGlobe.canvas);
+        container.appendChild(stats);
+        document.body.appendChild(container);
+
+        miniGlobe.ctx = miniGlobe.canvas.getContext('2d');
+        miniGlobe.centerX = miniGlobe.canvas.width / 2;
+        miniGlobe.centerY = miniGlobe.canvas.height / 2;
+
+        animateMiniGlobe();
+    }
+
+    function animateMiniGlobe() {
+        const ctx = miniGlobe.ctx;
+        const { centerX, centerY, radius } = miniGlobe;
+
+        // Auto-rotar
+        if (miniGlobe.autoRotate) {
+            miniGlobe.rotation += 0.005;
+        }
+
+        // Clear
+        ctx.clearRect(0, 0, miniGlobe.canvas.width, miniGlobe.canvas.height);
+
+        // Esfera base
+        const gradient = ctx.createRadialGradient(centerX, centerY, radius * 0.3, centerX, centerY, radius);
+        gradient.addColorStop(0, '#1a3a4a');
+        gradient.addColorStop(1, '#051015');
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Líneas de cuadrícula
+        ctx.strokeStyle = 'rgba(102, 209, 158, 0.15)';
+        ctx.lineWidth = 0.5;
+
+        for (let lat = -90; lat <= 90; lat += 30) {
+            ctx.beginPath();
+            for (let lon = -180; lon <= 180; lon += 10) {
+                const point = projectMiniPoint(lat, lon + miniGlobe.rotation * 50, radius, centerX, centerY);
+                if (point.visible) {
+                    if (lon === -180) ctx.moveTo(point.x, point.y);
+                    else ctx.lineTo(point.x, point.y);
+                }
+            }
+            ctx.stroke();
+        }
+
+        // Zonas infectadas y restauradas
+        WORLD_ZONES.forEach(zone => {
+            const point = projectMiniPoint(zone.lat, zone.lon + miniGlobe.rotation * 50, radius, centerX, centerY);
+
+            if (!point.visible) return;
+
+            const isRestored = globeState.restoredZones.includes(zone.id);
+
+            // Color según estado
+            ctx.fillStyle = isRestored ? '#66d19e' : '#ff4444';
+            ctx.shadowBlur = 8;
+            ctx.shadowColor = isRestored ? '#66d19e' : '#ff4444';
+
+            ctx.beginPath();
+            ctx.arc(point.x, point.y, 4, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.shadowBlur = 0;
+        });
+
+        // Enemigos (infección activa)
+        if (game.enemies.length > 0) {
+            game.enemies.forEach((enemy, i) => {
+                const angle = (i / game.enemies.length) * Math.PI * 2 + miniGlobe.rotation;
+                const lat = Math.sin(angle) * 40;
+                const lon = Math.cos(angle) * 100;
+
+                const point = projectMiniPoint(lat, lon, radius, centerX, centerY);
+
+                if (point.visible) {
+                    ctx.fillStyle = 'rgba(139, 0, 0, 0.8)';
+                    ctx.beginPath();
+                    ctx.arc(point.x, point.y, 3, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            });
+        }
+
+        // Actualizar stats
+        updateMiniGlobeStats();
+
+        requestAnimationFrame(animateMiniGlobe);
+    }
+
+    function projectMiniPoint(lat, lon, radius, centerX, centerY) {
+        const latRad = lat * Math.PI / 180;
+        const lonRad = lon * Math.PI / 180;
+
+        const x = radius * Math.cos(latRad) * Math.sin(lonRad);
+        const y = -radius * Math.sin(latRad);
+        const z = radius * Math.cos(latRad) * Math.cos(lonRad);
+
+        return {
+            x: centerX + x,
+            y: centerY + y,
+            visible: z > 0
+        };
+    }
+
+    function updateMiniGlobeStats() {
+        const restored = globeState.restoredZones.length;
+        const total = WORLD_ZONES.length;
+        const percentage = Math.round((restored / total) * 100);
+
+        const statsDiv = document.getElementById('miniGlobeStats');
+        if (statsDiv) {
+            statsDiv.innerHTML = `
+    <div style="color: #66d19e;">✓ ${restored}/${total} zones</div>
+    <div style="color: #ffc233;">${percentage}% restored</div>
+    <div style="color: #ff4444;">☠ ${game.enemies.length} threats</div>
+    `;
+        }
+    }
+
+    // Globo del tutorial
+    function initTutorialGlobe() {
+        const canvas = document.getElementById('tutorialGlobe');
+        const ctx = canvas.getContext('2d');
+        let rotation = 0;
+
+        function draw() {
+            rotation += 0.008;
+
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const radius = 100;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Esfera base
+            const gradient = ctx.createRadialGradient(centerX, centerY, radius * 0.3, centerX, centerY, radius);
+            gradient.addColorStop(0, '#2a1a1a');
+            gradient.addColorStop(1, '#1a0a0a');
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Zonas infectadas (todas rojas)
+            WORLD_ZONES.forEach(zone => {
+                const point = projectPoint(zone.lat, zone.lon + rotation * 50, radius, centerX, centerY);
+
+                if (point.visible && point.z > 0) {
+                    ctx.fillStyle = '#ff4444';
+                    ctx.shadowBlur = 12;
+                    ctx.shadowColor = '#ff4444';
+                    ctx.beginPath();
+                    ctx.arc(point.x, point.y, 6, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                }
+            });
+
+            requestAnimationFrame(draw);
+        }
+
+        draw();
+    }
+
+    // Globo de victoria con animación de florecimiento
+    function showVictoryGlobe() {
+        const canvas = document.getElementById('victoryCanvas');
+        const ctx = canvas.getContext('2d');
+        let rotation = 0;
+        let bloomProgress = 0;
+        let particles = [];
+
+        // Crear partículas de vida
+        for (let i = 0; i < 100; i++) {
+            particles.push({
+                angle: Math.random() * Math.PI * 2,
+                radius: 150 + Math.random() * 100,
+                speed: 0.5 + Math.random() * 1.5,
+                size: 2 + Math.random() * 4,
+                life: 1
+            });
+        }
+
+        function draw() {
+            rotation += 0.005;
+            bloomProgress = Math.min(1, bloomProgress + 0.01);
+
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const radius = 140;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Esfera restaurada
+            const gradient = ctx.createRadialGradient(centerX, centerY, radius * 0.3, centerX, centerY, radius);
+            gradient.addColorStop(0, '#2a5a3a');
+            gradient.addColorStop(0.5, '#1a4a2a');
+            gradient.addColorStop(1, '#0a2a1a');
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Continentes verdes
+            const continents = [
+                {lat: 40, lon: -100, size: 40},
+                {lat: -20, lon: -60, size: 30},
+                {lat: 50, lon: 10, size: 25},
+                {lat: 0, lon: 20, size: 35},
+                {lat: 50, lon: 100, size: 45},
+                {lat: -25, lon: 135, size: 20}
+            ];
+
+            continents.forEach(cont => {
+                const point = projectPoint(cont.lat, cont.lon + rotation * 50, radius, centerX, centerY);
+
+                if (point.visible && point.z > 0) {
+                    ctx.fillStyle = '#4a8a5a';
+                    ctx.globalAlpha = Math.max(0.6, point.z / radius);
+                    ctx.beginPath();
+                    ctx.arc(point.x, point.y, cont.size * (point.z / radius) * bloomProgress, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            });
+
+            ctx.globalAlpha = 1;
+
+            // Zonas restauradas con efecto de florecimiento
+            WORLD_ZONES.forEach((zone, index) => {
+                const point = projectPoint(zone.lat, zone.lon + rotation * 50, radius, centerX, centerY);
+
+                if (point.visible && point.z > 0) {
+                    const delay = index * 0.08;
+                    const zoneBloom = Math.max(0, Math.min(1, (bloomProgress - delay) * 2));
+
+                    // Pulso verde
+                    ctx.fillStyle = `rgba(102, 209, 158, ${zoneBloom})`;
+                    ctx.shadowBlur = 20 * zoneBloom;
+                    ctx.shadowColor = '#66d19e';
+                    ctx.beginPath();
+                    ctx.arc(point.x, point.y, 8 * zoneBloom, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+
+                    // Símbolo de planta
+                    if (zoneBloom > 0.5) {
+                        ctx.font = `${16 * zoneBloom}px Arial`;
+                        ctx.fillText('🌿', point.x - 8, point.y + 8);
+                    }
+                }
+            });
+
+            // Partículas flotantes
+            particles.forEach(p => {
+                p.angle += p.speed * 0.01;
+                p.radius -= p.speed * 0.5;
+
+                const x = centerX + Math.cos(p.angle) * p.radius;
+                const y = centerY + Math.sin(p.angle) * p.radius;
+
+                if (p.radius > 0) {
+                    ctx.fillStyle = `rgba(102, 209, 158, ${p.life * bloomProgress})`;
+                    ctx.beginPath();
+                    ctx.arc(x, y, p.size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            });
+
+            // Resplandor exterior
+            ctx.strokeStyle = `rgba(102, 209, 158, ${bloomProgress * 0.5})`;
+            ctx.lineWidth = 3;
+            ctx.shadowBlur = 30;
+            ctx.shadowColor = '#66d19e';
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius + 10, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+
+            requestAnimationFrame(draw);
+        }
+
+        draw();
+    }
+
+    // Modificar la función nextLevel para mostrar victoria
+    function nextLevel() {
+        document.getElementById('levelComplete').style.display = 'none';
+
+        if (game.currentLevel < LEVELS.length - 1) {
+            loadLevel(game.currentLevel + 1);
+        } else {
+            // ¡Victoria final!
+            document.getElementById('victoryGlobe').style.display = 'flex';
+            document.getElementById('finalDNA').textContent = game.dna;
+            showVictoryGlobe();
+        }
+    }
+
+    function showDefeatGlobe() {
+        document.getElementById('defeatGlobe').style.display = 'flex';
+        document.getElementById('defeatRestored').textContent = globeState.restoredZones.length + '/' + WORLD_ZONES.length;
+        document.getElementById('defeatDNA').textContent = game.dna;
+
+        const canvas = document.getElementById('defeatCanvas');
+        const ctx = canvas.getContext('2d');
+        let rotation = 0;
+
+        function draw() {
+            rotation += 0.005;
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const radius = 140;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Esfera oscura
+            const gradient = ctx.createRadialGradient(centerX, centerY, radius * 0.3, centerX, centerY, radius);
+            gradient.addColorStop(0, '#2a1a1a');
+            gradient.addColorStop(1, '#1a0a0a');
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Zonas infectadas (rojas)
+            WORLD_ZONES.forEach(zone => {
+                const point = projectPoint(zone.lat, zone.lon + rotation * 50, radius, centerX, centerY);
+                if (point.visible && point.z > 0) {
+                    const isRestored = globeState.restoredZones.includes(zone.id);
+                    ctx.fillStyle = isRestored ? '#66d19e' : '#ff4444';
+                    ctx.shadowBlur = isRestored ? 0 : 12;
+                    ctx.shadowColor = '#ff4444';
+                    ctx.beginPath();
+                    ctx.arc(point.x, point.y, 8, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                }
+            });
+
+            requestAnimationFrame(draw);
+        }
+        draw();
+    }
+
+    // Inicializar globo del tutorial cuando carga la página
+    window.addEventListener('DOMContentLoaded', () => {
+        initTutorialGlobe();
+    });
+</script>
+</body>
+</html>
