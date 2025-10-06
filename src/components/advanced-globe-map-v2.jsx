@@ -2,7 +2,7 @@
 
 import "maplibre-gl/dist/maplibre-gl.css";
 
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import Map, {
   GeolocateControl,
@@ -15,6 +15,7 @@ import Map, {
 import DatePicker from "@/components/date-picker";
 import Legend from "@/components/legend";
 import { clasificarNDVI, clasificarNDVIColor, getFirstDayOfMonthFormatted, getLastDayOfMonthFormatted, getStartOfWeekFormatted, transformDate } from "@/utils/clasificador-ndvi";
+import Toast from "./toast";
 
 // ==================== DEFINICIÓN DE CAPAS Y SELECTOR ====================
 const AVAILABLE_LAYERS = [
@@ -849,6 +850,21 @@ const AdvancedGlobeMapV2 = () => {
   const [predictionLoading, setPredictionLoading] = useState(false);
   const [predictionError, setPredictionError] = useState(null);
 
+  const [showDragToast, setShowDragToast] = useState(false);
+
+  useEffect(() => {
+    const hasSeenToast = sessionStorage.getItem('hasSeenDragToast');
+
+    if (!hasSeenToast) {
+      const timer = setTimeout(() => {
+        setShowDragToast(true);
+        sessionStorage.setItem('hasSeenDragToast', 'true');
+      }, 2000);
+
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
   const handlePredict = async (lat, lon, targetDate) => {
     setPredictionLoading(true);
     setPredictionError(null);
@@ -1058,6 +1074,12 @@ const AdvancedGlobeMapV2 = () => {
         onDragEnd={handleDragEnd}
         cursor={isDragging ? "grabbing" : "pointer"}
       >
+        {showDragToast && (
+          <Toast
+            message="💡 Press and hold to drag the globe and explore."
+            onClose={() => setShowDragToast(false)}
+          />
+        )}
         {clickedInfo && (
           <Popup
             longitude={clickedInfo.lng}
