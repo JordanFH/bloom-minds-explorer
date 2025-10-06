@@ -344,6 +344,103 @@ const ProjectionControls = ({ projection, onProjectionChange }) => {
   );
 };
 
+const PredictionPanel = ({ lat, lon, onPredict, onForecast, result, loading, error }) => {
+  const [targetDate, setTargetDate] = useState(() => {
+    const future = new Date();
+    future.setDate(future.getDate() + 30);
+    return future.toISOString().split("T")[0];
+  });
+
+  return (
+    <div className="space-y-4">
+      {/* --- Header --- */}
+      <div className="flex items-center space-x-2 border-b border-gray-200 pb-3">
+        <svg className="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M3 12v3c0 1.1.9 2 2 2h10a2 2 0 002-2v-3a1 1 0 10-2 0v3H5v-3a1 1 0 10-2 0zM17 6a1 1 0 00-1-1h-2a1 1 0 100 2h2a1 1 0 001-1zM4 5a1 1 0 100 2h2a1 1 0 100-2H4z" />
+          <path fillRule="evenodd" d="M10 2a1 1 0 00-1 1v1.335A3.99 3.99 0 006.01 7.422a1 1 0 101.98.204A1.99 1.99 0 0110 5.5a1 1 0 000-2zM12.01 7.422a1 1 0 10-1.98.204A1.99 1.99 0 0110 5.5a1 1 0 100-2 3.99 3.99 0 00-3.99 3.087A1 1 0 104.02 7.626 5.99 5.99 0 0110 3.5a1 1 0 000 2 1.99 1.99 0 01-1.99 1.913z" clipRule="evenodd" />
+        </svg>
+        <h4 className="font-bold text-gray-800 text-base">NDVI Prediction</h4>
+      </div>
+
+      {/* --- Controls --- */}
+      <div>
+        <label className="block text-xs font-medium text-gray-700 mb-1">Date for Single Prediction:</label>
+        <input
+          type="date"
+          value={targetDate}
+          onChange={(e) => setTargetDate(e.target.value)}
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-sm"
+        />
+      </div>
+      <div className="flex gap-3">
+        <button onClick={() => onPredict(lat, lon, targetDate)} disabled={loading} className="flex-1 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 disabled:bg-gray-400 transition-colors">
+          {loading ? "Calculating..." : "📊 Single Prediction"}
+        </button>
+        <button onClick={() => onForecast(lat, lon)} disabled={loading} className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 disabled:bg-gray-400 transition-colors">
+          {loading ? "Calculating..." : "📈 30-Day Forecast"}
+        </button>
+      </div>
+
+      {/* --- Status Feedback (Error or Loading) --- */}
+      {error && <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-3 text-sm"><p className="font-bold">Error:</p><p>{error}</p></div>}
+      {loading && <div className="text-center text-sm text-gray-600">Performing prediction...</div>}
+
+      {/* --- Results Visualization --- */}
+      {result && (
+        <div className="space-y-6 pt-4 border-t border-gray-200">
+
+          {/* Single Prediction Result */}
+          {result.prediction && (
+            <div className="space-y-3">
+              <h3 className="text-lg font-medium text-gray-800">📊 Prediction for {result.prediction.targetDate}</h3>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="bg-green-50 p-3 rounded-lg text-center"><p className="text-sm text-gray-600">Predicted NDVI</p><p className="text-2xl font-bold text-green-700">{result.prediction.ndvi}</p></div>
+                <div className="bg-blue-50 p-3 rounded-lg text-center"><p className="text-sm text-gray-600">Confidence</p><p className="text-2xl font-bold text-blue-700">{result.confidence.percentage}%</p></div>
+                <div className="bg-gray-100 p-3 rounded-lg text-center"><p className="text-xs text-gray-500">Lower Range</p><p className="text-md font-semibold text-gray-700">{result.prediction.lowerBound}</p></div>
+                <div className="bg-gray-100 p-3 rounded-lg text-center"><p className="text-xs text-gray-500">Upper Range</p><p className="text-md font-semibold text-gray-700">{result.prediction.upperBound}</p></div>
+              </div>
+            </div>
+          )}
+
+          {/* Recommendations Result */}
+          {result.recommendations && (
+            <div className="space-y-3">
+              <h3 className="text-lg font-medium text-gray-800">🌾 Recommendations</h3>
+              <div className="bg-blue-50 p-4 rounded-lg text-sm text-blue-900 font-medium">{result.recommendations.summary}</div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="border border-gray-200 p-3 rounded-lg"><p className="font-medium text-gray-700">💧 Irrigation</p><p className="text-sm text-gray-600">{result.recommendations.irrigation?.action}</p><p className="text-xs text-gray-500 mt-1">Priority: {result.recommendations.irrigation?.priority}</p></div>
+                <div className="border border-gray-200 p-3 rounded-lg"><p className="font-medium text-gray-700">🌱 Fertilization</p><p className="text-sm text-gray-600">{result.recommendations.fertilization?.action}</p><p className="text-xs text-gray-500 mt-1">Type: {result.recommendations.fertilization?.type}</p></div>
+              </div>
+            </div>
+          )}
+
+          {/* Forecast Result */}
+          {result.predictions && (
+            <div className="space-y-2">
+              <h3 className="text-lg font-medium text-gray-800">📈 Forecast ({result.predictions.length} predictions)</h3>
+              {result.predictions.map((pred, idx) => (
+                <div key={idx} className="flex justify-between items-center p-3 bg-gray-100 rounded-lg">
+                  <span className="text-sm font-medium text-gray-700">{pred.prediction.targetDate}</span>
+                  <div className="flex gap-4 items-center">
+                    <span className="text-sm">NDVI: <span className="font-semibold text-green-700">{pred.prediction.ndvi}</span></span>
+                    <span className="text-sm">Confidence: <span className="font-semibold text-blue-700">{pred.confidence.percentage}%</span></span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Collapsible JSON */}
+          <details className="pt-4">
+            <summary className="cursor-pointer text-xs text-gray-500 hover:text-gray-800">View full JSON</summary>
+            <pre className="mt-2 p-2 bg-gray-100 rounded-md text-xs overflow-auto max-h-48">{JSON.stringify(result, null, 2)}</pre>
+          </details>
+        </div>
+      )}
+    </div>
+  );
+};
+
 const ClimateChart = ({ data, dataCoordenadas }) => {
   if (data.loading) {
     return (
@@ -748,6 +845,46 @@ const AdvancedGlobeMapV2 = () => {
   const isDraggingRef = useRef(false);
   const abortControllerRef = useRef(null);
 
+  const [predictionResult, setPredictionResult] = useState(null);
+  const [predictionLoading, setPredictionLoading] = useState(false);
+  const [predictionError, setPredictionError] = useState(null);
+
+  const handlePredict = async (lat, lon, targetDate) => {
+    setPredictionLoading(true);
+    setPredictionError(null);
+    setPredictionResult(null);
+    try {
+      const response = await fetch("/api/nasa/predict", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ lat: parseFloat(lat), lon: parseFloat(lon), targetDate }),
+      });
+      const data = await response.json();
+      if (data.success) setPredictionResult(data.data);
+      else setPredictionError(data.error || "Error desconocido");
+    } catch (err) {
+      setPredictionError(err.message);
+    } finally {
+      setPredictionLoading(false);
+    }
+  };
+
+  const handleForecast = async (lat, lon) => {
+    setPredictionLoading(true);
+    setPredictionError(null);
+    setPredictionResult(null);
+    try {
+      const response = await fetch(`/api/nasa/predict?lat=${lat}&lon=${lon}&days=30&interval=7`);
+      const data = await response.json();
+      if (data.success) setPredictionResult(data.data);
+      else setPredictionError(data.error || "Error desconocido");
+    } catch (err) {
+      setPredictionError(err.message);
+    } finally {
+      setPredictionLoading(false);
+    }
+  };
+
   // Hooks personalizados
   const citiesData = useCitiesData();
   const mapStyles = useMapStyles();
@@ -893,11 +1030,12 @@ const AdvancedGlobeMapV2 = () => {
   };
 
   const handleClosePopup = useCallback(() => {
-    // Antes de cerrar, cancelamos cualquier petición de datos en curso.
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
     }
     setClickedInfo(null);
+    setPredictionResult(null);
+    setPredictionError(null);
   }, []);
 
   return (
@@ -988,8 +1126,19 @@ const AdvancedGlobeMapV2 = () => {
                   </div>
                 </div>
 
-                {/* Datos climáticos */}
                 <ClimateChart data={clickedInfo.climateData} dataCoordenadas={dataCoordenadas} />
+
+                <div className="p-4 border-b border-gray-200">
+                  <PredictionPanel
+                    lat={clickedInfo.lat}
+                    lon={clickedInfo.lng}
+                    onPredict={handlePredict}
+                    onForecast={handleForecast}
+                    result={predictionResult}
+                    loading={predictionLoading}
+                    error={predictionError}
+                  />
+                </div>
               </div>
 
               {/* Footer */}
