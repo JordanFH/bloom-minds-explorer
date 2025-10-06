@@ -2,6 +2,7 @@ import { MapPinMinusIcon } from "lucide-react";
 import ButtonBloomQuiz from "../buttons/button-bloom-quiz";
 import { ButtonOpenExplorer } from "../buttons/open-explorer";
 import { Badge } from "../ui/badge";
+import ButtonBloomGame from "../buttons/button-bloom-game";
 
 export default function HeroSection() {
   return (
@@ -33,6 +34,7 @@ export default function HeroSection() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <ButtonOpenExplorer />
             <ButtonBloomQuiz />
+            <ButtonBloomGame />
           </div>
         </div>
       </div>
