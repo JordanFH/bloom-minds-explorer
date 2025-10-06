@@ -1,5 +1,11 @@
-import { Globe, Satellite, TrendingUp } from "lucide-react";
-import { Card } from "../ui/card";
+import {
+  Gamepad,
+  Globe,
+  ListCheck,
+  Satellite,
+} from 'lucide-react';
+
+import { Card } from '../ui/card';
 
 export default function SolutionSection() {
   return (
@@ -16,35 +22,41 @@ export default function SolutionSection() {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto ">
+        <div className="grid md:grid-cols-4 gap-6 max-w-5xl mx-auto ">
           <Card className="p-6 bg-card border-border hover:border-primary/50 transition-colors">
             <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
               <Satellite className="w-6 h-6 text-primary" />
             </div>
             <h3 className="text-xl font-bold mb-3">NASA GIBS Integration</h3>
             <p className="text-muted-foreground leading-relaxed">
-              Real-time access to NDVI, surface temperature, and true-color satellite imagery
+              Real-time access to NDVI, surface temperature, and true-color satellite imagery from NASA.
             </p>
           </Card>
-
           <Card className="p-6 bg-card border-border hover:border-primary/50 transition-colors">
             <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
               <Globe className="w-6 h-6 text-primary" />
             </div>
             <h3 className="text-xl font-bold mb-3">Interactive 3D Globe</h3>
             <p className="text-muted-foreground leading-relaxed">
-              Explore vegetation data with multiple projections and map styles.
+              Explore vegetation data worldwide with multiple projections and dynamic map styles.
             </p>
           </Card>
-
           <Card className="p-6 bg-card border-border hover:border-primary/50 transition-colors">
             <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
-              <TrendingUp className="w-6 h-6 text-primary" />
+              <ListCheck className="w-6 h-6 text-primary" />
             </div>
             <h3 className="text-xl font-bold mb-3">Bloom Quiz</h3>
             <p className="text-muted-foreground leading-relaxed">
-              Discover how the Earth lives and breathes with each season. Learn about phenology,
-              pollination, climate change, and biodiversity as you bloom with every answer.
+              Learn about phenology, pollination, and biodiversity through an interactive quiz experience.
+            </p>
+          </Card>
+          <Card className="p-6 bg-card border-border hover:border-primary/50 transition-colors">
+            <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
+              <Gamepad className="w-6 h-6 text-primary" />
+            </div>
+            <h3 className="text-xl font-bold mb-3">Bloom Game</h3>
+            <p className="text-muted-foreground leading-relaxed">
+              Play <span className="font-semibold text-primary">"🌿 THE LAST BOTANIST"</span> and restore life to a dying Earth.
             </p>
           </Card>
         </div>
