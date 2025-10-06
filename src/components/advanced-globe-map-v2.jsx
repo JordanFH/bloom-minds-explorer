@@ -16,6 +16,8 @@ import DatePicker from "@/components/date-picker";
 import Legend from "@/components/legend";
 import { clasificarNDVI, clasificarNDVIColor, getFirstDayOfMonthFormatted, getLastDayOfMonthFormatted, getStartOfWeekFormatted, transformDate } from "@/utils/clasificador-ndvi";
 import Toast from "./toast";
+import Link from "next/link";
+import Image from "next/image";
 
 // ==================== DEFINICIÓN DE CAPAS Y SELECTOR ====================
 const AVAILABLE_LAYERS = [
@@ -771,6 +773,18 @@ const ControlPanel = ({
           } ${isMobile ? "mt-20 ml-2.5" : "mt-14 md:mt-0 md:ml-14"}`}
       >
         <div className="p-4">
+          <Link className="flex items-center gap-3 mb-3" href="/">
+            <Image
+              src="/logo-2.png"
+              alt="Bloom Minds Logo"
+              className="w-12 h-12"
+              width={100}
+              height={100}
+            />
+            <span className="text-xl font-bold">
+              Bloom <span className="text-primary">Minds</span>
+            </span>
+          </Link>
           <h3 className="font-bold text-base mb-3 sticky top-0 bg-white pb-2">
             Globe controls
           </h3>
