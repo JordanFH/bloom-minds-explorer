@@ -1090,7 +1090,7 @@ const AdvancedGlobeMapV2 = () => {
       >
         {showDragToast && (
           <Toast
-            message="💡 Press and hold to drag the globe and explore."
+            message="💡 Press and hold to explore the map. Click and let the magic bloom. 🌸"
             onClose={() => setShowDragToast(false)}
           />
         )}
