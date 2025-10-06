@@ -27,7 +27,8 @@ export default function HeroSection() {
           </h1>
           <p className="text-xl md:text-2xl text-muted-foreground mb-8 text-pretty leading-relaxed">
             Experience a unique visual journey with NASA data: explore the planet with{" "}
-            <b>Bloom Explorer</b> or learn about flowering and vegetation in the <b>Bloom Quiz.</b>
+            <b>Bloom Explorer</b> or learn about flowering and vegetation in the <b>Bloom Quiz</b>.
+            Also you can play with our <b>Bloom Game</b>.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <ButtonOpenExplorer />
