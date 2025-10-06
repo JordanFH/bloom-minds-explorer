@@ -12,14 +12,14 @@ export function ButtonOpenExplorer({ type = "default" }: Props) {
       <Link href={"/explore"}>
         <Button
           size="sm"
-          className="hidden md:inline-flex bg-white text-green-800 hover:bg-yellow-500 hover:text-white transition-all duration-300"
+          className="hidden md:inline-flex bg-white text-green-800 hover:bg-primary hover:text-white transition-all duration-300"
         >
-          Explorer
+          Try Bloom Explorer
         </Button>
       </Link>
     );
   return (
-    <Link href={"/explore"}>
+    <Link href={"/explore"} target="_blank">
       <Button
         size="lg"
         className="bg-white hover:bg-gray-100/80 transition-all duration-300 text-lg px-8"
