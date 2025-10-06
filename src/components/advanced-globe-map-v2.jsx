@@ -1056,7 +1056,7 @@ const AdvancedGlobeMapV2 = () => {
         onClick={handleMapClick}
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
-        cursor={isDragging ? "grabbing" : "crosshair"}
+        cursor={isDragging ? "grabbing" : "pointer"}
       >
         {clickedInfo && (
           <Popup
